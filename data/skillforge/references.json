@@ -1,0 +1,296 @@
+[
+  {
+    "en": "Anthropic. 2025. Agent skills specification. https://agentskills.io/specification. Accessed: 2026-03-21.",
+    "zh": "Anthropic. 2025. 智能体技能规范。 https://agentskills.io/specification. Accessed: 2026-03-21.",
+    "kind": "reference",
+    "id": "bib.bib1"
+  },
+  {
+    "en": "Anthropic. 2026. Skill authoring best practices. Anthropic PBC. Accessed: 2026-03-31.",
+    "zh": "Anthropic. 2026. 技能编写最佳实践。 Anthropic PBC. Accessed: 2026-03-31.",
+    "kind": "reference",
+    "id": "bib.bib2"
+  },
+  {
+    "en": "Victor Barres, Honghua Dong, Soham Ray, Xujie Si, and Karthik Narasimhan. 2025. τ2-bench: Evaluating conversational agents in a dual-control environment. Preprint, arXiv:2506.07982.",
+    "zh": "Victor Barres, Honghua Dong, Soham Ray, Xujie Si, and Karthik Narasimhan. 2025. τ²-bench：在双重控制环境中评估对话智能体。 Preprint, arXiv:2506.07982.",
+    "kind": "reference",
+    "id": "bib.bib3"
+  },
+  {
+    "en": "Minghao Chen, Yihang Li, Yanting Yang, Shiyu Yu, Binbin Lin, and Xiaofei He. 2024. Automanual: Constructing instruction manuals by LLM agents via interactive environmental learning. Preprint, arXiv:2405.16247.",
+    "zh": "Minghao Chen, Yihang Li, Yanting Yang, Shiyu Yu, Binbin Lin, and Xiaofei He. 2024. Automanual：通过交互式环境学习，由 LLM 智能体构建指令手册。 Preprint, arXiv:2405.16247.",
+    "kind": "reference",
+    "id": "bib.bib4"
+  },
+  {
+    "en": "Wenqi Fan, Yujuan Ding, Liangbo Ning, Shijie Wang, Hengyun Li, Dawei Yin, Tat-Seng Chua, and Qing Li. 2024. A survey on rag meeting llms: Towards retrieval-augmented large language models. In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD ’24, page 6491–6501, New York, NY, USA. Association for Computing Machinery.",
+    "zh": "Wenqi Fan, Yujuan Ding, Liangbo Ning, Shijie Wang, Hengyun Li, Dawei Yin, Tat-Seng Chua, and Qing Li. 2024. RAG 与 LLM 相遇的综述：迈向检索增强的大语言模型。 In Proceedings of the 30th ACM SIGKDD Conference on Knowledge Discovery and Data Mining, KDD ’24, page 6491–6501, New York, NY, USA. Association for Computing Machinery.",
+    "kind": "reference",
+    "id": "bib.bib5"
+  },
+  {
+    "en": "Runnan Fang, Yuan Liang, Xiaobin Wang, Jialong Wu, Shuofei Qiao, Pengjun Xie, Fei Huang, Huajun Chen, and Ningyu Zhang. 2025. Memp: Exploring agent procedural memory. Preprint, arXiv:2508.06433.",
+    "zh": "Runnan Fang, Yuan Liang, Xiaobin Wang, Jialong Wu, Shuofei Qiao, Pengjun Xie, Fei Huang, Huajun Chen, and Ningyu Zhang. 2025. Memp：探索智能体程序性记忆。 Preprint, arXiv:2508.06433.",
+    "kind": "reference",
+    "id": "bib.bib6"
+  },
+  {
+    "en": "Yao Fu, Dong-Ki Kim, Jaekyeom Kim, Sungryull Sohn, Lajanugen Logeswaran, Kyunghoon Bae, and Honglak Lee. 2024. Autoguide: Automated generation and selection of context-aware guidelines for large language model agents. Preprint, arXiv:2403.08978.",
+    "zh": "Yao Fu, Dong-Ki Kim, Jaekyeom Kim, Sungryull Sohn, Lajanugen Logeswaran, Kyunghoon Bae, and Honglak Lee. 2024. Autoguide：为大语言模型智能体自动生成并选择上下文感知指南。 Preprint, arXiv:2403.08978.",
+    "kind": "reference",
+    "id": "bib.bib7"
+  },
+  {
+    "en": "Zeyu Gan, Yun Liao, and Yong Liu. 2025. Rethinking external slow-thinking: From snowball errors to probability of correct reasoning. In Forty-second International Conference on Machine Learning.",
+    "zh": "Zeyu Gan, Yun Liao, and Yong Liu. 2025. 重新思考外部慢思考：从滚雪球式错误到正确推理的概率。 In Forty-second International Conference on Machine Learning.",
+    "kind": "reference",
+    "id": "bib.bib8"
+  },
+  {
+    "en": "Zhaolin Gao, Joongwon Kim, Wen Sun, Thorsten Joachims, Sid Wang, Richard Yuanzhe Pang, and Liang Tan. 2026. Prompt curriculum learning for efficient LLM post-training. In The Fourteenth International Conference on Learning Representations.",
+    "zh": "Zhaolin Gao, Joongwon Kim, Wen Sun, Thorsten Joachims, Sid Wang, Richard Yuanzhe Pang, and Liang Tan. 2026. 用于高效 LLM 后训练的提示词课程学习。 In The Fourteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib9"
+  },
+  {
+    "en": "Mengxuan Hu, Hongyi Wu, Ronghang Zhu, Zihan Guan, Dongliang Guo, Daiqing Qi, and Sheng Li. 2025. No free lunch: Retrieval-augmented generation undermines fairness in LLMs, Even for vigilant users. In Findings of the Association for Computational Linguistics: EMNLP 2025, pages 18145– 18170, Suzhou, China. Association for Computational Linguistics.",
+    "zh": "Mengxuan Hu, Hongyi Wu, Ronghang Zhu, Zihan Guan, Dongliang Guo, Daiqing Qi, and Sheng Li. 2025. 没有免费的午餐：即使对警觉的用户，检索增强生成也会损害 LLM 的公平性。 In Findings of the Association for Computational Linguistics: EMNLP 2025, pages 18145– 18170, Suzhou, China. Association for Computational Linguistics.",
+    "kind": "reference",
+    "id": "bib.bib10"
+  },
+  {
+    "en": "Yuyang Hu, Shichun Liu, Yanwei Yue, Guibin Zhang, Boyang Liu, Fangyi Zhu, Jiahang Lin, Honglin Guo, Shihan Dou, Zhiheng Xi, Senjie Jin, Jiejun Tan, Yanbin Yin, Jiongnan Liu, Zeyu Zhang, Zhongxiang Sun, Yutao Zhu, Hao Sun, Boci Peng, and 28 others. 2026. Memory in the age of ai agents. Preprint, arXiv:2512.13564.",
+    "zh": "Yuyang Hu, Shichun Liu, Yanwei Yue, Guibin Zhang, Boyang Liu, Fangyi Zhu, Jiahang Lin, Honglin Guo, Shihan Dou, Zhiheng Xi, Senjie Jin, Jiejun Tan, Yanbin Yin, Jiongnan Liu, Zeyu Zhang, Zhongxiang Sun, Yutao Zhu, Hao Sun, Boci Peng, and 28 others. 2026. AI 智能体时代的记忆。 Preprint, arXiv:2512.13564.",
+    "kind": "reference",
+    "id": "bib.bib11"
+  },
+  {
+    "en": "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela. 2020. Retrieval-augmented generation for knowledge-intensive nlp tasks. In Proceedings of the 34th International Conference on Neural Information Processing Systems, NIPS ’20, Red Hook, NY, USA. Curran Associates Inc.",
+    "zh": "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela. 2020. 面向知识密集型 NLP 任务的检索增强生成。 In Proceedings of the 34th International Conference on Neural Information Processing Systems, NIPS ’20, Red Hook, NY, USA. Curran Associates Inc.",
+    "kind": "reference",
+    "id": "bib.bib12"
+  },
+  {
+    "en": "Xiangyi Li, Wenbo Chen, Yimin Liu, Shenghan Zheng, Xiaokun Chen, Yifeng He, Yubo Li, Bingran You, Haotian Shen, Jiankai Sun, Shuyi Wang, Binxu Li, Qunhong Zeng, Di Wang, Xuandong Zhao, Yuanli Wang, Roey Ben Chaim, Zonglin Di, Yipeng Gao, and 22 others. 2026. Skillsbench: Benchmarking how well agent skills work across diverse tasks. Preprint, arXiv:2602.12670.",
+    "zh": "Xiangyi Li, Wenbo Chen, Yimin Liu, Shenghan Zheng, Xiaokun Chen, Yifeng He, Yubo Li, Bingran You, Haotian Shen, Jiankai Sun, Shuyi Wang, Binxu Li, Qunhong Zeng, Di Wang, Xuandong Zhao, Yuanli Wang, Roey Ben Chaim, Zonglin Di, Yipeng Gao, and 22 others. 2026. Skillsbench：衡量智能体技能在多样任务上的效果。 Preprint, arXiv:2602.12670.",
+    "kind": "reference",
+    "id": "bib.bib13"
+  },
+  {
+    "en": "Zhengxi Lu, Zhiyuan Yao, Jinyang Wu, Chengcheng Han, Qi Gu, Xunliang Cai, Weiming Lu, Jun Xiao, Yueting Zhuang, and Yongliang Shen. 2026. Skill0: In-context agentic reinforcement learning for skill internalization. Preprint, arXiv:2604.02268.",
+    "zh": "Zhengxi Lu, Zhiyuan Yao, Jinyang Wu, Chengcheng Han, Qi Gu, Xunliang Cai, Weiming Lu, Jun Xiao, Yueting Zhuang, and Yongliang Shen. 2026. Skill0：用于技能内化的上下文内智能体强化学习。 Preprint, arXiv:2604.02268.",
+    "kind": "reference",
+    "id": "bib.bib14"
+  },
+  {
+    "en": "Mike A Merrill, Alexander Glenn Shaw, Nicholas Carlini, Boxuan Li, Harsh Raj, Ivan Bercovich, Lin Shi, Jeong Yeon Shin, Thomas Walshe, E. Kelly Buchanan, Junhong Shen, Guanghao Ye, Haowei Lin, Jason Poulos, Maoyu Wang, Jenia Jitsev, Marianna Nezhurina, Di Lu, Orfeas Menis Mastromichalakis, and 65 others. 2026. Terminal-bench: Benchmarking agents on hard, realistic tasks in command line interfaces. In The Fourteenth International Conference on Learning Representations.",
+    "zh": "Mike A Merrill, Alexander Glenn Shaw, Nicholas Carlini, Boxuan Li, Harsh Raj, Ivan Bercovich, Lin Shi, Jeong Yeon Shin, Thomas Walshe, E. Kelly Buchanan, Junhong Shen, Guanghao Ye, Haowei Lin, Jason Poulos, Maoyu Wang, Jenia Jitsev, Marianna Nezhurina, Di Lu, Orfeas Menis Mastromichalakis, and 65 others. 2026. Terminal-bench：在命令行界面中以困难、真实的任务评测智能体。 In The Fourteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib15"
+  },
+  {
+    "en": "Jingwei Ni, Yihao Liu, Xinpeng Liu, Yutao Sun, Mengyu Zhou, Pengyu Cheng, Dexin Wang, Xiaoxi Jiang, and Guanjun Jiang. 2026. Trace2skill: Distill trajectory-local lessons into transferable agent skills. arXiv preprint arXiv:2603.25158.",
+    "zh": "Jingwei Ni, Yihao Liu, Xinpeng Liu, Yutao Sun, Mengyu Zhou, Pengyu Cheng, Dexin Wang, Xiaoxi Jiang, and Guanjun Jiang. 2026. Trace2skill：将轨迹局部经验提炼为可迁移的智能体技能。 arXiv preprint arXiv:2603.25158.",
+    "kind": "reference",
+    "id": "bib.bib16"
+  },
+  {
+    "en": "Siru Ouyang, Jun Yan, I-Hung Hsu, Yanfei Chen, Ke Jiang, Zifeng Wang, Rujun Han, Long Le, Samira Daruki, Xiangru Tang, Vishy Tirumalashetty, George Lee, Mahsan Rofouei, Hangfei Lin, Jiawei Han, Chen-Yu Lee, and Tomas Pfister. 2026. Reasoningbank: Scaling agent self-evolving with reasoning memory. In The Fourteenth International Conference on Learning Representations.",
+    "zh": "Siru Ouyang, Jun Yan, I-Hung Hsu, Yanfei Chen, Ke Jiang, Zifeng Wang, Rujun Han, Long Le, Samira Daruki, Xiangru Tang, Vishy Tirumalashetty, George Lee, Mahsan Rofouei, Hangfei Lin, Jiawei Han, Chen-Yu Lee, and Tomas Pfister. 2026. Reasoningbank：利用推理记忆扩展智能体自我演化。 In The Fourteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib17"
+  },
+  {
+    "en": "Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. 2023. Memgpt: Towards LLMs as operating systems. Preprint, arXiv:2310.08560.",
+    "zh": "Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. 2023. Memgpt：迈向作为操作系统的 LLM。 Preprint, arXiv:2310.08560.",
+    "kind": "reference",
+    "id": "bib.bib18"
+  },
+  {
+    "en": "Joon Sung Park, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, and Michael S. Bernstein. 2023. Generative agents: Interactive simulacra of human behavior. Preprint, arXiv:2304.03442.",
+    "zh": "Joon Sung Park, Joseph C. O’Brien, Carrie J. Cai, Meredith Ringel Morris, Percy Liang, and Michael S. Bernstein. 2023. 生成式智能体：人类行为的交互式模拟。 Preprint, arXiv:2304.03442.",
+    "kind": "reference",
+    "id": "bib.bib19"
+  },
+  {
+    "en": "Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, and Yuxiao Dong. 2025. WebRL: Training LLM web agents via self-evolving on-line curriculum reinforcement learning. In The Thirteenth International Conference on Learning Representations.",
+    "zh": "Zehan Qi, Xiao Liu, Iat Long Iong, Hanyu Lai, Xueqiao Sun, Jiadai Sun, Xinyue Yang, Yu Yang, Shuntian Yao, Wei Xu, Jie Tang, and Yuxiao Dong. 2025. WebRL：通过自演化在线课程强化学习训练 LLM Web 智能体。 In The Thirteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib20"
+  },
+  {
+    "en": "Noah Shinn, Federico Cassano, Edward Berman, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion: Language agents with verbal reinforcement learning. Preprint, arXiv:2303.11366.",
+    "zh": "Noah Shinn, Federico Cassano, Edward Berman, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion：采用语言强化学习的语言智能体。 Preprint, arXiv:2303.11366.",
+    "kind": "reference",
+    "id": "bib.bib21"
+  },
+  {
+    "en": "Charlie Victor Snell, Jaehoon Lee, Kelvin Xu, and Aviral Kumar. 2025. Scaling LLM test-time compute optimally can be more effective than scaling parameters for reasoning. In The Thirteenth International Conference on Learning Representations.",
+    "zh": "Charlie Victor Snell, Jaehoon Lee, Kelvin Xu, and Aviral Kumar. 2025. 最优扩展 LLM 测试时计算，在推理上可能比扩展参数更有效。 In The Thirteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib22"
+  },
+  {
+    "en": "Mirac Suzgun, Mert Yuksekgonul, Federico Bianchi, Dan Jurafsky, and James Zou. 2025. Dynamic cheatsheet: Test-time learning with adaptive memory.",
+    "zh": "Mirac Suzgun, Mert Yuksekgonul, Federico Bianchi, Dan Jurafsky, and James Zou. 2025. 动态速查表：借助自适应记忆进行测试时学习。",
+    "kind": "reference",
+    "id": "bib.bib23"
+  },
+  {
+    "en": "Guangya Wan, Mingyang Ling, Xiaoqi Ren, Rujun Han, Sheng Li, and Zizhao Zhang. 2025a. Compass: Enhancing agent long-horizon reasoning with evolving context. Preprint, arXiv:2510.08790.",
+    "zh": "Guangya Wan, Mingyang Ling, Xiaoqi Ren, Rujun Han, Sheng Li, and Zizhao Zhang. 2025a. Compass：利用演化上下文增强智能体长程推理。 Preprint, arXiv:2510.08790.",
+    "kind": "reference",
+    "id": "bib.bib24"
+  },
+  {
+    "en": "Guangya Wan, Yuqi Wu, Jie Chen, and Sheng Li. 2025b. Reasoning aware self-consistency: Leveraging reasoning paths for efficient LLM sampling. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers), pages 3613–3635, Albuquerque, New Mexico. Association for Computational Linguistics.",
+    "zh": "Guangya Wan, Yuqi Wu, Jie Chen, and Sheng Li. 2025b. 推理感知的自一致性：利用推理路径实现高效 LLM 采样。 In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Linguistics: Human Language Technologies (Volume 1: Long Papers), pages 3613–3635, Albuquerque, New Mexico. Association for Computational Linguistics.",
+    "kind": "reference",
+    "id": "bib.bib25"
+  },
+  {
+    "en": "Guangya Wan, Yuqi Wu, Hao Wang, Shengming Zhao, Jie Chen, and Sheng Li. 2025c. Derailer-rerailer: Adaptive verification for efficient and reliable language model reasoning. In Findings of the Association for Computational Linguistics: ACL 2025, pages 327–348, Vienna, Austria. Association for Computational Linguistics.",
+    "zh": "Guangya Wan, Yuqi Wu, Hao Wang, Shengming Zhao, Jie Chen, and Sheng Li. 2025c. Derailer-rerailer：用于高效可靠语言模型推理的自适应验证。 In Findings of the Association for Computational Linguistics: ACL 2025, pages 327–348, Vienna, Austria. Association for Computational Linguistics.",
+    "kind": "reference",
+    "id": "bib.bib26"
+  },
+  {
+    "en": "Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. 2023. Voyager: An open-ended embodied agent with large language models. Preprint, arXiv:2305.16291.",
+    "zh": "Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. 2023. Voyager：基于大语言模型的开放式具身智能体。 Preprint, arXiv:2305.16291.",
+    "kind": "reference",
+    "id": "bib.bib27"
+  },
+  {
+    "en": "Pinqiao Wang and Sheng Li. 2026. Multi-agent debate: A unified agentic framework for tabular anomaly detection. Preprint, arXiv:2602.14251.",
+    "zh": "Pinqiao Wang and Sheng Li. 2026. 多智能体辩论：用于表格异常检测的统一智能体框架。 Preprint, arXiv:2602.14251.",
+    "kind": "reference",
+    "id": "bib.bib28"
+  },
+  {
+    "en": "Xinglin Wang, Shaoxiong Feng, Yiwei Li, Peiwen Yuan, Yueqi Zhang, Chuyi Tan, Boyuan Pan, Yao Hu, and Kan Li. 2025. Make every penny count: Difficulty-adaptive self-consistency for cost-efficient reasoning. In Findings of the Association for Computational Linguistics: NAACL 2025, pages 6919–6932, Albuquerque, New Mexico. Association for Computational Linguistics.",
+    "zh": "Xinglin Wang, Shaoxiong Feng, Yiwei Li, Peiwen Yuan, Yueqi Zhang, Chuyi Tan, Boyuan Pan, Yao Hu, and Kan Li. 2025. 让每一分钱都物有所值：用于低成本推理的难度自适应自一致性。 In Findings of the Association for Computational Linguistics: NAACL 2025, pages 6919–6932, Albuquerque, New Mexico. Association for Computational Linguistics.",
+    "kind": "reference",
+    "id": "bib.bib29"
+  },
+  {
+    "en": "Zora Zhiruo Wang, Jiayuan Mao, Daniel Fried, and Graham Neubig. 2024. Agent workflow memory. Preprint, arXiv:2409.07429.",
+    "zh": "Zora Zhiruo Wang, Jiayuan Mao, Daniel Fried, and Graham Neubig. 2024. 智能体工作流记忆。 Preprint, arXiv:2409.07429.",
+    "kind": "reference",
+    "id": "bib.bib30"
+  },
+  {
+    "en": "Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, brian ichter, Fei Xia, Ed H. Chi, Quoc V Le, and Denny Zhou. 2022. Chain of thought prompting elicits reasoning in large language models. In Advances in Neural Information Processing Systems.",
+    "zh": "Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, brian ichter, Fei Xia, Ed H. Chi, Quoc V Le, and Denny Zhou. 2022. 思维链提示激发大语言模型推理能力。 In Advances in Neural Information Processing Systems.",
+    "kind": "reference",
+    "id": "bib.bib31"
+  },
+  {
+    "en": "Zidi Xiong, Yuping Lin, Wenya Xie, Pengfei He, Zirui Liu, Jiliang Tang, Himabindu Lakkaraju, and Zhen Xiang. 2025. How memory management impacts LLM agents: An empirical study of experience-following behavior. Preprint, arXiv:2505.16067.",
+    "zh": "Zidi Xiong, Yuping Lin, Wenya Xie, Pengfei He, Zirui Liu, Jiliang Tang, Himabindu Lakkaraju, and Zhen Xiang. 2025. 记忆管理如何影响 LLM 智能体：经验遵循行为的实证研究。 Preprint, arXiv:2505.16067.",
+    "kind": "reference",
+    "id": "bib.bib32"
+  },
+  {
+    "en": "Huibo Yang, Mengxuan Hu, Amoreena Most, W. Anthony Hawkins, Brian Murray, Susan E. Smith, Sheng Li, and Andrea Sikora. 2025. Evaluating accuracy and reproducibility of large language model performance on critical care assessments in pharmacy education. Frontiers in Artificial Intelligence, 7:1514896.",
+    "zh": "Huibo Yang, Mengxuan Hu, Amoreena Most, W. Anthony Hawkins, Brian Murray, Susan E. Smith, Sheng Li, and Andrea Sikora. 2025. 评估大语言模型在药学教育重症监护考核中表现的准确性与可复现性。 Frontiers in Artificial Intelligence, 7:1514896.",
+    "kind": "reference",
+    "id": "bib.bib33"
+  },
+  {
+    "en": "Yutao Yang, Junsong Li, Qianjun Pan, Bihao Zhan, Yuxuan Cai, Lin Du, Jie Zhou, Kai Chen, Qin Chen, Xin Li, Bo Zhang, and Liang He. 2026. Autoskill: Experience-driven lifelong learning via skill self-evolution. Preprint, arXiv:2603.01145.",
+    "zh": "Yutao Yang, Junsong Li, Qianjun Pan, Bihao Zhan, Yuxuan Cai, Lin Du, Jie Zhou, Kai Chen, Qin Chen, Xin Li, Bo Zhang, and Liang He. 2026. Autoskill：通过技能自演化实现经验驱动的终身学习。 Preprint, arXiv:2603.01145.",
+    "kind": "reference",
+    "id": "bib.bib34"
+  },
+  {
+    "en": "Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik R Narasimhan. 2025. {$\\tau$}-bench: A benchmark for \\underline{T}ool-\\underline{A}gent- \\underline{U}ser interaction in real-world domains. In The Thirteenth International Conference on Learning Representations.",
+    "zh": "Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik R Narasimhan. 2025. τ-bench：真实领域中工具—智能体—用户交互的基准。 In The Thirteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib35"
+  },
+  {
+    "en": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. React: Synergizing reasoning and acting in language models. In International Conference on Learning Representations.",
+    "zh": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2023. ReAct：协同语言模型中的推理与行动。 In International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib36"
+  },
+  {
+    "en": "Haoran Ye, Xuning He, Vincent Arak, Haonan Dong, and Guojie Song. 2026a. Meta context engineering via agentic skill evolution. Preprint, arXiv:2601.21557.",
+    "zh": "Haoran Ye, Xuning He, Vincent Arak, Haonan Dong, and Guojie Song. 2026a. 通过智能体技能演化实现元上下文工程。 Preprint, arXiv:2601.21557.",
+    "kind": "reference",
+    "id": "bib.bib37"
+  },
+  {
+    "en": "Rui Ye, Zhongwang Zhang, Kuan Li, Huifeng Yin, Zhengwei Tao, Yida Zhao, Liangcai Su, Liwen Zhang, Zile Qiao, Xinyu Wang, Yong Jiang, Pengjun Xie, Fei Huang, Siheng Chen, and Jingren Zhou. 2026b. Agentfold: Long-horizon web agents with proactive context folding. In The Fourteenth International Conference on Learning Representations.",
+    "zh": "Rui Ye, Zhongwang Zhang, Kuan Li, Huifeng Yin, Zhengwei Tao, Yida Zhao, Liangcai Su, Liwen Zhang, Zile Qiao, Xinyu Wang, Yong Jiang, Pengjun Xie, Fei Huang, Siheng Chen, and Jingren Zhou. 2026b. Agentfold：具有主动上下文折叠的长程 Web 智能体。 In The Fourteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib38"
+  },
+  {
+    "en": "Shicheng Ye, Chao Yu, Kaiqiang Ke, Chengdong Xu, and Yinqi Wei. 2025. H2R: Hierarchical hindsight reflection for multi-task LLM agents. Preprint, arXiv:2509.12810.",
+    "zh": "Shicheng Ye, Chao Yu, Kaiqiang Ke, Chengdong Xu, and Yinqi Wei. 2025. H2R：面向多任务 LLM 智能体的分层事后反思。 Preprint, arXiv:2509.12810.",
+    "kind": "reference",
+    "id": "bib.bib39"
+  },
+  {
+    "en": "Zihao Yu, Xiu Yuan, and Chongjie Zhang. 2026. Memora: Embodied action memory from egocentric videos for reasoning and planning. Preprint, arXiv:2607.14252.",
+    "zh": "Zihao Yu, Xiu Yuan, and Chongjie Zhang. 2026. Memora：来自第一人称视频、用于推理和规划的具身动作记忆。 Preprint, arXiv:2607.14252.",
+    "kind": "reference",
+    "id": "bib.bib40"
+  },
+  {
+    "en": "Hanrong Zhang, Shicheng Fan, Henry Peng Zou, Yankai Chen, Zhenting Wang, Jiayu Zhou, Chengze Li, Wei-Chieh Huang, Yifei Yao, Kening Zheng, Xue Liu, Xiaoxiao Li, and Philip S. Yu. 2026a. Coevoskills: Self-evolving agent skills via co-evolutionary verification. Preprint, arXiv:2604.01687.",
+    "zh": "Hanrong Zhang, Shicheng Fan, Henry Peng Zou, Yankai Chen, Zhenting Wang, Jiayu Zhou, Chengze Li, Wei-Chieh Huang, Yifei Yao, Kening Zheng, Xue Liu, Xiaoxiao Li, and Philip S. Yu. 2026a. Coevoskills：通过协同演化验证实现智能体技能自演化。 Preprint, arXiv:2604.01687.",
+    "kind": "reference",
+    "id": "bib.bib41"
+  },
+  {
+    "en": "Qizheng Zhang, Changran Hu, Shubhangi Upasani, Boyuan Ma, Fenglu Hong, Vamsidhar Kamanuru, Jay Rainton, Chen Wu, Mengmeng Ji, Hanchen Li, Urmish Thakker, James Zou, and Kunle Olukotun. 2026b. Agentic context engineering: Learning comprehensive contexts for self-improving language models. In The Fourteenth International Conference on Learning Representations.",
+    "zh": "Qizheng Zhang, Changran Hu, Shubhangi Upasani, Boyuan Ma, Fenglu Hong, Vamsidhar Kamanuru, Jay Rainton, Chen Wu, Mengmeng Ji, Hanchen Li, Urmish Thakker, James Zou, and Kunle Olukotun. 2026b. 智能体上下文工程：为自我改进语言模型学习全面上下文。 In The Fourteenth International Conference on Learning Representations.",
+    "kind": "reference",
+    "id": "bib.bib42"
+  },
+  {
+    "en": "Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. 2024. ExpeL: LLM agents are experiential learners. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 19632–19642.",
+    "zh": "Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. 2024. ExpeL：LLM 智能体是经验学习者。 In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 19632–19642.",
+    "kind": "reference",
+    "id": "bib.bib43"
+  },
+  {
+    "en": "Boyuan Zheng, Michael Y. Fatemi, Xiaolong Jin, Zora Zhiruo Wang, Apurva Gandhi, Yueqi Song, Yu Gu, Jayanth Srinivasa, Gaowen Liu, Graham Neubig, and Yu Su. 2025. Skillweaver: Web agents can self-improve by discovering and honing skills. Preprint, arXiv:2504.07079.",
+    "zh": "Boyuan Zheng, Michael Y. Fatemi, Xiaolong Jin, Zora Zhiruo Wang, Apurva Gandhi, Yueqi Song, Yu Gu, Jayanth Srinivasa, Gaowen Liu, Graham Neubig, and Yu Su. 2025. Skillweaver：Web 智能体能通过发现和打磨技能实现自我改进。 Preprint, arXiv:2504.07079.",
+    "kind": "reference",
+    "id": "bib.bib44"
+  },
+  {
+    "en": "Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica. 2023. Judging LLM-as-a-judge with MT-bench and chatbot arena. In Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track.",
+    "zh": "Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica. 2023. 利用 MT-bench 和 Chatbot Arena 评估作为评判器的 LLM。 In Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track.",
+    "kind": "reference",
+    "id": "bib.bib45"
+  },
+  {
+    "en": "Chenyu Zhou, Huacan Chai, Wenteng Chen, Zihan Guo, Rong Shan, Yuanyi Song, Tianyi Xu, Yingxuan Yang, Aofan Yu, Weiming Zhang, Congming Zheng, Jiachen Zhu, Zeyu Zheng, Zhuosheng Zhang, Xingyu Lou, Changwang Zhang, Zhihui Fu, Jun Wang, Weiwen Liu, and 2 others. 2026a. Externalization in llm agents: A unified review of memory, skills, protocols and harness engineering. Preprint, arXiv:2604.08224.",
+    "zh": "Chenyu Zhou, Huacan Chai, Wenteng Chen, Zihan Guo, Rong Shan, Yuanyi Song, Tianyi Xu, Yingxuan Yang, Aofan Yu, Weiming Zhang, Congming Zheng, Jiachen Zhu, Zeyu Zheng, Zhuosheng Zhang, Xingyu Lou, Changwang Zhang, Zhihui Fu, Jun Wang, Weiwen Liu, and 2 others. 2026a. LLM 智能体中的外部化：记忆、技能、协议与运行框架工程的统一综述。 Preprint, arXiv:2604.08224.",
+    "kind": "reference",
+    "id": "bib.bib46"
+  },
+  {
+    "en": "Yingli Zhou, Wang Shu, Yaodong Su, Wenchuan Du, Yixiang Fang, and Xuemin Lin. 2026b. A comprehensive survey on agent skills: Taxonomy, techniques, and applications. Preprint, arXiv:2605.07358.",
+    "zh": "Yingli Zhou, Wang Shu, Yaodong Su, Wenchuan Du, Yixiang Fang, and Xuemin Lin. 2026b. 智能体技能全面综述：分类、技术与应用。 Preprint, arXiv:2605.07358.",
+    "kind": "reference",
+    "id": "bib.bib47"
+  },
+  {
+    "en": "Zijian Zhou, Ao Qu, Zhaoxuan Wu, Sunghwan Kim, Alok Prakash, Daniela Rus, Jinhua Zhao, Bryan Kian Hsiang Low, and Paul Pu Liang. 2025. MEM1: Learning to synergize memory and reasoning for efficient long-horizon agents. Preprint, arXiv:2506.15841.",
+    "zh": "Zijian Zhou, Ao Qu, Zhaoxuan Wu, Sunghwan Kim, Alok Prakash, Daniela Rus, Jinhua Zhao, Bryan Kian Hsiang Low, and Paul Pu Liang. 2025. MEM1：学习协同记忆与推理，以实现高效长程智能体。 Preprint, arXiv:2506.15841.",
+    "kind": "reference",
+    "id": "bib.bib48"
+  },
+  {
+    "en": "Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingxuan Yang, Jiaxun Zhang, Pengrui Han, Qipeng Xie, Fuyang Cui, Weijia Zhang, Xiaoteng Ma, Xiaodong Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan Lu, James Zou, and Jiaxuan You. 2025. Where llm agents fail and how they can learn from failures. Preprint, arXiv:2509.25370.",
+    "zh": "Kunlun Zhu, Zijia Liu, Bingxuan Li, Muxin Tian, Yingxuan Yang, Jiaxun Zhang, Pengrui Han, Qipeng Xie, Fuyang Cui, Weijia Zhang, Xiaoteng Ma, Xiaodong Yu, Gowtham Ramesh, Jialian Wu, Zicheng Liu, Pan Lu, James Zou, and Jiaxuan You. 2025. LLM 智能体在哪里失败，以及如何从失败中学习。 Preprint, arXiv:2509.25370.",
+    "kind": "reference",
+    "id": "bib.bib49"
+  }
+]

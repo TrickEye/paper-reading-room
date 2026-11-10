@@ -1,0 +1,298 @@
+[
+  {
+    "number": 1,
+    "zh": "表 1：三个模型的表现与一致性。Pass@1 衡量单次试验成功率，RC = Pass⁵ / Pass@1 衡量重复运行一致性（越高越好）。粗体表示每项比较的最佳方法。SkillForge 主要改善 RC，表明重复执行的稳定性更强。显著性、技能检索率及 token 用量的统计见附录 B.4 和 B.5。",
+    "en": "Table 1: Performance and consistency across three models. Pass@1 measures single-trial success, and RC = Pass⁵/Pass@1 measures repeated-run consistency (higher is better). Bold denotes the best method for each comparison. SkillForge mainly improves RC, suggesting stronger stability across repeated executions. See Appendices B.4 and B.5 for statistics on significance, skill retrieval rate, and token usage.",
+    "headers": [
+      [
+        "模型",
+        "Model"
+      ],
+      [
+        "基准",
+        "Benchmark"
+      ],
+      [
+        "无技能",
+        "No Skill"
+      ],
+      [
+        "自生成技能",
+        "Self-Gen. Skill"
+      ],
+      [
+        "SkillForge（本文）",
+        "SkillForge (Ours)"
+      ]
+    ],
+    "rows": [
+      [
+        "Gemini 2.5 Flash",
+        "τ²-Bench Airline",
+        0.575,
+        0.48,
+        0.55,
+        0.48,
+        0.6,
+        0.567
+      ],
+      [
+        "Gemini 2.5 Flash",
+        "τ²-Bench Retail",
+        0.629,
+        0.455,
+        0.621,
+        0.428,
+        0.635,
+        0.482
+      ],
+      [
+        "Gemini 2.5 Flash",
+        "Terminal-Bench",
+        0.264,
+        0.413,
+        0.261,
+        0.395,
+        0.296,
+        0.524
+      ],
+      [
+        "Gemini 3.0 Flash",
+        "τ²-Bench Airline",
+        0.668,
+        0.552,
+        0.67,
+        0.537,
+        0.701,
+        0.683
+      ],
+      [
+        "Gemini 3.0 Flash",
+        "τ²-Bench Retail",
+        0.761,
+        0.599,
+        0.742,
+        0.597,
+        0.778,
+        0.701
+      ],
+      [
+        "Gemini 3.0 Flash",
+        "Terminal-Bench",
+        0.512,
+        0.67,
+        0.528,
+        0.667,
+        0.535,
+        0.791
+      ],
+      [
+        "GPT-5 Nano",
+        "τ²-Bench Airline",
+        0.435,
+        0.389,
+        0.44,
+        0.359,
+        0.455,
+        0.443
+      ],
+      [
+        "GPT-5 Nano",
+        "τ²-Bench Retail",
+        0.643,
+        0.443,
+        0.623,
+        0.425,
+        0.645,
+        0.519
+      ],
+      [
+        "GPT-5 Nano",
+        "Terminal-Bench",
+        0.256,
+        0.45,
+        0.248,
+        0.425,
+        0.273,
+        0.525
+      ]
+    ]
+  },
+  {
+    "number": 2,
+    "zh": "表 2：τ²-Bench Airline 上的逐技能调用统计。“Rate”为在技能被加载这一条件下，回合成功的比例。为简洁起见，省略 airline- 前缀。",
+    "en": "Table 2: Per-skill invocation statistics on τ²-Bench Airline. “Rate” is the fraction of episodes that succeeded conditional on the skill being loaded. The airline- prefix is omitted for brevity.",
+    "headers": [
+      [
+        "技能",
+        "Skill"
+      ],
+      [
+        "调用次数",
+        "Calls"
+      ],
+      [
+        "成功次数",
+        "Succ."
+      ],
+      [
+        "成功率",
+        "Rate"
+      ]
+    ],
+    "rows": [
+      [
+        "baggage-allowance-logic",
+        29,
+        21,
+        "72.4%"
+      ],
+      [
+        "cancellation-refund-valid",
+        153,
+        98,
+        "64.1%"
+      ],
+      [
+        "disruption-compensation",
+        45,
+        42,
+        "93.3%"
+      ],
+      [
+        "itinerary-search-optimize",
+        24,
+        8,
+        "33.3%"
+      ],
+      [
+        "mirror-booking-workflow",
+        8,
+        7,
+        "87.5%"
+      ],
+      [
+        "modification-financial-valid",
+        163,
+        105,
+        "64.4%"
+      ],
+      [
+        "rebooking-workflow",
+        9,
+        5,
+        "55.6%"
+      ],
+      [
+        [
+          "合计／加权平均",
+          "Total / weighted avg."
+        ],
+        431,
+        286,
+        "66.6%"
+      ]
+    ]
+  },
+  {
+    "number": 3,
+    "zh": "表 3：Terminal-Bench 上的效率权衡。按需加载同时取得最佳奖励、最小一致性下降和最少 token。第二列跟踪 Δ = Pass⁵ − Pass@1（绝对值越小越好，表示重复运行中的退化越少）。",
+    "en": "Table 3: Efficiency trade-offs on Terminal-Bench. On-demand loading achieves the best reward, the smallest consistency drop, and the fewest tokens simultaneously. The second column tracks Δ = Pass⁵ − Pass@1 (smaller magnitude is better, indicating less degradation across repeated runs).",
+    "headers": [
+      [
+        "方法",
+        "Method"
+      ],
+      [
+        "平均奖励 ↑",
+        "Avg. Reward ↑"
+      ],
+      [
+        "Pass@1 → Pass⁵（Δ）",
+        "Pass@1 → Pass⁵ (Δ)"
+      ],
+      [
+        "平均 token ↓",
+        "Avg. Tokens ↓"
+      ],
+      [
+        "平均轮数 ↓",
+        "Avg. Turns ↓"
+      ]
+    ],
+    "rows": [
+      [
+        [
+          "无技能",
+          "No Skill"
+        ],
+        "0.5117",
+        "0.512 → 0.343 (−0.169)",
+        "819,101",
+        "37.7"
+      ],
+      [
+        [
+          "完整提示词指南",
+          "Full Prompt Guidance"
+        ],
+        "0.4930",
+        "0.493 → 0.350 (−0.143)",
+        "892,756",
+        "27.1"
+      ],
+      [
+        [
+          "按需加载",
+          "On-Demand Loading"
+        ],
+        "0.5352",
+        "0.535 → 0.423 (−0.113)",
+        "682,266",
+        "31.1"
+      ]
+    ]
+  },
+  {
+    "number": 4,
+    "zh": "表 4：τ²-Bench、Gemini 3.0 Flash 上整体重复运行一致性的比较。AUC 表示 k 从 1 到 5 的 Passᵏ 曲线下的归一化面积。方括号表示对任务进行 bootstrap 重采样（10,000 次）所得的 95% 置信区间。p 值来自以 No Skill 为基线、对逐任务 AUC 值进行的配对 Wilcoxon 符号秩检验。Self-Generated Skill 未达到显著性（p = 0.631），而 SkillForge 达到显著性（p = 0.003）。",
+    "en": "Table 4: Overall repeated-run consistency comparison on τ²-Bench, Gemini 3.0 Flash. AUC denotes the normalized area under the Passᵏ curve from k = 1 to 5. Brackets denote 95% bootstrap confidence intervals over tasks (10,000 resamples). p-values are from a paired Wilcoxon signed-rank test on per-task AUC values against the No Skill baseline. Self-Generated Skill does not reach significance (p = 0.631), while SkillForge does (p = 0.003).",
+    "headers": [
+      [
+        "方法",
+        "Method"
+      ],
+      [
+        "AUC（Pass¹–⁵）",
+        "AUC (Pass¹–⁵)"
+      ],
+      [
+        "p 值",
+        "p-value"
+      ]
+    ],
+    "rows": [
+      [
+        [
+          "无技能",
+          "No Skill"
+        ],
+        "0.513 [0.468, 0.557]",
+        "–"
+      ],
+      [
+        [
+          "自生成技能",
+          "Self-Generated"
+        ],
+        "0.508 [0.463, 0.554]",
+        "0.631"
+      ],
+      [
+        "SkillForge",
+        "0.581 [0.537, 0.626]",
+        "0.003"
+      ]
+    ]
+  }
+]

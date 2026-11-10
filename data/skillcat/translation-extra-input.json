@@ -1,0 +1,437 @@
+[
+  {
+    "id": "alg1.l1",
+    "kind": "algorithm-line",
+    "en": "1: Input: Tasks for evolution \\mathcal{X}, tasks for test \\mathcal{X^{*}}, base skill S_{0}, score threshold \\theta, node budget k."
+  },
+  {
+    "id": "alg1.l2",
+    "kind": "algorithm-line",
+    "en": "2: Output: Evolved skill S^{*}, skill topology (S_{c},\\mathcal{V},\\mathcal{G}), and routed skill S_{j} for each test task."
+  },
+  {
+    "id": "alg1.l3",
+    "kind": "algorithm-line",
+    "en": "3: Stage 1: Contrastive Causal Extraction"
+  },
+  {
+    "id": "alg1.l4",
+    "kind": "algorithm-line",
+    "en": "4: for each task x_{i}\\in\\mathcal{X} (i=1,\\dots,N) do"
+  },
+  {
+    "id": "alg1.l5",
+    "kind": "algorithm-line",
+    "en": "5: Run the agent with multiple random seeds to get traces \\mathcal{T}_{i}."
+  },
+  {
+    "id": "alg1.l6",
+    "kind": "algorithm-line",
+    "en": "6: Split \\mathcal{T}_{i} into successful traces \\mathcal{T}_{i}^{+} and failed traces \\mathcal{T}_{i}^{-}."
+  },
+  {
+    "id": "alg1.l7",
+    "kind": "algorithm-line",
+    "en": "7: if \\mathcal{T}_{i}^{+}\\neq\\emptyset and \\mathcal{T}_{i}^{-}\\neq\\emptyset then"
+  },
+  {
+    "id": "alg1.l8",
+    "kind": "algorithm-line",
+    "en": "8: Sample a contrastive pair (\\tau_{i}^{+},\\tau_{i}^{-}) from \\mathcal{T}_{i}^{+} and \\mathcal{T}_{i}^{-}."
+  },
+  {
+    "id": "alg1.l9",
+    "kind": "algorithm-line",
+    "en": "9: Identify divergence and extract record"
+  },
+  {
+    "id": "alg1.l10",
+    "kind": "algorithm-line",
+    "en": "10: r_{i}\\leftarrow E(\\tau_{i}^{+},\\tau_{i}^{-})."
+  },
+  {
+    "id": "alg1.l11",
+    "kind": "algorithm-line",
+    "en": "11: else"
+  },
+  {
+    "id": "alg1.l12",
+    "kind": "algorithm-line",
+    "en": "12: Extract a non-contrastive record r_{i} from \\mathcal{T}_{i}."
+  },
+  {
+    "id": "alg1.l13",
+    "kind": "algorithm-line",
+    "en": "13: end if"
+  },
+  {
+    "id": "alg1.l14",
+    "kind": "algorithm-line",
+    "en": "14: Generate candidate skill editing patch p_{i} from r_{i} and S_{0}."
+  },
+  {
+    "id": "alg1.l15",
+    "kind": "algorithm-line",
+    "en": "15: end for"
+  },
+  {
+    "id": "alg1.l16",
+    "kind": "algorithm-line",
+    "en": "16: Stage 2: Assessment-Augmented Evolution"
+  },
+  {
+    "id": "alg1.l17",
+    "kind": "algorithm-line",
+    "en": "17: \\mathcal{P}_{\\theta}\\leftarrow\\emptyset"
+  },
+  {
+    "id": "alg1.l18",
+    "kind": "algorithm-line",
+    "en": "18: for each patch p_{i} (i=1,\\dots,N) do"
+  },
+  {
+    "id": "alg1.l19",
+    "kind": "algorithm-line",
+    "en": "19: Load the skill built from p_{i} and rerun the source-task."
+  },
+  {
+    "id": "alg1.l20",
+    "kind": "algorithm-line",
+    "en": "20: Compute assessment score a_{i} via Eq. 2."
+  },
+  {
+    "id": "alg1.l21",
+    "kind": "algorithm-line",
+    "en": "21: \\mathcal{P}_{\\theta}\\leftarrow\\{p_{i}:a_{i}\\geq\\theta\\} \\triangleright Score-thresholded selection."
+  },
+  {
+    "id": "alg1.l22",
+    "kind": "algorithm-line",
+    "en": "22: end for"
+  },
+  {
+    "id": "alg1.l23",
+    "kind": "algorithm-line",
+    "en": "23: Merge \\mathcal{P}_{\\theta} sequentially using \\mu to obtain S^{*} via Eq. 4."
+  },
+  {
+    "id": "alg1.l24",
+    "kind": "algorithm-line",
+    "en": "24: Stage 3: Topology-Aware Task Execution"
+  },
+  {
+    "id": "alg1.l25",
+    "kind": "algorithm-line",
+    "en": "25: Compile S^{*} into (S_{c},\\mathcal{V},\\mathcal{G}) and node bodies \\{B_{v}\\}_{v\\in\\mathcal{V}}."
+  },
+  {
+    "id": "alg1.l26",
+    "kind": "algorithm-line",
+    "en": "26: for each task x^{*}_{j}\\in\\mathcal{X^{*}} (j=1,\\dots,M) do \\triangleright Online"
+  },
+  {
+    "id": "alg1.l27",
+    "kind": "algorithm-line",
+    "en": "27: \\mathcal{V}_{j}\\leftarrow R(x^{*}_{j},\\mathcal{G},k) \\triangleright LLM routing, Eq. 5."
+  },
+  {
+    "id": "alg1.l28",
+    "kind": "algorithm-line",
+    "en": "28: S_{j}\\leftarrow A\\!\\left(S_{c},\\{B_{v}\\}_{v\\in\\mathcal{V}_{j}}\\right) \\triangleright LLM assembly, Eq. 6."
+  },
+  {
+    "id": "alg1.l29",
+    "kind": "algorithm-line",
+    "en": "29: end for"
+  },
+  {
+    "id": "cell-30",
+    "kind": "cell",
+    "en": "Skill User"
+  },
+  {
+    "id": "cell-31",
+    "kind": "cell",
+    "en": "Method"
+  },
+  {
+    "id": "cell-32",
+    "kind": "cell",
+    "en": "Skill Author: Qwen3.5-35B-A3B"
+  },
+  {
+    "id": "cell-33",
+    "kind": "cell",
+    "en": "Skill Author: Qwen3.5-122B-A10B"
+  },
+  {
+    "id": "cell-34",
+    "kind": "cell",
+    "en": "Overall"
+  },
+  {
+    "id": "cell-35",
+    "kind": "cell",
+    "en": "SpreadsheetBench"
+  },
+  {
+    "id": "cell-36",
+    "kind": "cell",
+    "en": "WikiTQ"
+  },
+  {
+    "id": "cell-37",
+    "kind": "cell",
+    "en": "Avg."
+  },
+  {
+    "id": "cell-38",
+    "kind": "cell",
+    "en": "SpreadsheetBench"
+  },
+  {
+    "id": "cell-39",
+    "kind": "cell",
+    "en": "WikiTQ"
+  },
+  {
+    "id": "cell-40",
+    "kind": "cell",
+    "en": "Avg."
+  },
+  {
+    "id": "cell-41",
+    "kind": "cell",
+    "en": "Qwen3.5- 35B-A3B"
+  },
+  {
+    "id": "cell-42",
+    "kind": "cell",
+    "en": "No-Skill"
+  },
+  {
+    "id": "cell-43",
+    "kind": "cell",
+    "en": "Human-Written"
+  },
+  {
+    "id": "cell-44",
+    "kind": "cell",
+    "en": "- Trace2Skill"
+  },
+  {
+    "id": "cell-52",
+    "kind": "cell",
+    "en": "- EvoSkill"
+  },
+  {
+    "id": "cell-60",
+    "kind": "cell",
+    "en": "- SkillOpt"
+  },
+  {
+    "id": "cell-68",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-76",
+    "kind": "cell",
+    "en": "LLM-Gen"
+  },
+  {
+    "id": "cell-77",
+    "kind": "cell",
+    "en": "- Trace2Skill"
+  },
+  {
+    "id": "cell-85",
+    "kind": "cell",
+    "en": "- EvoSkill"
+  },
+  {
+    "id": "cell-93",
+    "kind": "cell",
+    "en": "- SkillOpt"
+  },
+  {
+    "id": "cell-101",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-109",
+    "kind": "cell",
+    "en": "Qwen3.5- 122B-A10B"
+  },
+  {
+    "id": "cell-110",
+    "kind": "cell",
+    "en": "No-Skill"
+  },
+  {
+    "id": "cell-111",
+    "kind": "cell",
+    "en": "Human-Written"
+  },
+  {
+    "id": "cell-112",
+    "kind": "cell",
+    "en": "- Trace2Skill"
+  },
+  {
+    "id": "cell-120",
+    "kind": "cell",
+    "en": "- EvoSkill"
+  },
+  {
+    "id": "cell-128",
+    "kind": "cell",
+    "en": "- SkillOpt"
+  },
+  {
+    "id": "cell-136",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-144",
+    "kind": "cell",
+    "en": "LLM-Gen"
+  },
+  {
+    "id": "cell-145",
+    "kind": "cell",
+    "en": "- Trace2Skill"
+  },
+  {
+    "id": "cell-153",
+    "kind": "cell",
+    "en": "- EvoSkill"
+  },
+  {
+    "id": "cell-161",
+    "kind": "cell",
+    "en": "- SkillOpt"
+  },
+  {
+    "id": "cell-169",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-177",
+    "kind": "cell",
+    "en": "Cross-Family Model Generalization"
+  },
+  {
+    "id": "cell-178",
+    "kind": "cell",
+    "en": "Gemma-4- 31B-it"
+  },
+  {
+    "id": "cell-179",
+    "kind": "cell",
+    "en": "No-Skill"
+  },
+  {
+    "id": "cell-180",
+    "kind": "cell",
+    "en": "Human-Written"
+  },
+  {
+    "id": "cell-181",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-189",
+    "kind": "cell",
+    "en": "GPT-5.4- mini"
+  },
+  {
+    "id": "cell-190",
+    "kind": "cell",
+    "en": "No-Skill"
+  },
+  {
+    "id": "cell-191",
+    "kind": "cell",
+    "en": "Human-Written"
+  },
+  {
+    "id": "cell-192",
+    "kind": "cell",
+    "en": "- SkillCAT (Ours)"
+  },
+  {
+    "id": "cell-200",
+    "kind": "cell",
+    "en": "Condition"
+  },
+  {
+    "id": "cell-201",
+    "kind": "cell",
+    "en": "Modules"
+  },
+  {
+    "id": "cell-202",
+    "kind": "cell",
+    "en": "Acc."
+  },
+  {
+    "id": "cell-203",
+    "kind": "cell",
+    "en": "CCE"
+  },
+  {
+    "id": "cell-204",
+    "kind": "cell",
+    "en": "AAE"
+  },
+  {
+    "id": "cell-205",
+    "kind": "cell",
+    "en": "TTE"
+  },
+  {
+    "id": "cell-207",
+    "kind": "cell",
+    "en": "Trace2Skill"
+  },
+  {
+    "id": "cell-208",
+    "kind": "cell",
+    "en": "SkillCAT Full"
+  },
+  {
+    "id": "cell-210",
+    "kind": "cell",
+    "en": "-w/o CCE"
+  },
+  {
+    "id": "cell-212",
+    "kind": "cell",
+    "en": "-w/o AAE"
+  },
+  {
+    "id": "cell-214",
+    "kind": "cell",
+    "en": "-w/o TTE"
+  },
+  {
+    "id": "cell-216",
+    "kind": "cell",
+    "en": "Only CCE"
+  },
+  {
+    "id": "cell-218",
+    "kind": "cell",
+    "en": "Only AAE"
+  },
+  {
+    "id": "cell-220",
+    "kind": "cell",
+    "en": "Only TTE"
+  }
+]

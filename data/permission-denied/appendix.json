@@ -1,0 +1,72 @@
+[
+  {
+    "id": "Sx9.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "This appendix gives the full construction of the NIST-derived high policy summarized in the Boundary-Bench section of the main paper: its three hardening axes (network, filesystem, and privilege), the native enforcement and NIST controls each adds, and the pre-flight probes that verify them.",
+    "zh": "本附录完整说明 Boundary-Bench 章节所概述的 NIST-derived high 策略构造方式：三个加固维度（网络、文件系统和权限）、每项限制所增加的原生强制机制与 NIST 控制，以及用于验证这些限制的预检探针。"
+  },
+  {
+    "id": "Sx10.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Before attributing a model’s failure to the model, we require a solvability witness for the task: at least one solution trajectory that reaches the official passing state under the policy. Each task’s official reference solution is the natural first candidate—a compatibility probe. We therefore replayed every task’s shipped reference solution under NIST-derived high (a fixed trusted 205-domain developer egress allowlist with no per-task domains, read-only operating-system and home trees, and non-root execution with capabilities dropped), and treated a task as compatible only when some trajectory reached the official passing state.",
+    "zh": "在将模型失败归因于模型本身前，我们要求任务具备可解性见证：至少一条在策略下达到官方通过状态的解题轨迹。每项任务的官方参考解是自然的首选候选，即兼容性探针。因此，我们在 NIST-derived high 下重放每项任务随附的参考解。该策略固定使用可信的 205 域名开发者出站白名单、不允许按任务添加域名、将操作系统和主目录树设为只读，并以非 root 身份运行且移除能力；只有某条轨迹达到官方通过状态时，我们才将任务视为兼容。"
+  },
+  {
+    "id": "Sx11.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx11",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "We flag a task as a benchmark-integrity artifact when the official scoring path does not establish that the requested work was performed. Such findings are distinct from ordinary task failures and from tasks that become unsolved under a policy. A flagged task remains in every reported aggregate, consistent with the main paper’s 89-task reporting; the flag is recorded across all model–harness bundles (a model paired with the agent harness that runs it) and policy levels, and the affected raw trials are preserved for audit.",
+    "zh": "当官方评分流程无法确认任务要求的工作确实已完成时，我们将该任务标记为基准完整性问题。这类发现不同于普通任务失败，也不同于被策略变为不可解的任务。被标记任务仍保留在所有已报告汇总结果中，与主文按 89 项任务报告的口径一致；标记适用于全部模型—运行框架组合（即模型与运行该模型的智能体框架）和策略级别，受影响的原始试验也保留供审计。"
+  },
+  {
+    "id": "Sx12.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Two kinds of provider-side safety mechanism, serving-layer refusals and vendor fallback routing, intervened between the harness and the model during our runs. Neither is a benchmark-integrity artifact: the affected trials remain in every aggregate. We document them because they are properties of the deployed model route rather than of the runtime policy, and because any organization operating the same route would encounter them. Because every intervention is annotated per trial, we also report incidence by policy level, examining whether these mechanisms fire more often under hardened levels than under the unrestricted control—as would be expected if policy-induced denial-and-retry behavior makes a trajectory more likely to be flagged by a serving-layer classifier.",
+    "zh": "本次运行中，有两类提供方侧安全机制介入了运行框架与模型之间：服务层拒绝和厂商回退路由。两者都不属于基准完整性问题，受影响试验仍保留在所有汇总结果中。我们记录这些机制，是因为它们属于已部署模型调用路径的特性，而非运行时策略的特性；任何使用同一路由的组织都会遇到它们。由于每次干预都按试验记录，我们也报告各策略级别下的发生率，并检查这些机制在加固条件下是否比不受限的 Control 更频繁——如果策略造成的拒绝与重试行为使轨迹更容易触发服务层分类器，就可能出现这种情况。"
+  },
+  {
+    "id": "Sx13.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Table 10 lists the software used to produce every result in the paper. All components were frozen before the benchmark runs and held fixed across models, policies, and repetitions; the single exception (the Claude Code version used for Claude Opus 5) is documented at the end of this appendix. The complete transitive dependency closure is pinned in the released artifact: uv.lock for the evaluation controller and a fully hash-pinned requirements.lock for the in-sandbox Terminus-2 runtime (generated with uv pip compile --generate-hashes --universal and an --exclude-newer horizon of 2026-07-15).",
+    "zh": "表 10 列出了生成论文所有结果所用的软件。除 Claude Opus 5 使用的 Claude Code 版本（在本附录末尾说明）外，所有组件都在基准运行前冻结，并在不同模型、策略和重复试验中保持不变。发布的产物固定了完整的传递依赖闭包：评估控制器使用 uv.lock；沙箱内 Terminus-2 运行时使用完全锁定哈希的 requirements.lock（通过 uv pip compile --generate-hashes --universal 生成，并采用 --exclude-newer 截止日期 2026-07-15）。"
+  },
+  {
+    "id": "Sx14.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx14",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Tables 12 and 13 give the per-bundle success rate and cost behind Figure 1 of the main paper, for every model–harness bundle under each policy. Table 12 is the full 89-task pool as plotted; Table 13 restricts to the 82 tasks that admit a solvability witness under NIST-derived high (Appendix B), excluding the seven blocked-by-design tasks. Success rate is the percentage of passing trials with the standard deviation across the three repetitions; cost is the mean replicate cost over the pool, in US dollars; cost dispersion across the repetitions is not reported.",
+    "zh": "表 12 和表 13 给出了主文图 1 背后的逐组合成功率和成本，涵盖各模型—运行框架组合在每种策略下的结果。表 12 使用图中所示的完整 89 项任务池；表 13 则限制为在 NIST-derived high 下具有可解性见证的 82 项任务（附录 B），排除七项在设计上受阻的任务。成功率是通过试验比例，附带三次重复的标准差；成本是任务池上的平均重复成本，单位为美元；未报告重复试验间的成本离散程度。"
+  },
+  {
+    "id": "Sx15.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "This appendix details the blocked-action analysis behind the main paper’s Results: the unit and its evidence, the verified-evidence gate, per-axis and per-task detail, and the association with outcomes. All numbers are computed over the full evaluated cohort (twelve bundles, 89 tasks, three trials per condition) by a deterministic, outcome-blind re-analysis of each trial’s stored evidence.",
+    "zh": "本附录详细说明主文结果中的阻断动作分析：统计单位与证据、完整证据筛选条件、各策略维度和任务的细节，以及阻断与结果之间的关联。全部数字基于完整评测群体（十二个组合、89 项任务、每种条件下三次试验），通过对每次试验所存证据进行确定性、与结果无关的重新分析得到。"
+  }
+]

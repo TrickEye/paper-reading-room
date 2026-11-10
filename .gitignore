@@ -1,0 +1,6 @@
+# Python runtime caches
+__pycache__/
+*.py[cod]
+
+# Local operating system metadata
+.DS_Store

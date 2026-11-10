@@ -1,0 +1,27 @@
+{
+  "title": "SkillCAT: Contrastive, Assessment-Augmented and Topology-Aware Skill Self-Evolution for LLM Agents",
+  "authors": [
+    "Kunfeng Chen",
+    "Qihuang Zhong",
+    "Juhua Liu",
+    "Bo Du"
+  ],
+  "arxiv_id": "2606.13317",
+  "version": "v2",
+  "version_date": "2026-07-29",
+  "download_date": "2026-11-10",
+  "pdf_pages": 9,
+  "pdf_url": "https://arxiv.org/pdf/2606.13317v2",
+  "pdf_file": "SkillCAT-2606.13317v2.pdf",
+  "pdf_sha256": "f1d5af3f23f86df4ad5188e0c7abc3cd7025517095f9b02732b7210005d49fb5",
+  "html_sha256": "889d2be461c5979db090596f89da675f70244d124d3f73fad408409169314770",
+  "inventory": {
+    "figures": 4,
+    "tables": 2,
+    "equations": 6,
+    "algorithms": 1,
+    "algorithm_html_lines": 29,
+    "references": 34,
+    "appendices": 0
+  }
+}

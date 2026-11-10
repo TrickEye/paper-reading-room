@@ -1,0 +1,932 @@
+[
+  {
+    "id": "Sx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Organizations increasingly use coding agents for software development, but these agents operate within security controls that govern users and agents alike (South et al. 2025). Such controls are not agent-specific: scoped credentials, network restrictions, protected paths, and limited administrative privileges constrain any software operating in the environment. These mechanisms correspond to access-control and boundary-protection families in NIST SP 800-53 (Joint Task Force Interagency Working Group 2020). We call such settings hardened environments: execution environments in which policy restricts what an agent can observe, access, or execute. Hardening is also moving closer to the agent itself, as contemporary agent harnesses expose controls such as network access modes, filesystem sandboxes, and run profiles.11 1 Official tool documentation: Claude Code https://code.claude.com/docs/en/claude-code-on-the-web, Codex https://developers.openai.com/codex/permissions, Cursor https://cursor.com/docs/agent/run-modes.",
+    "zh": "各组织越来越多地将编码智能体用于软件开发，但这些智能体与用户一样，也受安全控制约束（South et al., 2025）。这类控制并非专为智能体设计：受限凭据、网络限制、受保护路径和有限的管理权限，会约束在环境中运行的任何软件。这些机制对应于 NIST SP 800-53 中的访问控制与边界保护控制族（Joint Task Force Interagency Working Group, 2020）。我们将这类设置称为「加固环境」：由策略限制智能体能够观察、访问或执行内容的执行环境。加固也正逐渐靠近智能体本身，因为当代智能体运行框架提供了网络访问模式、文件系统沙箱和运行配置等控制。¹"
+  },
+  {
+    "id": "Sx1.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Some coding-agent benchmarks use permissive task sandboxes: Terminal-Bench allows agents to manipulate task containers freely (Merrill et al. 2026), FeatureBench provides free Internet access (Zhou et al. 2026), and enterprise data-privacy and access-control policies are rarely tested in standard benchmarks (Yehudai et al. 2026). Like the mid-trajectory tool failures and bans that destabilize agents and require replanning (Xiong et al. 2025; Liu et al. 2026), a policy denial can trigger retries, workarounds, or abandonment; we represent the resulting trade-off as a success–cost Pareto frontier (Kapoor et al. 2025). Safety evaluations such as AgentHarm document the risks that motivate such restrictions (Andriushchenko et al. 2024), but do not measure what enforcing them costs in success rate and token spend. Compliance-scored benchmarks check whether agents follow stated policies, but neither enforce them at runtime nor measure their operational cost (Levy et al. 2026). Security-policy enforcement is itself a structured runtime perturbation: unlike observation distractions or injected faults (Ma et al. 2024; Kara, Faisal, and Nath 2025), it changes which observations and actions are permitted. Existing evaluations therefore do not show how coding-agent performance changes as such policies tighten, and unconstrained leaderboards may misrepresent the success–cost trade-offs of agents in deployed enterprise settings.",
+    "zh": "一些编码智能体基准使用宽松的任务沙箱：Terminal-Bench 允许智能体自由操作任务容器（Merrill et al., 2026），FeatureBench 提供不受限的互联网访问（Zhou et al., 2026），而企业数据隐私与访问控制策略很少在标准基准中接受测试（Yehudai et al., 2026）。类似于会扰乱智能体并迫使其重新规划的中途工具故障与禁用情形（Xiong et al., 2025；Liu et al., 2026），策略拒绝可能引发重试、变通或放弃；我们用成功率—成本帕累托前沿表示由此产生的权衡（Kapoor et al., 2025）。AgentHarm 等安全评估记录了促使组织实施这些限制的风险（Andriushchenko et al., 2024），但不衡量执行限制会使成功率和 token 支出付出多少代价。按合规性评分的基准会检查智能体是否遵守明示策略，但既不在运行时强制执行策略，也不衡量其运行成本（Levy et al., 2026）。安全策略执行本身是一种结构化的运行时扰动：不同于观察干扰或注入故障（Ma et al., 2024；Kara, Faisal, and Nath, 2025），它会改变哪些观察和动作是被允许的。因此，现有评估无法说明随着策略收紧，编码智能体的表现会如何变化；在宽松环境下形成的排行榜也可能错误呈现智能体在已部署企业环境中的成功率—成本权衡。"
+  },
+  {
+    "id": "Sx1.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "In this paper, we show that hardening does not uniformly degrade coding-agent performance. Every model’s success–cost operating point worsens on both axes under policy, but by amounts and in currencies that differ across models, reshaping the Pareto frontier and making model choice policy-dependent. This effect is behavioral: agents respond differently to denied actions (some retry, some reroute, and some give up), so performance under enforced policy cannot be predicted from unconstrained scores. Because a single locked-down configuration provides only one operating point, it cannot show how the frontier moves as policies tighten. We therefore introduce Boundary-Bench and evaluate agents under graded, nested policy levels derived from common enterprise restriction settings and mapped to NIST SP 800-53 controls. At each level, we run each model’s native harness on Terminal-Bench. We report outcomes over the full task set. As secondary diagnostics, we track whether any evaluated agent solves each task (task accessibility) and whether its reference solution remains compatible with each policy level. Our contributions are:",
+    "zh": "本文表明，加固并不会以一致方式降低编码智能体的表现。策略约束会使每个模型的成功率—成本工作点在两个维度上都恶化，但各模型恶化的幅度和承担代价的形式不同，从而改变帕累托前沿，并使模型选择取决于策略。这个影响来自行为差异：智能体面对被拒绝的动作时反应不同（有些重试，有些改走其他路径，有些则放弃），因此无法根据无约束环境下的分数预测强制执行策略时的表现。单一的锁定配置只提供一个工作点，无法显示策略逐渐收紧时前沿如何移动。因此，我们提出 Boundary-Bench，并在一系列分级、嵌套的策略级别下评估智能体。这些级别源自常见企业限制设置，并映射到 NIST SP 800-53 控制。每个级别中，我们都在 Terminal-Bench 上运行各模型原生的智能体运行框架。我们报告完整任务集上的结果。作为次要诊断，我们跟踪是否有任何受测智能体能够解决每项任务（任务可达性），以及参考解在各策略级别下是否仍然兼容。我们的贡献如下："
+  },
+  {
+    "id": "Sx1.I1.i1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Policy-graded evaluation. We release Boundary-Bench as an open-source hardening plugin that runs each model in its native harness on Terminal-Bench 2.1 under three nested policy levels enforced by native Linux mechanisms.",
+    "zh": "策略分级评估。我们发布开源加固插件 Boundary-Bench，使每个模型在其原生运行框架中运行 Terminal-Bench 2.1，并由原生 Linux 机制强制执行三个相互嵌套的策略级别。"
+  },
+  {
+    "id": "Sx1.I1.i2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Task diagnostics. We report outcomes over all Terminal-Bench tasks. As secondary diagnostics, we track whether any evaluated agent solves each task and whether its reference solution remains compatible under the policy. This identifies task accessibility and cases where agents succeed through alternative trajectories when the canonical trajectory is blocked.",
+    "zh": "任务诊断。我们报告所有 Terminal-Bench 任务上的结果。作为次要诊断，我们跟踪是否有任何受测智能体能够解决每项任务，以及其参考解在策略下是否仍然兼容。这可以识别任务可达性，以及规范轨迹受阻时智能体通过其他轨迹成功的情况。"
+  },
+  {
+    "id": "Sx1.I1.i3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Non-uniform policy effects. We show that hardening degrades every model–harness bundle non-uniformly: some models lose success, some incur higher token cost, and some experience both, reshaping the success–cost Pareto frontier at each policy level (Figure 1, Figure 2).",
+    "zh": "非均一的策略影响。我们表明，加固对每个模型—运行框架组合的影响并不一致：有些模型成功率下降，有些模型 token 成本上升，有些两者兼有，因而在每个策略级别上都会改变成功率—成本帕累托前沿（图 1、图 2）。"
+  },
+  {
+    "id": "Sx1.I1.i4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Failure-mode decomposition. We decompose policy-induced degradation into measured failure modes: the extra failures are dominated by budget exhaustion and completed-but-wrong solutions, in proportions that differ by bundle, and we quantify agents’ blocked-action exposure at the enforcement boundary (Table 3).",
+    "zh": "失败模式分解。我们把策略导致的性能下降分解为实测失败模式：新增失败主要来自预算耗尽以及已经完成但答案错误的情况；两者比例因组合而异。我们还量化智能体在执行边界遭遇阻断动作的情况（表 3）。"
+  },
+  {
+    "id": "Sx2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "SWE-bench (Jimenez et al. 2023) standardizes repository-level coding evaluation; Terminal-Bench (Merrill et al. 2026) and OSWorld (Xie et al. 2024) evaluate interactive coding and computer-use agents; cost-aware evaluation reports success jointly with inference cost, for example as a Pareto frontier (Kapoor et al. 2025). All hold the execution-security configuration fixed rather than varying it as an evaluation factor. Verifier over-specification, where assertions demand incidental details a task never requires, is likewise a documented failure mode of code-generation benchmarks (Sharifloo et al. 2025); we audit and repair five such verifiers before any policy comparison. Routing and cascade methods (Chen, Zaharia, and Zou 2024; Ong et al. 2024) navigate a performance–cost trade-off by varying model choice; we keep the two-objective framing, use verifier-checked task success as the outcome, and make the environment’s policy level the independent variable.",
+    "zh": "SWE-bench（Jimenez et al., 2023）标准化了仓库级编码评估；Terminal-Bench（Merrill et al., 2026）和 OSWorld（Xie et al., 2024）评估交互式编码与计算机使用智能体；考虑成本的评估会将成功率与推理成本一同报告，例如用帕累托前沿表示（Kapoor et al., 2025）。这些工作都固定执行安全配置，而没有将其作为评估因素加以变化。验证器过度规格化——断言要求了任务本身并不需要的附带细节——也是已记录的代码生成基准失效模式（Sharifloo et al., 2025）；我们在比较策略前审查并修复了五个此类验证器。路由与级联方法（Chen, Zaharia, and Zou, 2024；Ong et al., 2024）通过改变模型选择来权衡性能与成本；我们保留双目标框架，以验证器检查过的任务成功作为结果，并将环境策略级别设为自变量。"
+  },
+  {
+    "id": "Sx2.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "AgentHarm scores harmfulness and refusal on malicious tasks (Andriushchenko et al. 2024); ToolEmu surfaces risky tool-use behavior in an LM-emulated sandbox (Ruan et al. 2023); ST-WebAgentBench scores web-agent trajectories against organizational policies post hoc (Levy et al. 2026); τ\\tau-bench states domain rules in the prompt while enforcing only basic validity checks (Yao et al. 2024); AgentDyn shows that prompt-injection defenses with low attack success can coincide with severe over-defense and reduced task utility (Li et al. 2026). In contrast, we impose compliance as a graded property of the execution environment and measure task success and token spend as functions of the policy level.",
+    "zh": "AgentHarm 在恶意任务上评估有害性与拒绝行为（Andriushchenko et al., 2024）；ToolEmu 在由语言模型模拟的沙箱中揭示高风险工具使用行为（Ruan et al., 2023）；ST-WebAgentBench 事后依据组织策略对网页智能体轨迹评分（Levy et al., 2026）；τ-bench 在提示中给出领域规则，但只强制执行基本有效性检查（Yao et al., 2024）；AgentDyn 表明，低攻击成功率的提示注入防御可能同时伴随严重的过度防御和任务效用下降（Li et al., 2026）。与此不同，我们把合规性作为执行环境的一项分级属性施加，并衡量任务成功率和 token 支出如何随策略级别变化。"
+  },
+  {
+    "id": "Sx2.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Input-perturbation robustness studies adversarial text and prompts (Wang et al. 2021; Zhu et al. 2023); ReliabilityBench varies injected fault intensity per tool call (Gupta 2026); WAREX injects network and server faults into web-agent trajectories (Kara, Faisal, and Nath 2025). We draw qualitative inspiration from the effective-robustness lens (Taori et al. 2020), comparing hardened against unhardened performance. Whereas these works perturb inputs or inject synthetic faults, our severity axis is the security policy itself, held fixed per evaluation run.",
+    "zh": "输入扰动鲁棒性研究会改变对抗性文本和提示（Wang et al., 2021；Zhu et al., 2023）；ReliabilityBench 改变每次工具调用中注入故障的强度（Gupta, 2026）；WAREX 将网络和服务器故障注入网页智能体轨迹（Kara, Faisal, and Nath, 2025）。我们从有效鲁棒性视角获得定性启发（Taori et al., 2020），比较加固与未加固时的表现。这些工作扰动输入或注入合成故障，而我们的严重性维度就是安全策略本身，且在每次评估运行中保持固定。"
+  },
+  {
+    "id": "Sx2.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Sandboxes and agent-runtime controls instantiate hardened execution environments, and the closest prior work shows that enforcement need not destroy utility at a single, fixed configuration. CaMeL deterministically enforces a fixed security policy and reports task utility under enforcement: a multi-point success drop and a 2.8×2.8\\times token overhead (Debenedetti et al. 2025). Progent enforces tool-call privilege policies and reports utility largely maintained (Shi et al. 2025). The Verifier Tax quantifies task success and LLM-call and token overhead under an internal block-and-revise gate (Sah et al. 2026). Each prices one enforcement configuration in isolation. We complement these single-point results with, to our knowledge, the first benchmark study to make policy severity the independent variable: a shared, NIST-mapped, nested ladder run identically across model–harness bundles, measuring what enforcement costs, for which bundle, and in which currency (success or spend), together with task accessibility at each level.",
+    "zh": "沙箱和智能体运行时控制构成了加固执行环境；最接近的先前工作表明，在单一固定配置下，强制执行并不必然摧毁效用。CaMeL 以确定性方式强制执行固定安全策略，并报告强制执行下的任务效用：成功率出现多个百分点的下降，token 开销达到 2.8 倍（Debenedetti et al., 2025）。Progent 强制执行工具调用权限策略，并报告效用基本得以维持（Shi et al., 2025）。Verifier Tax 量化了内部拦截并修正机制下的任务成功率、LLM 调用和 token 开销（Sah et al., 2026）。这些研究各自在单一强制配置下核算代价。我们补充这些单点结果，并据我们所知，首次将策略严重性设为自变量开展基准研究：在模型—运行框架组合之间采用共享、映射到 NIST 且相互嵌套的策略阶梯，并以相同方式运行，衡量强制执行的代价、受影响的组合以及代价体现在哪个维度（成功率或支出），同时报告各级别的任务可达性。"
+  },
+  {
+    "id": "Sx3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Boundary-Bench is a framework that layers a configurable, operating-system-enforced policy onto an existing coding-agent benchmark and measures how agent success and cost change relative to the unrestricted baseline.",
+    "zh": "Boundary-Bench 是一个框架，可将可配置、由操作系统强制执行的策略叠加到现有编码智能体基准上，并衡量相对于不受限制基线，智能体成功率和成本如何变化。"
+  },
+  {
+    "id": "Sx3.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A policy is a set of capability restrictions on the runtime, enforced on the environment rather than the agent; it limits what any process can do.",
+    "zh": "策略是一组针对运行时能力的限制，由环境而非智能体强制执行；它限制任何进程能够执行的操作。"
+  },
+  {
+    "id": "Sx3.SSx1.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "We model policies on three axes: network egress (N), filesystem scope (F), and privilege (P). Each axis ranges over three postures: open (no restrictions), restricted, and locked. The three axes map to distinct families of NIST SP 800-53 controls (Joint Task Force Interagency Working Group 2020): boundary protection (SC-7) on the network axis, access, information-flow, and process-isolation controls (AC-3, AC-4, SC-39) on the filesystem axis, and least privilege (AC-6) on the privilege axis. The mapping records the controls that motivated each mechanism and is not a compliance claim.",
+    "zh": "我们用三个维度对策略建模：网络出站访问（N）、文件系统范围（F）和权限（P）。每个维度有三种状态：开放（无限制）、受限和锁定。这三个维度分别映射到 NIST SP 800-53 的不同控制族（Joint Task Force Interagency Working Group, 2020）：网络维度对应边界保护（SC-7）；文件系统维度对应访问、信息流和进程隔离控制（AC-3、AC-4、SC-39）；权限维度对应最小权限（AC-6）。此映射记录了启发各项机制的控制，并不构成合规性声明。"
+  },
+  {
+    "id": "Sx3.SSx1.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "From this space we evaluate three policy levels that form a cumulative severity ladder, each adding restrictions on top of the previous level. Control is the open baseline: the agent runs as root with unrestricted egress and a writable filesystem. Non-root drops root privilege only, isolating the effect of running as an ordinary user while network and filesystem access stay open. NIST-derived high restricts all three axes together: a fixed network egress allow-list, a read-only filesystem outside a dedicated small writable set, and a full privilege lockdown. Because the step from non-root to NIST-derived high changes several surfaces at once, we treat its effect as whole-configuration rather than attributing it to any single axis. The exact egress allow-list, the read-only system directories, the privilege lockdown, and each axis’s NIST control mapping are given in Appendix A.",
+    "zh": "我们从这一空间中评估三个策略级别，构成逐步加严的阶梯，每一级都在前一级基础上增加限制。Control 是开放基线：智能体以 root 身份运行，具有不受限的出站访问和可写文件系统。Non-root 只撤销 root 权限，以隔离普通用户身份运行的影响，同时保持网络和文件系统访问开放。NIST-derived high 同时限制全部三个维度：固定的网络出站白名单、除专用小型可写区域外均为只读的文件系统，以及全面的权限锁定。由于从 non-root 到 NIST-derived high 的变化同时涉及多个方面，我们将其影响视为整体配置的效果，而不归因于任何单一维度。完整的出站白名单、只读系统目录、权限锁定，以及各维度对应的 NIST 控制见附录 A。"
+  },
+  {
+    "id": "Sx3.SSx1.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Each restriction is realized by a native Linux access-control mechanism rather than requested of the agent: network egress passes through a proxy the agent cannot reconfigure, the filesystem is mounted read-only outside a small writable workspace, and the agent process runs under an unprivileged user that cannot re-escalate. Enforcement is compiled into the environment without the agent’s knowledge. The agent meets each limit only as a native runtime failure. Every restriction is inherited by each child process the agent spawns, so it cannot be evaded by launching a subprocess, while benchmark setup and grading run outside the sandbox. Before each run, pre-flight probes confirm every restriction is active and fail closed otherwise (Appendix A).",
+    "zh": "每项限制都通过原生 Linux 访问控制机制实现，而不是要求智能体自行遵守：网络出站流量经过智能体无法重新配置的代理；除小型可写工作区外，文件系统均以只读方式挂载；智能体进程以无法再次提权的非特权用户运行。执行机制在环境中编译，不让智能体知晓。智能体遇到的限制只表现为原生运行时错误。智能体创建的每个子进程都会继承所有限制，因此不能通过启动子进程绕过限制；基准设置和评分则在沙箱之外运行。每次运行前，预检探针都会确认所有限制均已启用，否则将以失败关闭方式中止（附录 A）。"
+  },
+  {
+    "id": "Sx3.SSx2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx3.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A sufficiently strict policy can invalidate a task rather than merely harden it, so Boundary-Bench audits the benchmark under its strictest policy before interpreting any agent result. First, we establish each task’s solvability: we replay the benchmark’s own reference solution under NIST-derived high, and where it no longer passes we attempt to author a policy-compliant reference solution ourselves; a task whose official passing state is reached by either route gains a solvability witness. A task is blocked by design when the policy forbids an action the task itself requires, so no policy-compliant solution exists. Second, we review every trial in which the verifier reported failure although the agent had reached the stated goal, checking the failing assertion for over-specification; a repair may only additively broaden an assertion, and the repaired verifier runs identically at every policy level, with original outcomes kept for audit. Third, we classify every failed run by where it terminates relative to its task’s wall-clock budget: a run whose agent runtime reaches 95% of the budget is a timeout, one that ends in the bottom decile of the task’s runtimes is an early stop, and any other failure is a wrong solution; a small residual of provider- and verifier-side errors is excluded.",
+    "zh": "严格策略可能使任务失效，而不只是增加难度，因此 Boundary-Bench 会先在最严格策略下审计基准，再解释任何智能体结果。首先，我们确认每项任务是否可解：在 NIST-derived high 下重放基准自带的参考解；若其不再通过，则尝试自行编写符合策略的参考解。只要通过任一路径达到任务官方通过状态，该任务就获得一个可解性见证。若策略禁止了任务本身所要求的动作，使得不存在符合策略的解，则称该任务在设计上受阻。其次，我们审查所有验证器报告失败、但智能体已达到明示目标的试验，并检查失败断言是否过度规格化；修复只能以添加方式放宽断言，修复后的验证器在所有策略级别下完全相同，同时保留原始结果供审计。第三，我们根据失败运行相对于任务墙钟预算的终止位置进行分类：智能体运行时达到预算的 95% 即为超时；若在该任务运行时长的最低十分位内结束，则为提前停止；其他失败都属于错误解。少量提供方或验证器侧错误会被排除。"
+  },
+  {
+    "id": "Sx4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The evaluated unit in all experiments is a frozen model-harness bundle: which defines a model and the agent harness that runs it. The twelve models are GPT-5.6 Sol, GPT-5.6 Terra, and GPT-5.6 Luna (OpenAI); Claude Sonnet 5, Claude Opus 4.8, Claude Fable 5, and Claude Opus 5 (Anthropic); Kimi K3, GLM-5.2, Qwen3.7 Max, and MiniMax M3; and Grok 4.5 (xAI). In the primary comparison, Anthropic models use Claude Code, OpenAI models use Codex, Grok 4.5 uses Grok Build, and the remaining models use Terminus-2. All bundles use high effort and are evaluated on all 89 tasks under every policy configuration, with exactly three valid trials per bundle-task-policy cell.",
+    "zh": "所有实验的评估单位都是冻结的模型—运行框架组合，即一个模型及运行它的智能体框架。十二个模型分别是 GPT-5.6 Sol、GPT-5.6 Terra 和 GPT-5.6 Luna（OpenAI）；Claude Sonnet 5、Claude Opus 4.8、Claude Fable 5 和 Claude Opus 5（Anthropic）；Kimi K3、GLM-5.2、Qwen3.7 Max 和 MiniMax M3；以及 Grok 4.5（xAI）。主要比较中，Anthropic 模型使用 Claude Code，OpenAI 模型使用 Codex，Grok 4.5 使用 Grok Build，其余模型使用 Terminus-2。所有组合均使用 high 推理强度，在每种策略配置下评估全部 89 项任务，并且每个组合—任务—策略单元恰有三次有效试验。"
+  },
+  {
+    "id": "Sx4.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Claude Fable 5 ships with dual-use safety classifiers, and Anthropic’s default serves flagged requests with Claude Opus 4.8 instead; we keep this default, since the gated route is what an organization deploys.",
+    "zh": "Claude Fable 5 配备了双用途安全分类器；Anthropic 的默认行为会将被标记的请求改由 Claude Opus 4.8 响应。我们保留这一默认设置，因为组织实际部署的正是这种受门控的调用路径。"
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx2.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A trial runs the bundle headlessly until the harness returns or the task’s timeout is reached; either way the official verifier scores the resulting environment, so a timed-out execution can still pass, and its PASS or FAIL is the trial score. Harness-internal retries are part of the trial. Provisioning, pre-flight, provider, harness, or verifier malfunctions invalidate an attempt, which we log, exclude, and rerun until the cell holds three valid trials; a scored trial is never rerun.",
+    "zh": "一次试验会让该组合以无头方式运行，直到运行框架返回或任务超时；无论哪种情况，官方验证器都会对最终环境评分，因此即使运行超时仍可能通过，其 PASS 或 FAIL 就是试验分数。运行框架内部的重试属于试验的一部分。配置、预检、提供方、运行框架或验证器故障会使一次尝试无效；我们会记录、排除并重新运行，直到该单元包含三次有效试验。已经评分的试验绝不会重跑。"
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx2.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "To characterize per-run cost distributions, we picked two tasks and evaluated them with the GPT-5.6 Luna–Codex bundle at 100 runs per condition under control and NIST-derived high: compile-compcert, whose success rate hardening leaves nearly unchanged, and caffe-cifar-10, whose success rate degrades sharply. We read all 200 hardened-condition trajectories to attribute the observed cost movement to a mechanism.",
+    "zh": "为刻画单次运行的成本分布，我们选取两项任务，在 Control 和 NIST-derived high 条件下，各进行 100 次运行，使用 GPT-5.6 Luna—Codex 组合：compile-compcert 的成功率几乎不受加固影响，而 caffe-cifar-10 的成功率则大幅下降。我们阅读了全部 200 条加固条件下的轨迹，以便将观察到的成本变化归因于具体机制。"
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx2.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "To test whether the two cost extremes of the Pareto frontier follow the model or its harness, we evaluate GPT-5.6 Luna, which anchors the low-cost side, and Grok 4.5, which anchors the high-cost side, with both Codex and Grok Build. This experiment disentangles the effect of the harness from the model’s performance in the restricted environment.",
+    "zh": "为检验帕累托前沿两端的成本极值来自模型还是运行框架，我们分别用 Codex 和 Grok Build 评估低成本端代表 GPT-5.6 Luna，以及高成本端代表 Grok 4.5。该实验将运行框架对受限环境下模型表现的影响区分出来。"
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx2.SSS0.Px4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Each trial runs in an isolated cloud sandbox (Daytona) built from the task’s own Terminal-Bench image; the sandbox’s CPU and memory follow that task’s Terminal-Bench specification, which we do not override. Model inference is served over a single OpenRouter route with per-harness vendor endpoints. Software versions are all in Appendix E.",
+    "zh": "每次试验都在隔离的云沙箱（Daytona）中运行，该沙箱由任务自己的 Terminal-Bench 镜像构建；CPU 和内存遵循 Terminal-Bench 对该任务的规格，我们不作更改。模型推理通过单一 OpenRouter 路由提供服务，并为各运行框架配置相应的厂商端点。软件版本见附录 E。"
+  },
+  {
+    "id": "Sx4.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "To measure a bundle’s robustness under restriction, we summarize each bundle–policy cell by two numbers, computed per bundle over the task pool: the success rate SRm​(ℓ)\\mathrm{SR}_{m}(\\ell), the percentage of passing trials over all tasks and repetitions of bundle mm under condition ℓ\\ell, and the mean cost per task Cm​(ℓ)C_{m}(\\ell), in US dollars. A bundle’s shift under a restricted condition is the change from its own control values.",
+    "zh": "为衡量组合在限制下的鲁棒性，我们用两个数概括每个组合—策略单元，按组合在整个任务池上计算：成功率 SRₘ(ℓ)，即模型组合 m 在条件 ℓ 下所有任务和重复试验中的通过试验比例；以及每项任务的平均成本 Cₘ(ℓ)，单位为美元。组合在受限条件下的变化量，是相对于其自身 Control 数值的变化。"
+  },
+  {
+    "id": "Sx4.SSx1.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx4.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "For the restricted conditions ℓ∈{non-root,NIST-derived high}\\ell\\in\\{\\text{non-root},\\allowbreak\\text{NIST-derived high}\\}, Δ​SRm​(ℓ)\\Delta\\mathrm{SR}_{m}(\\ell) is an absolute difference in percentage points; Δ​Cm​(ℓ)\\Delta C_{m}(\\ell) is normalized by the bundle’s own control cost, making it comparable across bundles whose absolute costs differ by orders of magnitude. At task level we use the cost multiplier: a bundle–task pair’s mean cost over completed (PASS or FAIL) runs under a policy divided by its mean control cost, averaged with equal weight across pairs.",
+    "zh": "对于受限条件 ℓ∈{non-root, NIST-derived high}，ΔSRₘ(ℓ) 是以百分点表示的绝对差值；ΔCₘ(ℓ) 则以该组合自身的 Control 成本为分母，因此即使各组合绝对成本相差数个数量级，也可以比较。在任务层面，我们使用成本倍数：将某组合—任务在一种策略下已完成运行（PASS 或 FAIL）的平均成本除以其 Control 平均成本，再对各组合—任务对等权平均。"
+  },
+  {
+    "id": "Sx5.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Figure 1 places each bundle in the success–cost plane under the three policies. A clear Pareto frontier emerges under every policy, not only under control: the Codex bundles trace it under control, from the cheapest (GPT-5.6 Luna) up to the highest-scoring (GPT-5.6 Sol), and under both",
+    "zh": "图 1 将每个组合置于三种策略下的成功率—成本平面。每种策略下都出现清晰的帕累托前沿，而不只是在 Control 下：Control 条件下，Codex 组合从成本最低的 GPT-5.6 Luna 到得分最高的 GPT-5.6 Sol 构成前沿；在两种加固策略下，Grok 4.5 加入了前沿的高成本端；"
+  },
+  {
+    "id": "Sx5.SSx1.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "hardened policies Grok 4.5 joins its high-cost end; on the 82 tasks with a solvability witness Grok 4.5 instead ties with GPT-5.6 Sol under NIST-derived high and leaves the frontier as the costlier of the two (Appendix F). Tightening the policy pushes this frontier lower and further right, trading success for cost. That movement is far from uniform across bundles: some models forfeit noticeably more task success under policy than others, and some absorb the policy more as inflated cost than as lost success. We take up this per-model heterogeneity, and what drives it, in the analyses that follow.",
+    "zh": "在具有可解性见证的 82 项任务上，Grok 4.5 在 NIST-derived high 下与 GPT-5.6 Sol 并列，但由于成本更高而退出前沿（附录 F）。收紧策略会使前沿向下并向右移动，即以成功率换取成本。各组合受到的影响差异很大：有些模型在策略下损失的任务成功率明显多于其他模型；有些则更多以成本上升而非成功率下降来承担策略影响。后续分析将讨论各模型之间的这种差异及其成因。"
+  },
+  {
+    "id": "Sx5.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Grok 4.5 remains the higher-cost model under both harnesses and all three policies (Table 1), whereas moving either endpoint model to the other harness lowers success at every policy. The Luna–Grok Build bundle moves down and left because its lower spend accompanies a much larger success loss, not because it offers a more useful operating point.",
+    "zh": "无论使用哪种运行框架、处于哪种策略下，Grok 4.5 的成本始终更高（表 1）；而将任一端点模型换到另一种运行框架后，各策略下的成功率都会下降。Luna—Grok Build 组合向下、向左移动，是因为支出降低的同时成功率损失大得多，并不代表它提供了更有用的工作点。"
+  },
+  {
+    "id": "Sx5.SSx2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Figure 2 plots the shifts of Eq. (1), normalized by each bundle’s control operating point in Figure 1. Each task contributes its three valid trials, scored by the original verifiers, so these numbers predate the verifier repairs and the artifact separation of the next subsection applies on top of them.",
+    "zh": "图 2 绘出了公式（1）所定义的变化量，并以图 1 中各组合自身的 Control 工作点作归一化。每项任务均计入三次有效试验，并由原始验证器评分，因此这些数值产生于验证器修复之前；下一小节所述的基准问题则是在这些结果之上进一步处理的。"
+  },
+  {
+    "id": "Sx5.SSx2.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Under NIST-derived high, every bundle’s point estimate worsens on both axes: hardening lowers the success rate and raises the mean cost per task for all twelve bundles, so every point in Figure 2 falls in the same quadrant. Within that quadrant the two axes do not move together, and bundles pay in different currencies. Grok 4.5 gives up the least success (−7.1-7.1 pp) but absorbs the largest cost inflation by a wide margin (+167.3%+167.3\\%); Claude Sonnet 5 loses the most success (−18.3-18.3 pp) at a comparatively modest cost inflation (+21.4%+21.4\\%); GPT-5.6 Luna is the mirror of Grok 4.5, showing the smallest cost inflation (+16.0%+16.0\\%) with a success loss nearly as large",
+    "zh": "在 NIST-derived high 下，每个组合的点估计在两个维度上都变差：加固使全部十二个组合的成功率下降、每项任务的平均成本上升，因此图 2 中所有点都落在同一象限内。但在该象限中，两个维度并不同步，各组合付出的代价形式也不同。Grok 4.5 的成功率损失最小（−7.1 个百分点），但成本膨胀幅度远高于其他模型（+167.3%）；Claude Sonnet 5 的成功率损失最大（−18.3 个百分点），成本膨胀则相对温和（+21.4%）；GPT-5.6 Luna 与 Grok 4.5 相反，成本膨胀最小（+16.0%），而成功率损失几乎同样大"
+  },
+  {
+    "id": "Sx5.SSx2.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "(−18.0-18.0 pp). With three trials per cell and no intervals we report",
+    "zh": "（−18.0 个百分点）。每个单元只有三次试验，且未给出区间，因此我们将这些数值视为组合间的分布，而不是排名。"
+  },
+  {
+    "id": "Sx5.SSx2.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "this as a spread across bundles, not as a ranking. All five verifier-repaired tasks lie inside this pool, and their repairs raise success under NIST-derived high on two of them, so the losses reported here are slightly overstated (next subsection).",
+    "zh": "五项经验证器修复的任务都包含在这个任务池中；修复后，其中两项在 NIST-derived high 下的成功率有所提高。因此，这里报告的损失略有高估（见下一小节）。"
+  },
+  {
+    "id": "Sx5.SSx3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Because a sufficiently strict policy can render a task not merely harder but unsolvable, we begin by establishing, for every Terminal-Bench task, whether it remains solvable under NIST-derived high enforcement. Most tasks remain solvable: 82 of the 89 have a solvability witness, a trajectory that reaches the official passing state under the policy. For 50 the witness is Terminal-Bench’s own reference solution, unchanged; for the other 32 we author a policy-compliant reference solution ourselves, changing no task (Appendix B). We call these the unaffected (50) and affected (32) subsets.",
+    "zh": "由于足够严格的策略可能使任务无法求解，而不仅是更难，我们首先逐一确认每项 Terminal-Bench 任务在 NIST-derived high 强制执行下是否仍然可解。大多数任务仍可解：89 项中有 82 项具有可解性见证，即在该策略下达到官方通过状态的轨迹。其中 50 项使用 Terminal-Bench 自带且未修改的参考解作为见证；其余 32 项则由我们编写符合策略的参考解，且不更改任务本身（附录 B）。我们将前一组称为「未受影响」任务（50 项），后一组称为「受影响」任务（32 项）。"
+  },
+  {
+    "id": "Sx5.SSx3.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Seven tasks are blocked by design: no policy-compliant solution exists. This is itself a finding that reinforces our central claim, their requirements are incompatible with a hardened environment, and we keep all 89 tasks in the reported results, analyzing the slices separately.",
+    "zh": "有七项任务在设计上受阻：不存在符合策略的解。这一发现本身也强化了本文的核心论点，因为这些任务的要求与加固环境不相容。我们仍在所报告结果中保留全部 89 项任务，并分层分析各个子集。"
+  },
+  {
+    "id": "Sx5.SSx3.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Wherever a verifier indicated failure although the agent had achieved the stated goal, the root cause was an over-specified verifier: an assertion demanding an incidental detail that the policy blocks but the task never required, for example one exact installation path for a tool that only needs to be available, a failure mode documented in code-generation benchmarks (Sharifloo et al. 2025). For each of the five such verifiers we additively broaden the assertion to also accept the agent’s writable workspace, leaving every substantive check intact; the identical verifier runs at every policy level, including control, with original outcomes kept for audit.",
+    "zh": "凡验证器报告失败、但智能体已经达到明示目标的情况，根本原因都是验证器过度规格化：它要求某个被策略阻止、但任务本身并未要求的附带细节。例如，工具只需可用，验证器却要求安装在某个指定路径。这种失效模式已在代码生成基准中记录（Sharifloo et al., 2025）。对于这五个验证器，我们仅以添加方式扩展断言，使其也接受智能体可写的工作区，同时保留所有实质性检查；修复后的同一验证器在每个策略级别（包括 Control）运行，原始结果也保留以供审计。"
+  },
+  {
+    "id": "Sx5.SSx3.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The headline results (Figure 1) include both artifact classes. Rescoring under NIST-derived high increases the success rate on two of the five repaired tasks (Table 2), both recoveries with the same shape: the agent had built the required tool in its writable workspace, where the original check never looked.",
+    "zh": "主要结果（图 1）包含这两类基准问题。在 NIST-derived high 下重新评分后，五项修复任务中的两项成功率有所提高（表 2）；两项恢复情况相同：智能体已在可写工作区中构建所需工具，而原始检查从未查看该位置。"
+  },
+  {
+    "id": "Sx5.SSx3.p5.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The other three are unchanged under either verifier, confirming the repairs correct the checks rather than inflate scores: one is unsolved even in control, and two fail for genuine hardening reasons; on mcmc-sampling-stan every bundle installed the sampler and computed correct posterior means, yet none made the installation visible to a second process, so checks that open a fresh session fail in every trial (Appendix B).",
+    "zh": "另外三项在两种验证器下的结果均未改变，这说明修复纠正的是检查方式，而非抬高分数：一项即使在 Control 下也未被解决，另外两项则因真实的加固原因而失败。对于 mcmc-sampling-stan，每个组合都安装了采样器并计算出正确的后验均值，但没有一个能让第二个进程看到该安装，因此所有试验中，启动全新会话的检查都会失败（附录 B）。"
+  },
+  {
+    "id": "Sx5.SSx3.p6.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Under hardening the seven blocked-by-design tasks are guaranteed failures for every bundle alike: restricting to the 82 witnessed tasks raises each bundle’s hardened success by 3.4 to 5.8 points while leaving control essentially unchanged, removing a roughly common five to seven points from every measured penalty. What remains discriminates: the control-to-hardened drop runs from 2.4 points (Grok 4.5) to 13.5 (Claude Sonnet 5) on the reduced pool, against 7.1 to 18.3 on the full pool; Appendix F reports both pools in full, every bundle’s success rate and cost under each policy.",
+    "zh": "加固下，七项在设计上受阻的任务对所有组合都会确定失败：只看有见证的 82 项任务，会使各组合在加固条件下的成功率提高 3.4 至 5.8 个百分点，而 Control 下基本不变；这从每项测得惩罚中都扣除了大致相同的 5 至 7 个百分点。剩余差异仍有区分度：在缩减后的任务池中，从 Control 到加固条件的降幅介于 Grok 4.5 的 2.4 个百分点和 Claude Sonnet 5 的 13.5 个百分点之间；完整任务池中的范围则为 7.1 至 18.3 个百分点。附录 F 完整报告了这两个任务池中每个组合在各策略下的成功率和成本。"
+  },
+  {
+    "id": "Sx5.SSx3.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx3.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Anthropic and OpenAI operate safety classifiers inside their serving layers that can end a trial before the verifier runs; they respond to request content, and any organization calling the same route encounters them. Across the campaign they affected five of the twelve bundles and 98 trials. We retain every affected trial in the reported aggregates, consistent with measuring the bundle as deployed. Only the OpenAI route retries a dropped stream; every Anthropic refusal ends its trial. Claude Fable 5’s declared Opus 4.8 fallback (Experimental Setup) served 29.9% of its requests, so its results describe the gated route rather than Fable 5 alone. Intervention-caused failures cost any bundle at most 2.2 percentage points of measured success, and incidence does not rise with policy severity; Appendix D documents each mechanism, message, and count.",
+    "zh": "Anthropic 和 OpenAI 在服务层运行安全分类器，可能在验证器评分前终止试验；这些分类器响应请求内容，任何调用同一路由的组织都会遇到它们。在整个评测过程中，这影响了十二个组合中的五个，共 98 次试验。按照衡量已部署组合的方式，我们在报告的汇总结果中保留所有受影响试验。只有 OpenAI 路由会重试中断的流；Anthropic 的拒绝都会结束试验。Claude Fable 5 的既定 Opus 4.8 回退机制（实验设置）为其 29.9% 的请求提供服务，因此其结果反映的是受门控的调用路径，而非 Claude Fable 5 单独的表现。对任何组合而言，干预导致的失败最多使测得成功率下降 2.2 个百分点，且干预发生率不会随策略严重程度增加；附录 D 记录了各项机制、消息和次数。"
+  },
+  {
+    "id": "Sx5.SSx4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "On the 82 tasks that admit a solvability witness, hardening still costs 7.4 points of success (72.5% to 65.1%, Table 3). Classifying each failed run by where it terminates relative to its task’s wall-clock budget shows the additional failures are of two kinds: runs that exhaust the budget (timeouts, 12.0% to 16.4% of runs) and runs that end well within it with a solution that fails verification (wrong solutions, 12.8% to 15.5%). Agents do not give up more often under policy: early stops barely move (2.4% to 2.7%). Of the failures hardening adds, roughly 59% are timeouts and 37% wrong solutions.",
+    "zh": "在 82 项具有可解性见证的任务上，加固仍使成功率下降 7.4 个百分点（从 72.5% 降至 65.1%，表 3）。按失败运行相对于任务墙钟预算的终止位置分类后可以看出，新增失败有两类：耗尽预算的运行（超时比例从 12.0% 升至 16.4%），以及在预算尚未耗尽时结束、但解未通过验证的运行（错误解比例从 12.8% 升至 15.5%）。策略下智能体并没有更常放弃：提前停止比例仅从 2.4% 微升至 2.7%。加固新增的失败中，约 59% 是超时，37% 是错误解。"
+  },
+  {
+    "id": "Sx5.SSx4.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The same pressure is visible in the runs that succeed: matching passing runs within the same bundle and task, a hardened pass takes 13% more wall-clock time, 14% more tool calls, and 26% more tokens than its control counterpart. Under NIST-derived high the timeout class grows fast enough to overtake wrong solutions as the most common failure. The mix is bundle-dependent: the open-weight bundles evaluated on Terminus-2 account for most of the additional timeouts, while the Codex bundles add almost exclusively wrong solutions within budget.",
+    "zh": "同样的压力也体现在成功的运行中：在同一组合和任务内匹配通过的运行后，加固条件下的通过运行比 Control 对照多耗费 13% 墙钟时间、14% 工具调用和 26% token。在 NIST-derived high 下，超时类别增长得足够快，超过错误解，成为最常见的失败。失败组合因模型而异：在 Terminus-2 上评估的开放权重模型造成了大多数新增超时；Codex 组合新增的则几乎全是在预算内结束的错误解。"
+  },
+  {
+    "id": "Sx5.SSx5.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Hardening’s second currency is cost. Figure 3 shows how the NIST-derived high policy shifts the cost distributions of the two deep-sampled tasks. The median cost increase is comparable in both cases, decoupling the cost of policy from its effect on success. Passing and failing runs pay the shift alike. The mechanism is almost exclusively workaround construction (97%): the agent abandons the blocked path and rebuilds a tool-chain from source or sources substitute data, and this reconstruction produces the added cost; the few low-cost extremes are runs that stop early once blocked.",
+    "zh": "成本是加固影响的第二种代价形式。图 3 展示 NIST-derived high 如何改变两项深度采样任务的成本分布。两项任务的中位成本增幅相近，说明策略带来的成本与其对成功率的影响相互独立。通过和失败的运行同样承担成本增加。新增成本几乎完全来自构造变通方案（97%）：智能体放弃被阻断的路径，转而从源代码重建工具链或寻找替代数据；这种重建带来额外开销。成本极低的少数情况则是运行在受阻后很快提前结束。"
+  },
+  {
+    "id": "Sx5.SSx5.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Figure 4 stratifies the cost effect by",
+    "zh": "图 4 按"
+  },
+  {
+    "id": "Sx5.SSx5.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "reference-solution compatibility. Adding the seven blocked-by-design tasks to the affected subset gives 39 tasks and yields",
+    "zh": "参考解兼容性分层。将七项在设计上受阻的任务加入受影响子集后，共有 39 项任务，结果为"
+  },
+  {
+    "id": "Sx5.SSx5.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "3.03×3.03\\times [1.81, 5.56] under non-root and 3.48×3.48\\times [2.37, 5.56]. “Affected” describes reference-solution evidence rather than every agent trajectory: an agent may follow a policy-affected trajectory on a task with an unaffected reference solution, consistent with the small residual inflation in the unaffected subset, or, less often, an unaffected trajectory on an affected-label task. The intervals quantify within-subset uncertainty rather than testing between-subset differences.",
+    "zh": "在 non-root 下为 3.03 倍 [1.81, 5.56]，在 NIST-derived high 下为 3.48 倍 [2.37, 5.56]。「受影响」描述的是参考解证据，并不代表每条智能体轨迹：在参考解未受影响的任务上，智能体也可能走上受策略影响的轨迹，这与该子集中残留的轻微成本膨胀相符；较少数情况下，智能体也可能在标记为受影响的任务上走出一条未受影响的轨迹。这些区间量化的是各子集内部的不确定性，并非检验子集之间的差异。"
+  },
+  {
+    "id": "Sx5.SSx5.p5.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The same stratification predicts the success penalty. On the affected subset the success rate falls from 70.3% to 54.5% under NIST-derived high (15.8 points), while on the unaffected subset it moves from 73.8% to 71.8%, a change indistinguishable from noise; 83.5% of the additional failures in Table 3 fall on the 32 affected tasks, and the trajectory lengthening concentrates there as well (36% more wall-clock time and 70% more tokens for matched passing runs, against no measurable change on unaffected tasks). The two subsets have nearly identical control success rates, so the divergence is not a difficulty difference between the groups: it appears only once the policy is enforced. A task’s reference-solution compatibility, computable before any agent runs, therefore anticipates where a policy will cost both money and success.",
+    "zh": "同样的分层也能预测成功率损失。在受影响子集中，成功率在 NIST-derived high 下从 70.3% 降至 54.5%（下降 15.8 个百分点）；在未受影响子集中，成功率从 73.8% 变为 71.8%，差异无法与噪声区分。表 3 中新增失败的 83.5% 落在 32 项受影响任务上，轨迹延长也集中于这些任务（匹配的通过运行多耗费 36% 墙钟时间和 70% token；未受影响任务没有可测量的变化）。两个子集在 Control 下的成功率几乎相同，因此差异并非组间任务难度造成：只有在强制执行策略后才出现分化。由此，任务的参考解兼容性可以在任何智能体运行前计算，并预示策略会在哪些任务上造成成本和成功率损失。"
+  },
+  {
+    "id": "Sx5.SSx6.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Finally, we measure the restrictions agents actually hit. A blocked action is one denied operation, counted from verified-complete evidence only (Appendix G). By design, control has no blocked actions; under non-root every blocked action is a privilege denial. Under NIST-derived high, a third of trials (675 of 2,051) record at least one. Egress denials lead on every measure (500 trials, against 283 privilege and 158 filesystem), and their 90.5% share of volume is mostly persistence: a trial that hits the egress wall records 10.5 denials on average, against 1.4 for privilege. Blocks concentrate sharply across the 88 tasks with verified evidence (the remaining task’s traces are always truncated): 14 record a verified zero, 48 record five or fewer in total, and five carry half the volume (build-pov-ray, break-filter-js-from-html, mteb-retrieve, protein-assembly, count-dataset-tokens).",
+    "zh": "最后，我们衡量智能体实际遇到的限制。一次「阻断动作」是指一个被拒绝的操作，只统计证据已验证完整的试验（附录 G）。按设计，Control 不会产生阻断动作；在 non-root 下，每个阻断动作都是权限拒绝。在 NIST-derived high 下，约三分之一试验（2,051 次中的 675 次）至少记录了一次阻断。网络出站拒绝在各项指标上都最多（500 次试验，权限拒绝为 283 次，文件系统拒绝为 158 次）；它们占总量 90.5%，主要是由于重复尝试：遇到网络出口限制的试验平均记录 10.5 次拒绝，而权限拒绝平均为 1.4 次。在具有已验证证据的 88 项任务中，阻断高度集中（其余一项任务的轨迹始终被截断）：14 项记录到已验证的零次阻断，48 项总计不超过五次，而五项任务占了总量的一半（build-pov-ray、break-filter-js-from-html、mteb-retrieve、protein-assembly、count-dataset-tokens）。"
+  },
+  {
+    "id": "Sx5.SSx6.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx5.SSx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Exposure follows solvability: trials with at least one blocked action rise from 14.4% on the unaffected subset, to 51.6% on the affected subset, to 67.8% on tasks blocked by design, and on affected tasks failing trials record 2.7 times the blocked actions of passing ones. These are diagnostic associations, not causes (Appendix G).",
+    "zh": "阻断暴露程度随可解性而变化：至少遭遇一次阻断的试验，在未受影响子集中占 14.4%，在受影响子集中占 51.6%，在设计上受阻的任务中占 67.8%；而在受影响任务中，失败试验记录的阻断动作数是通过试验的 2.7 倍。这些是诊断性关联，并非因果关系（附录 G）。"
+  },
+  {
+    "id": "Sx6.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Single benchmark. All evidence comes from Terminal-Bench and its 89 tasks. Boundary-Bench attaches to the runtime rather than to task content, but every added benchmark would repeat the solvability audit, the witness authoring, and the inference spend of the full twelve-bundle grid; our findings are therefore established for this benchmark only.",
+    "zh": "单一基准。全部证据都来自 Terminal-Bench 及其 89 项任务。Boundary-Bench 作用于运行时，而非任务内容；但每增加一个基准，都要重新进行可解性审计、编写见证解，并承担完整十二组合评测网格的推理开销。因此，本文结论目前仅在这个基准上得到确立。"
+  },
+  {
+    "id": "Sx6.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Bundle-level attribution. The evaluated unit is the frozen model–harness bundle, so effects are not attributed to model weights or the harness alone. The ablation of Table 1 covers only the frontier’s two cost extremes, and a harness change alters the prompt, tools, and interface; full-roster attribution remains bundle-level.",
+    "zh": "组合层面的归因。评估单位是冻结的模型—运行框架组合，因此无法将影响归因于模型权重或运行框架本身。表 1 的消融仅覆盖帕累托前沿成本两端；改变运行框架也会改变提示、工具和界面。因此，对完整模型名单的归因仍停留在组合层面。"
+  },
+  {
+    "id": "Sx6.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "One operating point, three trials. Every primary bundle runs at high reasoning effort with three valid trials per bundle–task–policy cell; no other effort setting or trial count is evaluated. Intervals describe run-to-run variability at this configuration; Pareto, sensitivity, and ordering statements are descriptive, and small differences between bundles should not be over-read.",
+    "zh": "单一工作点，三次试验。所有主要评估组合都使用 high 推理强度；每个组合—任务—策略单元进行三次有效试验。没有评估其他推理强度或试验次数。区间描述的是这一配置下运行间的变异性；帕累托、敏感性和次序陈述均为描述性结果，不应过度解读组合间的小幅差异。"
+  },
+  {
+    "id": "Sx6.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Policy realism. The three conditions form one severity ladder derived from common enterprise restriction settings and mapped to NIST SP 800-53 families. They are not a certified deployment configuration, and we measure their performance cost, not their effectiveness as security.",
+    "zh": "策略真实性。三个条件构成一条源自常见企业限制设置、并映射到 NIST SP 800-53 控制族的严重程度阶梯。它们不是经过认证的部署配置；我们衡量的是这些限制的性能代价，而非其安全有效性。"
+  },
+  {
+    "id": "Sx7.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Security restrictions are part of the coding agent’s real operating environment, yet benchmarks measure agents without them. Evaluating twelve model–harness bundles on Terminal-Bench 2.1 under three natively enforced policy levels, we draw four conclusions.",
+    "zh": "安全限制是编码智能体真实运行环境的一部分，但基准评估通常不包含这些限制。我们在 Terminal-Bench 2.1 上、以三种由原生机制强制执行的策略级别评估十二种模型—运行框架组合，并得出四点结论。"
+  },
+  {
+    "id": "Sx7.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Hardening is non-uniform. Every bundle loses success and gains cost under the strictest policy, NIST-derived high, but by amounts that differ across bundles: success losses reach 18.3 points and cost inflation 167.3%.",
+    "zh": "加固的影响并不一致。在最严格的 NIST-derived high 策略下，每个组合的成功率都会下降、成本都会上升，但幅度各不相同：成功率损失最高达 18.3 个百分点，成本膨胀最高达 167.3%。"
+  },
+  {
+    "id": "Sx7.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The trade-off is universal; its currency is not. Some bundles absorb the policy as inflated cost, others as lost success, and none escapes both. The loss is grinding rather than surrender: longer trajectories ending in timeouts or wrong solutions, almost never in early stops, so budgets must be provisioned under the deployment’s policy.",
+    "zh": "权衡普遍存在，但代价形式各不相同。有些组合以成本膨胀承担策略影响，有些以成功率下降承担，没有组合能同时避开两者。损失表现为持续消耗，而非放弃：轨迹变长并以超时或错误解告终，几乎不会提前停止。因此应依据部署环境的策略配置预算。"
+  },
+  {
+    "id": "Sx7.p4.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The tax is predictable. Given a policy, reference-solution compatibility identifies the affected tasks before any agent runs, for success and cost alike, and the procedure applies to any benchmark that ships reference solutions.",
+    "zh": "代价可以预测。给定一项策略，参考解兼容性可以在任何智能体运行前识别受影响任务，并同时预测成功率和成本变化；该流程适用于任何提供参考解的基准。"
+  },
+  {
+    "id": "Sx7.p5.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Benchmarks should carry a policy axis. Hardening degrades even frontier bundles, restoring discriminative headroom, and model selection is only valid under the deployment’s own policy; reporting performance in a common restricted environment should become standard practice.",
+    "zh": "基准应包含策略维度。加固会降低包括前沿模型在内的表现，从而恢复区分模型的空间；只有依据实际部署环境的策略才能有效选择模型。应当逐步将共同受限环境中的性能报告变成标准做法。"
+  },
+  {
+    "id": "Sx7.p6.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx7",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Natural next steps are extending the solvability audit to further benchmarks and building policy-adaptive agents that mitigate the mechanisms quantified here.",
+    "zh": "自然的后续工作包括将可解性审计扩展到更多基准，并构建能够减轻本文所量化机制影响、会适应策略的智能体。"
+  },
+  {
+    "id": "Sx8.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx8",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "We thank our colleagues at Accomplish AI for feedback and support throughout this work. The evaluation campaign, including all model inference and cloud-sandbox compute, was funded by Accomplish AI.",
+    "zh": "我们感谢 Accomplish AI 的同事在整个研究期间提供反馈和支持。本次评测活动，包括所有模型推理和云沙箱计算，均由 Accomplish AI 资助。"
+  },
+  {
+    "id": "Sx9.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Each axis is enforced by a distinct native mechanism, mapped to the NIST controls it projects onto the runtime. The mapping records the controls that motivated each mechanism and is not a compliance claim. Table 4 summarizes the three axes at the NIST-derived high posture; the paragraphs that follow give the read-only trees and privilege lockdown, and Table 5 reproduces the exact egress allowlist.",
+    "zh": "每个维度均由独立的原生机制强制执行，并映射到其在运行时所体现的 NIST 控制。该映射记录了启发各项机制的控制，并不构成合规性声明。表 4 概述了 NIST-derived high 状态下的三个维度；后续段落列出只读目录树和权限锁定细节，表 5 则给出完整的出站白名单。"
+  },
+  {
+    "id": "Sx9.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Under NIST-derived high, all egress is forced through a loopback proxy that default-denies every domain outside its allowlist: a fixed 205-domain developer list adapted from the default allowlist for Claude Code on the web,22 2 https://code.claude.com/docs/en/claude-code-on-the-web“#default-allowed-domains which includes the model-serving endpoints, plus the running harness’s own vendor endpoint; the full list is reproduced in Table 5. No task-specific domains are added: we extracted each task’s network dependencies from its official reference solution (36 of the 89 tasks require at least one, spanning 30 distinct domains, of which 9 already fall inside the allowlist), and deliberately did not admit the remaining 21, so the allowlist is not fitted to the evaluated tasks. Exactly one task is thereby foreclosed by an egress blockage alone (count-dataset-tokens; Appendix B): for every other out-of-list dependency, an equivalent artifact is reachable through an allowlisted host, so a solver can route around the blockage, for example, installing the same R packages from the allowlisted conda-forge channel when CRAN is blocked, or obtaining a toolchain from the allowlisted Ubuntu mirrors rather than Debian’s. The proxy runs with root ownership while the firewall rule is scoped to the agent’s user, so the proxy cannot be bypassed or disabled from inside the policy; the same rules deny the cloud-metadata endpoint and private address ranges, and resolved addresses are rechecked so an allowed domain cannot resolve into a denied range. A blocked domain returns a bare HTTP 403; direct egress that skips the proxy fails with a refused connection.",
+    "zh": "在 NIST-derived high 下，所有出站流量都被强制通过环回代理；代理会默认拒绝白名单以外的所有域名。该固定白名单包含 205 个开发域名，改编自 Claude Code on the web 的默认白名单，²其中包括模型服务端点和当前运行框架自身的厂商端点；完整列表见表 5。我们没有添加任何任务专用域名：我们从官方参考解中提取每项任务的网络依赖（89 项任务中有 36 项至少需要一个域名，涉及 30 个不同域名，其中 9 个已在白名单内），并刻意不放行其余 21 个，因此该白名单并非针对受评任务定制。仅网络出口受阻就使一项任务无法完成（count-dataset-tokens；附录 B）。对其他所有白名单外依赖，都可以通过白名单内的主机获取等效资源，因此求解者可以绕过阻断；例如 CRAN 受阻时，可从白名单内的 conda-forge 通道安装相同 R 软件包；也可以从白名单内的 Ubuntu 镜像而非 Debian 镜像获取工具链。代理由 root 所有，而防火墙规则仅作用于智能体用户，因此智能体无法绕过或关闭代理。同一规则也会拒绝云元数据端点和私有地址范围，并重新检查解析出的地址，以防允许的域名解析到被拒绝的地址范围。被阻止的域名会返回不带正文的 HTTP 403；绕过代理的直接出站连接则会因连接被拒而失败。"
+  },
+  {
+    "id": "Sx9.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9.SSx1.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The protected operating-system trees are /usr, /bin, /sbin, /lib, /lib64, /etc, /opt, /boot, /srv, /root, /var, and /home; each is bind-remounted read-only. The working directories (/app, /workspace), the scratch paths (/tmp, /dev/shm), and the agent’s runtime and cache directories (~/.cache, ~/.config, ~/.local, and the running harness’s own directory such as ~/.claude or ~/.codex) remain writable; the rest of the home directory and /var/tmp are read-only. Writes outside the writable set fail with EROFS. Reads remain available everywhere; the mechanism restricts tampering rather than confidentiality.",
+    "zh": "受保护的操作系统目录包括 /usr、/bin、/sbin、/lib、/lib64、/etc、/opt、/boot、/srv、/root、/var 和 /home；每个目录都以绑定挂载方式重新挂载为只读。工作目录（/app、/workspace）、临时与共享内存路径（/tmp、/dev/shm），以及智能体运行框架自身的运行时和缓存目录（~/.cache、~/.config、~/.local，以及 ~/.claude 或 ~/.codex 等运行框架目录）仍可写；主目录中的其余部分和 /var/tmp 均为只读。在可写范围之外写入会返回 EROFS。所有位置仍可读取；这一机制限制的是篡改，而非机密性。"
+  },
+  {
+    "id": "Sx9.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9.SSx1.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Under both non-root and NIST-derived high restricted policies, setpriv drops the agent to a dedicated user and group; the user has no sudoers entry, and the root password is locked, so sudo and su escalation fail. Both policies also install a firewall rule, scoped to the agent’s user and outside the network policy axis, that rejects access to the sandbox provider’s own control-plane ports, closing a platform escalation path. NIST-derived high additionally sets no_new_privs so no executed program can gain privilege, empties the Linux capability bounding set, and strips setuid bits from the task image. Mounting filesystems, changing firewall rules, and opening raw sockets then fail with EPERM.",
+    "zh": "在 non-root 和 NIST-derived high 两种受限策略下，setpriv 都会将智能体降权为专用用户和用户组；该用户不在 sudoers 列表中，root 密码也已锁定，因此无法通过 sudo 或 su 提权。两种策略还会安装一条针对智能体用户的防火墙规则；这条规则属于网络策略维度之外的保护，用于拒绝访问沙箱提供方自身的控制平面端口，以封闭一条平台提权路径。NIST-derived high 进一步设置 no_new_privs，使执行的程序无法获取更高权限；清空 Linux 能力边界集，并从任务镜像中移除 setuid 位。挂载文件系统、修改防火墙规则和打开原始套接字等操作都会因 EPERM 而失败。"
+  },
+  {
+    "id": "Sx9.SSx2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx9.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Enforcement is checked by a pre-flight probe suite, run once per sandbox before the agent starts and outside task-execution time, that exercises every configured blockage: direct probes confirm each restriction denies its target operation, adversarial probes attempt bypasses (nested shells, raw-IP and alternate-port egress, child-process inheritance), and enablement probes confirm permitted operations still succeed. Because these probes run before the agent starts, a required probe failure can never be classified as an agent failure or scored against the task. Instead, the attempt is discarded as an infrastructure error and replaced by a fresh sandbox. A hardening step that cannot be established likewise fails closed rather than running unhardened. The probes leave no trace; their scratch area is verifiably removed before the agent begins.",
+    "zh": "每个沙箱启动一次预检探针组，在智能体开始运行前、且不计入任务执行时间，检查所有已配置的阻断：直接探针确认目标操作确实被拒绝；对抗性探针尝试绕过限制（嵌套 shell、原始 IP 和替代端口出站、子进程继承）；启用探针则确认获准的操作仍然成功。由于这些探针在智能体启动前运行，其失败绝不会被归类为智能体失败，也不会计入任务评分。相反，该次尝试会被视为基础设施错误而丢弃，并由新的沙箱替代。任何无法建立的加固步骤也会失败关闭，而不会在未加固状态下继续运行。探针不会留下痕迹；智能体开始运行前，会验证其临时区域已被清除。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Many shipped solutions assume the unrestricted control environment: they install packages system-wide with apt-get install, escalate with sudo, or fetch from hosts outside the allowlist. Under NIST-derived high these steps fail with EROFS, EPERM, or a blocked-egress error. For such tasks we authored solvability witnesses that reach the same passing state using only operations the policy permits: rootless installation into the writable workspace (a fully pinned (@EXPLICIT) conda-forge transaction, or a download-and-extract apt sysroot pattern), with all fetches restricted to the trusted allowlist. A witness changes neither the task environment nor its verifier—it is one admissible trajectory, which is exactly what the compatibility probe requires.",
+    "zh": "许多随附的参考解都假设运行在不受限制的 Control 环境中：它们用 apt-get install 全局安装软件包、通过 sudo 提权，或从白名单以外的主机下载文件。在 NIST-derived high 下，这些步骤会因 EROFS、EPERM 或出站访问阻断而失败。对于这类任务，我们编写可解性见证，只使用策略允许的操作达到同一通过状态：以 rootless 方式将软件安装到可写工作区（使用完全固定版本的 @EXPLICIT conda-forge 安装方案，或采用下载并解压 apt sysroot 的模式），且所有下载都限制在可信白名单内。见证解既不改变任务环境，也不修改验证器；它只是一个符合策略的轨迹，这正是兼容性探针所需确认的内容。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A residual set of tasks admitted no witness. Examining these one by one, we found two distinct causes that call for opposite responses.",
+    "zh": "仍有一组任务无法获得见证解。逐项检查后，我们发现两个成因，需要采取相反的应对方式。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px2.p2.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The first is a genuine task–policy conflict: the task’s own instruction mandates a resource or location the policy denies. Six tasks pin a write to a read-only tree—build-pmars and build-pov-ray instruct the solver to install a binary to /usr/local/bin; build-cython-ext and kv-store-grpc to install Python packages into the system-wide environment; and nginx-request-logging and mailman to place configuration and logs under /etc and /var. A seventh, count-dataset-tokens, is foreclosed by the network policy alone: it requires the exact metadata file of a Hugging Face dataset, reachable only through Hugging Face’s own endpoints (huggingface.co and its content-delivery hosts), none of which are in the allowlist. The download URL is minted only by the blocked huggingface.co hop, no allowlisted mirror exists, and the file cannot be re-derived deterministically; admitting the task would require exactly the per-task egress exception the fixed-allowlist policy rejects. Because the requirement is written into the task, no admissible trajectory exists without editing the task itself, which we decline to do; these tasks are reported as unsolved under NIST-derived high rather than made to pass.",
+    "zh": "第一种是真实的任务—策略冲突：任务指令本身要求某种资源或位置，但策略禁止了相应操作。有六项任务要求写入只读目录：build-pmars 和 build-pov-ray 要求将二进制文件安装到 /usr/local/bin；build-cython-ext 和 kv-store-grpc 要求将 Python 软件包安装到系统级环境；nginx-request-logging 和 mailman 要求将配置和日志放在 /etc 与 /var 下。第七项任务 count-dataset-tokens 仅因网络策略而无法完成：它要求取得某个 Hugging Face 数据集的确切元数据文件，而该文件只能通过 Hugging Face 自身的端点（huggingface.co 及其内容分发主机）访问，这些端点都不在白名单中。下载 URL 只能经由被阻断的 huggingface.co 请求生成；没有白名单内的镜像，也无法确定性地重新推导该文件。若要接纳这项任务，就必须添加恰恰被固定白名单策略排除的任务专用出站例外。由于任务要求写得很明确，除非修改任务本身，否则不存在可接受的轨迹；我们选择不修改任务，因此报告这些任务在 NIST-derived high 下未解决，而不让它们通过。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px2.p3.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The second cause is verifier over-specification: the instruction is satisfiable without the denied privilege, but the verifier inspects only the conventional root-owned location and so marks a legitimate non-root solution as failing. sqlite-with-gcov is the illustrative case. The task asks the solver to build SQLite and make it available on the PATH; a non-root agent does exactly that by building under the writable workspace and exposing the binary on its own PATH, yet the verifier resolves sqlite3 only through the root user’s PATH and reports failure. Since the requested work was genuinely performed, this is a deficiency of the check, not of the solution.",
+    "zh": "第二种成因是验证器过度规格化：任务指令允许在没有被拒绝权限的情况下完成，但验证器只检查传统的 root 所有位置，因此把合法的非 root 解标记为失败。sqlite-with-gcov 就是一个例子。任务要求构建 SQLite 并使其能通过 PATH 使用；非 root 智能体在可写工作区中构建软件，并将二进制文件加入自己的 PATH，已经完成了任务，但验证器只从 root 用户的 PATH 中查找 sqlite3，因而报告失败。由于要求的工作确实已经完成，这属于检查机制缺陷，而非解本身的问题。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "For the over-specified cases our operating rule is deliberately asymmetric: we never alter a task’s instruction, but we may correct a verifier that fails to recognize a valid solution, provided the correction only adds an admissible location and preserves every substantive check. The corrected verifier resolves the required artifact at the conventional location or the agent-writable workspace, and is applied uniformly across all policy levels so that no arm gains an advantage. We produced such additive verifiers for five tasks: sqlite-with-gcov, adaptive-rejection-sampler, make-doom-for-mips, mcmc-sampling-stan, and configure-git-webserver.",
+    "zh": "对于过度规格化案例，我们采用刻意不对称的原则：绝不修改任务指令，但可以修正无法识别合法解的验证器，前提是修正只增加一个允许的位置，并保留所有实质性检查。修正后的验证器会在传统位置或智能体可写工作区中查找所需产物，并在所有策略级别上一致应用，确保没有任何一组获得优势。我们为五项任务编写了这种增量式验证器：sqlite-with-gcov、adaptive-rejection-sampler、make-doom-for-mips、mcmc-sampling-stan 和 configure-git-webserver。"
+  },
+  {
+    "id": "Sx10.SSx2.SSS0.Px4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx2.SSS0.Px4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "After this analysis, 82 of the 89 tasks are established to admit a solvability witness under NIST-derived high: for 50 it is the unmodified reference solution, and for 32 an authored policy-compatible one (Table 7), five of which reach the passing state only once the over-specified verifier is corrected as above. The remaining seven are the six task–policy conflicts and count-dataset-tokens, whose scoring artifact is documented in Appendix C. The distinction matters for interpreting the headline numbers: a task counted as unsolved under NIST-derived high is one the policy genuinely forecloses by the task’s own terms, not one an adequate verifier would have credited.",
+    "zh": "完成上述分析后，89 项任务中有 82 项被确认在 NIST-derived high 下具有可解性见证：其中 50 项使用未修改的参考解，32 项使用自行编写的策略兼容解（表 7）；其中五项只有在上述验证器修正后才能达到通过状态。其余七项是六项任务—策略冲突和 count-dataset-tokens；该项任务的评分问题见附录 C。这个区分对于解释主要数字很重要：在 NIST-derived high 下被计为未解的任务，是按任务自身条件确实被策略阻断，而不是因为合适的验证器没有给予认可。"
+  },
+  {
+    "id": "Sx10.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Five tasks needed an adapted verifier to admit a policy-compliant solution. Their outcomes under NIST-derived high (Table 2 of the main paper) differ sharply, and the reasons are instructive.",
+    "zh": "有五项任务需要改编验证器才能认可符合策略的解。它们在 NIST-derived high 下的结果（论文主文表 2）差异很大，成因也值得分析。"
+  },
+  {
+    "id": "Sx10.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Hardening does not add friction to a fixed plan; it removes an assumption the task was built on, and each axis removes a different one. On sqlite-with-gcov it removes a destination: the agent compiles SQLite without difficulty, but the conventional install path is read-only. On mcmc-sampling-stan it removes supply: every R package channel the agents reach lies outside the allowlist, and in 31 of the 36 trials the request to CRAN’s primary mirrors returns HTTP 403, after which agents work down through further mirrors until they find that an allowlisted operating-system repository happens to carry the package. On configure-git-webserver it removes the architecture the task presumes: the provided reference trajectory installs system packages, creates a UNIX account, and runs a privileged-port SSH daemon as root, none of which survive hardening. Our witness reaches the passing state only by rebuilding that stack inside the workspace, including an SSH service that authenticates the expected login without any corresponding system account.",
+    "zh": "加固并非只在固定计划上增加阻力；它会移除任务原先依赖的假设，而且每个策略维度移除的假设不同。对于 sqlite-with-gcov，它移除了一个目标路径：智能体可以轻松编译 SQLite，但传统安装路径是只读的。对于 mcmc-sampling-stan，它移除了软件来源：智能体能访问的所有 R 软件包渠道都在白名单之外，36 次试验中有 31 次向 CRAN 主镜像请求时收到 HTTP 403，之后智能体不断尝试其他镜像，直到发现某个白名单内的操作系统软件源恰好提供该软件包。对于 configure-git-webserver，它移除了任务所假设的系统架构：随附的参考轨迹会安装系统软件包、创建 UNIX 账户，并以 root 身份运行特权端口上的 SSH 守护进程，这些操作在加固后都无法执行。我们的见证解只能在工作区内重建整套架构，其中包括一个 SSH 服务：它能验证预期的登录身份，却不需要对应的系统账户。"
+  },
+  {
+    "id": "Sx10.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx1.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A repair recovers only what the agent left somewhere predictable. On sqlite-with-gcov the task statement itself names the build location, so the agent and the verifier look in the same place and the repair recovers most of the score (80.6% under the adapted verifier against 97.2% in control). Where no location is prescribed, agents improvise separately and the repair finds little. mcmc-sampling-stan is the clearest case: the verifier’s own checks on the estimated posterior means pass in all but two trials, so the statistical work was done, while both checks that open a fresh R session fail in every trial, because each agent pointed its own script at its own package directory instead of making the installation discoverable to another process. Our witness passes by writing a small wrapper that sets the library path for any caller. Under hardening these agents completed the requested work but left the result private to themselves.",
+    "zh": "修复只能找回智能体留在可预测位置的成果。对于 sqlite-with-gcov，任务说明本身指定了构建位置，因此智能体和验证器会检查同一位置；修复后找回了大部分分数（改编验证器下为 80.6%，Control 下为 97.2%）。若任务没有指定位置，智能体就会各自采用不同做法，修复便很难找到结果。mcmc-sampling-stan 是最明显的例子：验证器对估计后验均值的检查在除两次以外的所有试验中都通过，表明统计计算已经完成；但每次试验中，启动新的 R 会话的两项检查都失败，因为每个智能体都只让自己的脚本使用自己的软件包目录，未使其他进程能够发现该安装。我们的见证解通过一个小型包装脚本，为任意调用者设置库路径后通过验证。在加固条件下，这些智能体完成了任务要求的工作，但成果仅对自身可见。"
+  },
+  {
+    "id": "Sx10.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx10.SSx1.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "On configure-git-webserver the adapted verifier recovers none of the failing trials, which is itself evidence that they are not discovery failures. make-doom-for-mips is unsolved in control as well, so its zero under policy carries no information about hardening.",
+    "zh": "在 configure-git-webserver 上，改编后的验证器没有找回任何失败试验的分数；这本身就说明问题并非成果发现失败。make-doom-for-mips 在 Control 下也未被解决，因此它在策略下得零分，并不能说明加固的影响。"
+  },
+  {
+    "id": "Sx11.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx11.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "This task requires retrieving a Hugging Face dataset and computing its token count. In an affected NIST-derived high trial, the dataset request returned HTTP 403, and the trajectory contained no successful retrieval or tokenization. The model nevertheless submitted the exact expected constant, 79586. The official verifier awarded success because it checked only whether that string occurred in the answer file. Producing the exact constant without the required computation is consistent with benchmark contamination or memorization, although the trajectory cannot establish how the model obtained it. The confirmed measurement defect is narrower: the verifier awarded success without evidence that the requested work occurred. The pattern is not a single trial: 13 trials of this task pass by submitting the expected constant (Appendix G). We therefore flag count-dataset-tokens as a benchmark-integrity artifact, keep its trials in every reported aggregate, and preserve them as audit evidence; separately, the task is excluded from the 82-task witness pool on solvability grounds (Appendix B).",
+    "zh": "这项任务要求检索一个 Hugging Face 数据集并计算 token 数。在一次受影响的 NIST-derived high 试验中，数据集请求返回 HTTP 403，轨迹中没有成功检索或分词的记录，但模型仍提交了预期的精确常数 79586。官方验证器只检查答案文件中是否出现该字符串，因此给了通过分数。在没有按要求执行计算的情况下得到精确常数，与基准污染或记忆相符，不过轨迹无法证明模型究竟如何得到该值。可以确认的测量缺陷更有限：验证器在没有证据证明所要求工作已完成时仍然判为通过。该模式并非仅发生在一次试验中：此任务有 13 次试验通过提交预期常数而得分（附录 G）。因此，我们将 count-dataset-tokens 标记为基准完整性问题，仍把其试验保留在所有汇总结果中，并保存为审计证据；另外，由于可解性原因，该任务不纳入 82 项任务的见证子集中（附录 B）。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "OpenAI’s serving layer screens requests for cybersecurity risk. On security-themed tasks it can terminate the model stream with the message ‘‘This content was flagged for possible cybersecurity risk,’’ directing the caller to enroll in its Trusted Access for Cyber program.33 3 https://openai.com/index/trusted-access-for-cyber/ Our organization was not enrolled during the measurement window, so our runs traverse the default, unenrolled serving route. When the flag fires, the Codex CLI reconnects and retries the disconnected stream, and the retry frequently succeeds: in 25 of the 43 flagged trials the stream resumed and the trial ran to completion, 23 of which reached a passing state. When the retries are exhausted the CLI abandons the turn, and the affected trial either aborts mid-trajectory, which is the common case (14 of the 18 abandoned trials), or terminates before any tool call. The flagging is stochastic—some attempts of a task are terminated while identical sibling attempts proceed. We do not exclude these trials. Under our deployed-bundle scope, a task the provider declines to serve is a failure of that model–harness bundle at that policy level: it depresses the measured success rate and still incurs the cost of the consumed attempts. We detect each occurrence from the harness event stream (a terminal turn.failed carrying the flag message, with a zero-work or aborted-trajectory signature), annotate the trial, and report the frequency of these refusals alongside the affected results, so their contribution to failure counts and cost is visible rather than folded silently into ordinary failures. Any organization without this authorization measures—and operates—the same degraded route; enrolled organizations receive a more permissive serving path for verified security work.",
+    "zh": "OpenAI 的服务层会筛查网络安全风险请求。在涉及安全主题的任务上，它可能以「This content was flagged for possible cybersecurity risk」消息终止模型流，并提示调用者注册 Trusted Access for Cyber 计划。³测量期间，我们的组织尚未注册，因此试验使用默认的未注册服务路径。触发标记后，Codex CLI 会重新连接并重试已断开的流；重试常常能够成功：43 次被标记的试验中，有 25 次恢复了流并完成试验，其中 23 次通过任务。重试耗尽后，CLI 会放弃当前轮次；受影响试验要么在轨迹中途终止（18 次放弃中有 14 次属于这种常见情况），要么在任何工具调用前结束。标记具有随机性：同一任务的某些尝试会被终止，其他完全相同的尝试则能继续。我们不排除这些试验。按照对已部署组合的评估范围，提供方拒绝响应的任务，就是该组合在相应策略级别下的一次失败；它会降低测得成功率，也会产生已消耗尝试的成本。我们根据运行框架事件流检测每次触发（带有该标记消息、并呈现零工作量或轨迹中断特征的终结性 turn.failed 事件），给试验加注标记，并报告这些拒绝的频率，使其对失败次数和成本的影响清晰可见，而不会被默默合并进一般失败。任何未取得此授权的组织都会测量并使用同一受限服务路径；已注册组织则可对经过验证的安全工作使用限制更少的服务路径。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Claude Fable 5 ships with dual-use safety classifiers, and the vendor’s production behavior when a request is flagged is to serve the response with Claude Opus 4.8 instead.44 4 https://www.anthropic.com/news/claude-fable-5-mythos-5 Our harness preserves this behavior by declaring the vendor’s fallback at the request level, so Fable 5 results measure the gated product route an organization actually deploys. The vendor’s own reporting discloses how often the fallback fires per benchmark (20.9% of Terminal-Bench trials in the accompanying system card), and we adopt the same disclosure practice: the model gateway records the model that actually served every request, and each Fable 5 result is accompanied by the share of trials containing at least one fallback-served completion and the per-trial share of fallback-served requests. Numbers for this bundle should therefore be read as the behavior of the gated route, with the fallback share as the explicit label of how often the fallback model participated. Across the 801 evaluated trials, 27.6% contained at least one fallback-served completion, against the 20.9% of trials the vendor reports for this benchmark, and 29.9% of all requests were served by the fallback model. The distribution is strongly bimodal: 72.4% of trials were served entirely by Claude Fable 5 and 12.9% entirely by Claude Opus 4.8, though a majority of the fallback-touched trials mix both models, so the routing decision often, but not always, persists across a conversation.",
+    "zh": "Claude Fable 5 配备双用途安全分类器；厂商的生产环境行为是在请求被标记时改由 Claude Opus 4.8 提供响应。⁴我们的运行框架通过在请求级别声明厂商回退来保留这一行为，因此 Fable 5 的结果衡量的是组织实际部署的受门控产品路由。厂商自己的报告披露了这一回退在每个基准上触发的频率（随附系统卡中，Terminal-Bench 试验为 20.9%）；我们采用同样的披露做法：模型网关记录实际响应每个请求的模型，并为每个 Fable 5 结果报告至少包含一次回退响应的试验比例，以及每个试验中由回退模型响应的请求比例。因此，该组合的数字应解读为受门控路由的表现，回退比例则明确指出回退模型参与的频率。在评估的 801 次试验中，27.6% 至少包含一次回退响应，高于厂商对该基准报告的 20.9%；所有请求中有 29.9% 由回退模型响应。分布明显呈双峰：72.4% 的试验完全由 Claude Fable 5 响应，12.9% 完全由 Claude Opus 4.8 响应；不过，多数受回退影响的试验混合使用两个模型，因此回退路由经常、但并非总是贯穿整个对话。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "The fallback and the refusals above are not successive stages of one mechanism. The fallback is declared on every request, and it engages when the Claude Fable 5 route declines to serve one: the request is retried against Claude Opus 4.8 and the agent observes nothing unusual. A refusal, by contrast, arrives as an ordinary successful completion whose content is the refusal itself, which presents the routing layer with nothing to retry. The protein-assembly trials make the distinction concrete: the fallback was fully engaged there, with every request already served by Claude Opus 4.8, and the trial still ended in a refusal because Claude Opus 4.8 refused the same content. That task is refused by every Claude model evaluated here, so rerouting between them cannot resolve it.",
+    "zh": "上文的回退和拒绝并非同一机制的连续阶段。回退在每次请求中都已声明；当 Claude Fable 5 路由拒绝响应时，请求会重试并转交 Claude Opus 4.8，智能体不会察觉异常。相反，拒绝本身是一次正常成功完成的响应，只是其内容为拒绝信息，因此路由层没有理由重试。protein-assembly 试验清楚展示了这一区别：所有请求都已由 Claude Opus 4.8 响应，回退机制完全启动，但试验仍因 Claude Opus 4.8 拒绝同一内容而结束。这里评估的每个 Claude 模型都会拒绝该任务，因此在它们之间重新路由也无法解决问题。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Three further refusal messages appear on the Claude Code route, none of which is retried: each ends the trial where it fires. Claude Opus 5 returns a cybersecurity-topic refusal naming Anthropic’s Cyber Verification Program, the structural counterpart of the OpenAI flag above and the single largest source of trial-ending interventions we observe. Claude Opus 4.8 and Claude Sonnet 5 return a general Usage Policy refusal, and Claude Fable 5 returns a safeguard notice naming its own dual-use classifiers, the classifiers whose production fallback behavior the preceding paragraph describes. A fourth wording, citing restrictions on violative cyber content, appeared once on Claude Opus 5. Table 8 gives each message with its frequency and how often it ended the trial. The Usage Policy message is itself instructive: it advises API integrators to configure a fallback model to reduce refusals, which is exactly the vendor mechanism documented above for Claude Fable 5.",
+    "zh": "Claude Code 路由中还出现了另外三种拒绝消息，均不会触发重试；每条消息出现时都会结束试验。Claude Opus 5 会返回提及 Anthropic Cyber Verification Program 的网络安全主题拒绝，这是上文 OpenAI 标记机制在结构上的对应物，也是我们观察到的、导致试验终止的干预中数量最多的一种。Claude Opus 4.8 和 Claude Sonnet 5 会返回一般的 Usage Policy 拒绝；Claude Fable 5 会发出提及其双用途分类器的保护提示——前文已描述该分类器的生产回退行为。另有一种措辞提及对违规网络内容的限制，曾在 Claude Opus 5 上出现一次。表 8 列出每种消息及其出现次数和导致试验结束的频率。Usage Policy 消息本身也值得注意：它建议 API 集成方配置回退模型以减少拒绝，这正是上文为 Claude Fable 5 记录的厂商机制。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px5.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "These interventions do not become more frequent under hardening. The five affected bundles recorded 28 flagged trials under control, 41 under non-root, and 29 under NIST-derived high (Table 9). Four of the five are flat across the three conditions; only Claude Opus 5 varies materially, and 12 of its 20 non-root flags fall on tasks that are blocked by design, where the agent must attempt the privileged operations the policy denies before it can make progress. We therefore do not observe the association the mechanism would predict, and we report none. The counts are small and clustered by bundle and by task, so we describe them rather than test them.",
+    "zh": "这些干预没有因加固而变得更频繁。五个受影响组合在 Control 下记录到 28 次被标记试验，在 non-root 下为 41 次，在 NIST-derived high 下为 29 次（表 9）。五个组合中有四个在三种条件下基本持平；只有 Claude Opus 5 出现明显变化，其 non-root 下 20 次标记中有 12 次出现在设计上受阻的任务上；在这些任务上，智能体必须先尝试被策略禁止的特权操作才能继续。因此，我们没有观察到该机制所预期的关联，也不作此类报告。次数较少，且集中在特定组合和任务上，因此我们只描述这些结果，不进行检验。"
+  },
+  {
+    "id": "Sx12.SSx1.SSS0.Px6.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx12.SSx1.SSS0.Px6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "What the flags track is task content. All 98 fall on 16 of the 89 tasks, and four tasks account for just under half of them: vulnerable-secret (18 trials), protein-assembly (12), break-filter-js-from-html (9), and feal-differential-cryptanalysis (9). vulnerable-secret draws both vendors’ classifiers, in every policy condition and every replicate; protein-assembly, a protein-design task, draws only Anthropic-side refusals. Of the 73 interventions that ended a trial, 70 were scored as failures: 19 fall on tasks that are blocked by design and 51 on tasks for which a solvability witness exists (Appendix B). Only the 51 could represent lost successes; the 19 that fall on blocked-by-design tasks could not have passed under the policy regardless. Under control, where the policy forecloses no task, the cost is small and bounded: 18 of the 1,335 control trials across the five affected bundles (1.3%) ended in an intervention-caused failure, at most 6 of a single bundle’s 267 control trials, so no bundle’s control success rate is depressed by more than 2.2 percentage points. We record that split as an observation, not as grounds for exclusion: neither group is removed from the reported aggregates.",
+    "zh": "这些标记反映的是任务内容。98 次干预全部落在 89 项任务中的 16 项上，其中四项任务占了略低于一半：vulnerable-secret（18 次试验）、protein-assembly（12 次）、break-filter-js-from-html（9 次）和 feal-differential-cryptanalysis（9 次）。vulnerable-secret 会触发两家厂商的分类器，且在每种策略条件和每次重复中都会触发；protein-assembly 是蛋白质设计任务，只触发 Anthropic 侧的拒绝。导致试验结束的 73 次干预中，有 70 次被评分为失败：19 次发生在设计上受阻的任务上，51 次发生在具有可解性见证的任务上（附录 B）。只有后 51 次可能代表成功率损失；若策略下任务本身受阻，前 19 次无论如何都不可能通过。在 Control 下，策略不会封锁任何任务，代价较小且有明确上限：五个受影响组合的 1,335 次 Control 试验中有 18 次（1.3%）以干预导致的失败告终；单个组合最多为 267 次 Control 试验中的 6 次，因此没有组合的 Control 成功率下降超过 2.2 个百分点。我们将这一划分作为观察结果记录，而非排除试验的理由：两组试验都保留在汇总结果中。"
+  },
+  {
+    "id": "Sx13.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Each trial provisions a fresh Daytona cloud sandbox from the task’s own per-task Terminal-Bench 2.1 Docker image, exactly as declared in the task’s task.toml (environment.docker_image); CPU, memory, and storage follow the task’s declared resources without override. Task images are heterogeneous (a mix of glibc- and musl-based distributions), so base-image package versions are fixed by the digest-pinned dataset rather than by a single global pin. A runtime layer is installed into every sandbox at run start: distribution base packages, the harness CLI at the pinned version above (Claude Code via its official installer, Codex and uv as pinned GitHub release binaries, Grok from a pinned artifact bucket, Terminus-2 from the hash-pinned requirements.lock), and the policy enforcement stack.",
+    "zh": "每次试验都会根据任务自身的 Terminal-Bench 2.1 Docker 镜像创建一个全新的 Daytona 云沙箱，镜像严格遵循任务 task.toml 中声明的 environment.docker_image；CPU、内存和存储遵循任务规定，不作覆盖。任务镜像并不相同，包含基于 glibc 和 musl 的不同发行版；因此，基础镜像软件包版本由按摘要固定的数据集确定，而非由一组全局版本号确定。每个沙箱在启动时安装一层运行环境：发行版基础软件包、指定版本的运行框架命令行工具（Claude Code 使用官方安装器；Codex 和 uv 使用版本固定的 GitHub 发布二进制；Grok 来自版本固定的制品桶；Terminus-2 使用哈希锁定的 requirements.lock），以及策略执行栈。"
+  },
+  {
+    "id": "Sx13.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13.SSx1.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Policy hardening uses Linux kernel mechanisms configured from within the sandbox: a uid-scoped nftables reject wall with a forced egress proxy (implemented in-repo in stdlib-only Python), seccomp filters and LD_PRELOAD shims compiled in-sandbox with the task image’s own toolchain and libseccomp so they link against that image’s libc, and Landlock network rules. The enforcement source is part of the frozen repository; the userspace library versions (libseccomp, nftables) follow each task image’s pinned distribution packages.",
+    "zh": "策略加固使用在沙箱内配置的 Linux 内核机制：按 UID 限定、采用拒绝规则的 nftables 防火墙，并强制通过出站代理（以仓库内仅依赖 Python 标准库的代码实现）；seccomp 过滤器和 LD_PRELOAD 替代库在沙箱内使用任务镜像自带的工具链和 libseccomp 编译，以便链接到该镜像的 libc；此外还使用 Landlock 网络规则。执行机制源码属于冻结仓库的一部分；用户空间库版本（libseccomp、nftables）遵循各任务镜像中固定的发行版软件包版本。"
+  },
+  {
+    "id": "Sx13.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13.SSx1.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "All model inference is served over the OpenRouter HTTP API with per-harness vendor endpoints (as described in the experimental setup); OpenRouter is a hosted service and carries no client-side version pin beyond the openai client version listed above. The released experiment provenance records the exact provider model identifier for every bundle.",
+    "zh": "所有模型推理都通过 OpenRouter HTTP API 提供，并使用与运行框架对应的厂商端点（如实验设置所述）。OpenRouter 是托管服务；除上文列出的 openai 客户端版本外，没有其他客户端版本固定项。发布的实验溯源记录了每个模型组合使用的确切提供方模型标识符。"
+  },
+  {
+    "id": "Sx13.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Claude Sonnet 5, Claude Fable 5, and Claude Opus 4.8 were evaluated with Claude Code 2.1.206, the harness version frozen for the original benchmark runs. Claude Opus 5 was released only after those runs had completed. Re-running every previously evaluated bundle on a newer harness solely to accommodate one added model would have been costly and would have perturbed the frozen configuration, so we instead admitted Opus 5 as a narrowly scoped exception. Upstream Claude Code did not recognize the claude-opus-5 model identifier until v2.1.219,55 5 https://github.com/anthropics/claude-code/blob/main/feed.xml so we evaluated Opus 5 with Claude Code 2.1.220, the immediately following release, which contributed only reliability fixes. Under v2.1.206, Opus 5 requests failed at the client and protocol level before the agent received any usable model response; we treat those observations as harness incompatibilities rather than model outcomes and exclude them. No other Claude model was moved off v2.1.206, so the historical harness configuration is otherwise unchanged, and the version exception and the affected runs are recorded in the released experiment provenance.",
+    "zh": "Claude Sonnet 5、Claude Fable 5 和 Claude Opus 4.8 使用 Claude Code 2.1.206 评估，这是原始基准运行时冻结的运行框架版本。Claude Opus 5 则在这些运行完成后才发布。若仅为容纳这一个新增模型，就将之前评估过的每个组合都用较新的运行框架重跑，成本会很高，也会扰动冻结的配置，因此我们对 Opus 5 采用范围严格受限的例外。上游 Claude Code 直到 v2.1.219 才识别 claude-opus-5 模型标识符；⁵因此我们使用紧接其后的版本 Claude Code 2.1.220 评估 Opus 5，该版本只包含可靠性修复。在 v2.1.206 下，Opus 5 请求会在客户端和协议层失败，智能体无法收到任何可用模型响应；我们将这些观察视为运行框架不兼容，而非模型结果，并予以排除。其他 Claude 模型没有改用 v2.1.206 以外的版本，因此历史运行框架配置其余部分保持不变；版本例外及受影响运行均记录在发布的实验溯源资料中。"
+  },
+  {
+    "id": "Sx13.SSx2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx13.SSx2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Table 11 lists, for each of the twelve evaluated models, the exact provider model identifier used for inference and the agent harness that drove it. Every identifier is the string passed to the OpenRouter HTTP API; it is the same value recorded in the released experiment provenance for every result bundle. In the primary comparison, harness assignment is fixed per vendor family: the Anthropic models run under Claude Code, the OpenAI models under Codex, Grok 4.5 under Grok Build, and all open-weight models under Terminus-2.",
+    "zh": "表 11 列出了十二种受测模型各自用于推理的确切提供方模型标识符，以及负责调用该模型的智能体运行框架。每个标识符都是传给 OpenRouter HTTP API 的字符串，并与发布的实验溯源中对应组合所记录的值相同。主要比较中，运行框架按厂商类别固定：Anthropic 模型使用 Claude Code，OpenAI 模型使用 Codex，Grok 4.5 使用 Grok Build，所有开放权重模型使用 Terminus-2。"
+  },
+  {
+    "id": "Sx14.SSx1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx14.SSx1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Table 14 reports the success–cost Pareto frontier under NIST-derived high on the 82-task witnessed pool, computed from Table 13: a bundle lies on the frontier when no other bundle reaches at least its success rate at no greater cost. Three bundles are non-dominated. GPT-5.6 Sol and Grok 4.5 tie at 79.3%79.3\\% success, but Sol attains it at $51.67 to Grok’s $75.64, so Sol dominates Grok, and Grok 4.5 leaves the frontier as the costlier of the two.",
+    "zh": "表 14 根据表 13 计算了 NIST-derived high 下、82 项见证任务池的成功率—成本帕累托前沿：若没有其他组合能以不高于该组合的成本达到至少相同的成功率，该组合就在前沿上。共有三个组合不受支配。GPT-5.6 Sol 和 Grok 4.5 的成功率同为 79.3%，但 Sol 的成本为 51.67 美元，低于 Grok 的 75.64 美元；因此 Sol 支配 Grok，Grok 4.5 作为成本更高者退出前沿。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px1",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A blocked action is one denied operation. Two evidence classes contribute and remain distinct in the underlying records: enforcement-observed blocks, logged by the enforcement mechanisms themselves (the egress proxy’s denials, firewall counters, and the sudo log), and transcript-inferred denials, recognized from characteristic error signatures in the transcript (EROFS, EPERM, HTTP 403, refused connections, DNS failures). Repeated error output from one denied operation is collapsed to a single action, and an inferred denial that merely echoes an enforcement-observed block on the same axis is not counted again. The counter never reads the verifier outcome, so the outcome associations below are not circular.",
+    "zh": "一个阻断动作是一次被拒绝的操作。底层记录中有两类证据参与计数，且彼此区分：由执行机制记录的阻断（出站代理拒绝、防火墙计数器和 sudo 日志），以及从轨迹文本推断的拒绝（EROFS、EPERM、HTTP 403、连接被拒和 DNS 失败等特征性错误）。同一被拒操作产生的重复错误输出会合并为一次；若推断出的拒绝只是重复记录同一维度上已由执行机制观测到的阻断，则不会再次计数。计数过程不会读取验证器结果，因此下文对结果的关联分析不是循环论证。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px2",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "A stored trace is truncated when a transcript exceeds its storage bound. A truncated trace can still show blocked actions, but it cannot establish their absence, so every count uses only trials whose evidence is verified complete: 6,194 of 9,612 trials overall, and under NIST-derived high 2,051 of 3,204, covering 88 of the 89 tasks. Truncation is flat across conditions (35–36% of trials at every policy level), so the gate does not tilt cross-condition comparisons; it is uneven across harnesses (the Grok 4.5 bundle retains 213 of 801 trials) and tasks: schemelike-metacircular-eval exceeds the bound in nearly every trial in every condition, including control, and is conservatively excluded from the evaluable set; its transcripts are simply long (it passes 26 of its 36 trials under NIST-derived high). All totals are lower bounds.",
+    "zh": "当轨迹文本超过存储上限时，存储记录会被截断。截断记录仍可能显示发生了阻断，但无法证明没有阻断，因此所有计数只使用证据已确认完整的试验：总计 9,612 次试验中的 6,194 次；在 NIST-derived high 下，则为 3,204 次中的 2,051 次，覆盖 89 项任务中的 88 项。各条件下的截断比例相近（35%–36%），因此筛选不会偏向某个条件；但不同运行框架的截断比例不均（Grok 4.5 组合的 801 次试验中只有 213 次记录完整），任务之间也不同：schemelike-metacircular-eval 在几乎所有条件的几乎所有试验中都会超过上限，包括 Control，因此我们保守地将其排除在可评估任务之外；它的轨迹只是很长（NIST-derived high 下 36 次试验中有 26 次通过）。所有总数都是下界。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px3",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Blocked actions land exactly on the axes each condition restricts: control records zero across all 3,204 trials, including those with truncated traces, and all 482 blocked actions under non-root are privilege denials. Under NIST-derived high the volume split is 5,250 egress, 392 privilege, and 158 filesystem denials (egress is 90.5% of the 5,800 total), but incidence is closer than volume: 500 trials record an egress denial, 283 a privilege denial, 158 a filesystem denial, and privilege denials touch more tasks than egress denials (60 against 55). In total, 675 of the 2,051 verified trials record at least one blocked action; this union is smaller than the per-axis incidence sum (941) because a trial can be denied on more than one axis. The volume gap is persistence. A trial that hits the egress wall records 10.5 denials on average, against 1.4 for privilege and exactly one for filesystem; single trials reach 171 egress denials, and destination-level linking, whose attribution is heuristic, assigns 62% of egress volume to re-attempts against a destination already blocked earlier in the same trial, up to 86 re-attempts on one destination. A re-attempt establishes pressure on a destination, not intent: a deliberate retry is indistinguishable from a client library’s automatic retry (package installers retry their host by default). Consistent with a retryability reading, the denials that present as final (EROFS, EPERM) show no re-attempts at all.",
+    "zh": "阻断动作恰好落在各条件限制的维度上：包括轨迹被截断的试验在内，Control 下全部 3,204 次试验都记录为零；non-root 下的 482 次阻断全部是权限拒绝。NIST-derived high 下，拒绝总量为出站访问 5,250 次、权限 392 次、文件系统 158 次（出站访问占 5,800 次总量的 90.5%）；但发生过拒绝的试验数差距较小：出站访问 500 次、权限 283 次、文件系统 158 次。权限拒绝影响的任务数比出站访问更多（60 项，对比 55 项）。总计 2,051 次证据完整的试验中有 675 次至少发生了一次阻断；由于同一试验可能在多个维度遭遇拒绝，因此这个并集小于各维度发生次数之和 941。总量上的差距来自反复尝试：遇到出站访问限制的试验平均记录 10.5 次拒绝，权限拒绝为 1.4 次，文件系统拒绝恰为一次。单次试验最多出现 171 次出站拒绝。按目的地关联（归因属于启发式）后，62% 的出站拒绝量被归为在同一试验中对早先已被阻断目的地的重复尝试；对单一目的地最多重复尝试 86 次。重复尝试证明智能体持续请求某个目的地，但不能说明其意图：有意重试和客户端库自动重试无法区分（软件包安装器默认会重试其主机）。与可重试性的解释一致，最终呈现为 EROFS 或 EPERM 的拒绝完全没有重复尝试。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px4.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px4",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Of the 88 evaluable tasks, 14 record a verified zero and 48, including those 14, record five or fewer blocked actions in total, while the top five carry 52.8% of all volume: build-pov-ray (693), break-filter-js-from-html (685), mteb-retrieve (596), protein-assembly (555), and count-dataset-tokens (534); the top twelve carry 80%. Seven tasks record a blocked action in every verified trial: build-pmars, build-pov-ray, count-dataset-tokens, hf-model-inference, make-doom-for-mips, mteb-retrieve, and protein-assembly. Table 15 gives the distribution; totals include re-attempts, which only inflate counts, so membership in the low buckets is conservative.",
+    "zh": "在 88 项可评估任务中，14 项记录到已验证的零次阻断，48 项（包括这 14 项）总共不超过五次阻断；而前五项任务占全部阻断量的 52.8%：build-pov-ray（693 次）、break-filter-js-from-html（685 次）、mteb-retrieve（596 次）、protein-assembly（555 次）和 count-dataset-tokens（534 次）；前十二项任务占 80%。有七项任务在每次证据完整的试验中都出现阻断：build-pmars、build-pov-ray、count-dataset-tokens、hf-model-inference、make-doom-for-mips、mteb-retrieve 和 protein-assembly。表 15 给出分布；总数包含重复尝试，而重复尝试只会增加计数，因此低阻断区间中的任务数是保守估计。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px5.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px5",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "Grouping tasks by their solvability status (Appendix B): on the 49 evaluable tasks whose shipped reference solution survives the policy (the 50 of Appendix B minus schemelike-metacircular-eval), 14.4% of 1,107 trials record a blocked action (0.95 per trial); on the 32 tasks that required an authored witness, 51.6% of 764 trials (3.81 per trial); on the 7 tasks blocked by design, 67.8% of 180 trials (10.18 per trial). The gradient is robust to the evidence gate: with truncated-trace trials included it reads 15.2%, 54.9%, and 69.8%.",
+    "zh": "按任务可解状态分组（附录 B）：在 49 项可评估、且其随附参考解在策略下仍可用的任务上（附录 B 的 50 项减去 schemelike-metacircular-eval），1,107 次试验中有 14.4% 记录了阻断动作（每次试验 0.95 次）；在需要自行编写见证解的 32 项任务上，764 次试验中有 51.6% 记录了阻断（每次试验 3.81 次）；在设计上受阻的 7 项任务上，180 次试验中有 67.8% 记录了阻断（每次试验 10.18 次）。这一梯度对证据筛选稳健：若计入轨迹被截断的试验，比例分别为 15.2%、54.9% 和 69.8%。"
+  },
+  {
+    "id": "Sx15.SSx1.SSS0.Px6.p1.1",
+    "kind": "p",
+    "source": {
+      "section": "Sx15.SSx1.SSS0.Px6",
+      "source_version": "arXiv:2608.02670v1"
+    },
+    "en": "On witness tasks, trials with no blocked action pass 66.2% against 46.7% for trials with at least one, and failing trials record 2.7 times the blocked actions of passing trials (5.88 against 2.20). On reference-compatible tasks the pass gap persists (80.5% against 59.1%) but the volume relation inverts (passing trials average 1.04 against 0.67): there, hitting a wall is incidental, and failures are mostly not blockage-shaped. On blocked-by-design tasks no verified trial passes, except 13 trials of count-dataset-tokens, precisely the verifier artifact documented in Appendix C; that this analysis independently isolates the same task corroborates both the labels and the evidence. All of these are diagnostic associations, not causes: blockage evidence alone cannot establish why a trial failed, harder tasks are both more blocked and more failed, and an agent that anticipates the policy and never attempts a denied operation leaves no evidence at all.",
+    "zh": "在具有可解性见证的任务上，没有阻断动作的试验通过率为 66.2%，至少有一次阻断的试验通过率为 46.7%；失败试验记录的阻断次数是通过试验的 2.7 倍（5.88 次，对比 2.20 次）。在参考解兼容的任务上，通过率差距仍存在（80.5%，对比 59.1%），但阻断量关系反转（通过试验平均 1.04 次，失败试验为 0.67 次）：在这些任务上，遇到限制只是伴随现象，失败大多并非由阻断造成。在设计上受阻的任务中，没有任何证据完整的试验通过；count-dataset-tokens 的 13 次试验例外，它们正是附录 C 所记录的验证器问题。独立分析再次识别出同一任务，印证了标签和证据。这些都只是诊断性关联，而非因果关系：阻断证据本身无法证明试验失败的原因；较难的任务既更常遭遇阻断，也更常失败；而预先意识到策略、从不尝试被拒操作的智能体不会留下任何阻断证据。"
+  }
+]

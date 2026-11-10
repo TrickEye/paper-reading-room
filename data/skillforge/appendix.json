@@ -1,0 +1,602 @@
+[
+  {
+    "zh": "附录 A AI 辅助的使用",
+    "kind": "h2",
+    "id": "A1",
+    "en": "A Use of AI Assistance"
+  },
+  {
+    "zh": "在准备本稿件的过程中，我们在两种有限的、非科学性的工作中使用了大语言模型：",
+    "kind": "p",
+    "id": null,
+    "en": "We used large language models in two limited, non-scientific capacities during the preparation of this manuscript:"
+  },
+  {
+    "zh": "（1）代码审查：识别实验与评估脚本中的错误、风格不一致及潜在边界情况；以及",
+    "kind": "p",
+    "id": null,
+    "en": "(1) Code review: identifying bugs, style inconsistencies, and potential edge cases in our experiment and evaluation scripts; and"
+  },
+  {
+    "zh": "（2）语法和行文审查：校对草稿中的语法错误、不自然的措辞及排印问题。",
+    "kind": "p",
+    "id": null,
+    "en": "(2) Grammar and prose review: proofreading draft text for grammatical errors, awkward phrasing, and typographical issues."
+  },
+  {
+    "zh": "我们没有将任何 AI 工具用于科学构思、实验设计、结果解释或实质性论断的撰写。所有概念贡献、方法决策、分析和结论均完全由作者完成。我们相信，这一披露符合研究界对透明度的期望。",
+    "kind": "p",
+    "id": null,
+    "en": "No AI tool was used for scientific ideation, experimental design, result interpretation, or the writing of substantive claims. All conceptual contributions, methodological decisions, analyses, and conclusions are solely the work of the authors. We believe this disclosure aligns with the transparency expectations of the research community."
+  },
+  {
+    "zh": "附录 B 实现细节",
+    "kind": "h2",
+    "id": "A2",
+    "en": "B Implementation Details"
+  },
+  {
+    "zh": "B.1 基础设施与评估设置",
+    "kind": "h3",
+    "id": "A2.SS1",
+    "en": "B.1 Infrastructure and Evaluation Settings"
+  },
+  {
+    "zh": "基础设施。所有实验、技能归纳运行和智能体评估均使用 Google 的 Agent Development Kit（ADK）进行编排，并通过 Vertex AI API 访问 Gemini 模型系列。为在标准化环境中开展评估，我们改造了 τ²-Bench 和 Terminal-Bench 的原始代码库，使其原生兼容 ADK 框架。",
+    "kind": "p",
+    "id": null,
+    "en": "Infrastructure. All experiments, skill induction runs, and agent evaluations were orchestrated using Google’s Agent Development Kit (ADK), with the Vertex AI API used to access the Gemini model family. To evaluate on standardized environments, we adapted the original codebases of τ²-Bench and Terminal-Bench to be natively compatible with the ADK framework."
+  },
+  {
+    "zh": "数据划分。对于 τ²-Bench，我们遵循基准提供的官方训练／测试划分。由于没有官方验证集，我们将官方训练集随机分成相等的两半：T_train 用于技能归纳，T_val 用于经验验证，同时保持官方测试集 T_test 不变，用于最终评估。我们对 Terminal-Bench 应用相同过程。在所有情况下，T_test 从不用于技能构建或验证。在 T_train 内，T_contrast 仅表示同时观察到成功与失败轨迹的任务子集。",
+    "kind": "p",
+    "id": null,
+    "en": "Data splits. For τ²-Bench, we follow the official train/test split provided by the benchmark. Because no official validation split is available, we randomly partition the official training set into two equal halves: T_train for skill induction and T_val for empirical validation, while keeping the official test set T_test untouched for final evaluation. We apply the same procedure to Terminal-Bench. In all cases, T_test is never used during skill construction or validation. Within T_train, T_contrast denotes only the subset of tasks for which both successful and failed trajectories are observed."
+  },
+  {
+    "zh": "轨迹收集。为在技能构建中产生混合结果轨迹，我们在一小组推理时配置下运行同一任务。具体而言，将解码温度从 0.5 变化到 1.0，并依据骨干模型改变推理预算。对于 Gemini 2.5 Flash，使用 8192 token 和 auto 两种推理预算；对于 Gemini 3.0 Flash，使用 low、medium 和 high 思考等级。这些变化只用于轨迹收集，以增加混合结果任务的数量，并暴露同一任务上的多样程序性行为。留出验证阶段只保留下游影响为正的技能，从而缓解特定配置造成的产物偏差。",
+    "kind": "p",
+    "id": null,
+    "en": "Trajectory collection. To induce mixed-outcome trajectories for skill construction, we run the same task under a small set of inference-time configurations. In particular, we vary the decoding temperature from 0.5 to 1.0 and also vary the reasoning budget depending on the backbone model. For Gemini 2.5 Flash, we use reasoning budgets of 8192 tokens and auto; for Gemini 3.0 Flash, we use low, medium, and high thinking levels. These variations are used only during trajectory collection to increase the number of mixed-outcome tasks and expose diverse procedural behaviors on the same task. Configuration-specific artifacts are mitigated by the held-out validation stage, which retains only skills with positive downstream impact."
+  },
+  {
+    "zh": "评估设置。除非另有说明，我们以解码温度 1.0 评估智能体，每个任务运行 5 次试验以估计一致性。确切模型名称、试验次数及并发设置随每张实验表报告，而不假定所有基准都采用同一全局配置。",
+    "kind": "p",
+    "id": null,
+    "en": "Evaluation settings. Unless otherwise stated, we evaluate agents at decoding temperature 1.0 and run 5 trials per task for consistency estimation. Exact model names, trial counts, and concurrency settings are reported alongside each experiment table, rather than assuming a single global configuration across all benchmarks."
+  },
+  {
+    "zh": "流程默认设置。技能生成默认使用对比模式：对比式起草中，每个结果组（成功和失败）最多使用 6 条轨迹；单一结果起草最多使用 4 条轨迹。生成器 LLM 以低温度运行（起草为 0.25，批量精炼为 0.15），并输出结构化 JSON，以保证候选技能可解析。保留技能池上限为 50 个技能；起草时向生成器展示至多 20 个已有技能，以减少冗余。政策文本截断为 6,000 个字符，以保持在上下文限制内。个别实验脚本可能在注明处覆盖这些默认值；完整配置细节见随附代码仓库。",
+    "kind": "p",
+    "id": null,
+    "en": "Pipeline defaults. Skill generation uses contrastive mode by default, with up to 6 trajectories per outcome group (successful and failed) for contrastive drafting and up to 4 trajectories for single-outcome drafting. The generator LLM is run at low temperature (0.25 for drafting and 0.15 for batch refinement) with structured JSON outputs to ensure parseable skill candidates. The retained skill pool is capped at 50 skills, with up to 20 existing skills shown to the generator during drafting to reduce redundancy. Policy text is truncated at 6,000 characters to stay within context limits. Individual experiment scripts may override these defaults where noted; full configuration details are provided in the accompanying code repository."
+  },
+  {
+    "zh": "生成的技能。我们概述本方法在生成、精炼和过滤后所使用的最终技能集。对于航空领域，实验使用的最终技能集包含 7 个技能：airline-baggage-allowance-logic、airline-cancellation-refund-validation、airline-disruption-compensation-and-disputes、airline-itinerary-search-optimization、airline-mirror-booking-workflow、airline-modification-financial-validation 和 airline-rebooking-workflow。这些技能对应航空智能体中反复出现的决策点，例如退款验证、重新订票、行程搜索、付款与票价差额核查，以及航班中断相关的补偿处理。",
+    "kind": "p",
+    "id": null,
+    "en": "Skills Generated. We summarize the final skill sets used by our method after generation, refinement, and filtering. For the airline domain, the final skill set used in our experiments contains 7 skills: airline-baggage-allowance-logic, airline-cancellation-refund-validation, airline-disruption-compensation-and-disputes, airline-itinerary-search-optimization, airline-mirror-booking-workflow, airline-modification-financial-validation, and airline-rebooking-workflow. These skills correspond to recurring airline-agent decision points, such as refund validation, rebooking, itinerary search, payment and fare-difference checking, and disruption-related compensation handling."
+  },
+  {
+    "zh": "对于编码和终端任务，最终 Terminal-Bench 技能集存放在 Memory/Procedural_Memory/Outputs/tb_w8_skills 下。它包含 5 个技能：glibc-compat-legacy-c、secret-sanitization-workflow、workflow-security-audit、qemu-initramfs-media-integration 和 cli-tool-feature-extension。这些技能编码了可复用的软件工程程序，例如兼容性修复、安全审计、密钥移除、命令行功能扩展，以及 QEMU/initramfs 集成。",
+    "kind": "p",
+    "id": null,
+    "en": "For coding and terminal tasks, the final Terminal-Bench skill set is stored under Memory/Procedural_Memory/Outputs/tb_w8_skills. It contains 5 skills: glibc-compat-legacy-c, secret-sanitization-workflow, workflow-security-audit, qemu-initramfs-media-integration, and cli-tool-feature-extension. These skills encode reusable software-engineering procedures such as compatibility fixes, security auditing, secret removal, command-line feature extension, and QEMU/initramfs integration."
+  },
+  {
+    "zh": "对于 tau2-retail，最终精炼后的零售技能库在 skills/tau2_retail_cheatsheets_v2 中包含 25 个技能。这些技能捕捉常见零售智能体失败模式，包括多意图澄清、替换商品确认、交易范围确认、不可逆操作确认，以及交易更新前的信息验证。作为具体示例，我们在下方展示 address-multi-part-requests 的完整技能卡。",
+    "kind": "p",
+    "id": null,
+    "en": "For tau2-retail, the final refined retail library contains 25 skills in skills/tau2_retail_cheatsheets_v2. These skills capture common retail-agent failure patterns including multi-intent clarification, replacement-item confirmation, transaction-scope confirmation, irreversible-action confirmation, and information verification before transactional updates. As a concrete example, we show the full skill card for address-multi-part-requests below."
+  },
+  {
+    "zh": "---\nname: address-multi-part-requests\ndescription: 确保用户多部分请求中所有不同组成部分都得到确认和处理，防止仅部分满足。\nmetadata:\n  benchmark: tau2_retail_cheatsheets_v2\n---\n## 第 1 层：元数据与描述\n- 描述：确保用户多部分请求中所有不同组成部分都得到确认和处理，防止仅部分满足。\n## 第 2 层：指南\n### 一般指南\n- 始终解析用户初始陈述中的所有显式和隐式意图。\n- 确认理解多部分请求的全部部分。\n- 不要假定一种请求类型优先于另一种。\n- 如果存在多个意图，向用户澄清先处理哪一部分。\n- 在确认所有组成部分前，避免处理请求中的任何部分。\n### 具体指南\n- 如果用户既提问又请求操作，确认两者并询问：“我理解您有关于商品的问题，也想发起退货。您希望先处理哪一个？”\n- 在发起任何交易操作（例如退货）之前，明确确认涉及的具体商品或细节。\n- 如果存在信息查询，确保已回答，或在用户同意下明确推迟处理。\n- 如果同时存在信息查询，避免立即执行交易请求。\n- 在执行任何操作之前，使用概括性陈述确认已理解请求的所有部分。\n## 第 3 层：上下文\n- 问题模式：未能处理用户多部分请求中所有不同的组成部分。\n- 状态特征：用户初始陈述包含多个不同请求或意图（例如信息查询和交易操作）。\n- 绕过策略：\n  1. 识别用户话语中的所有不同意图。\n  2. 向用户确认每个已识别意图。\n  3. 明确询问用户希望先处理哪一部分。\n  4. 在处理任何交易部分前，确认与该交易有关的具体细节。",
+    "kind": "code",
+    "id": null,
+    "en": "---\nname: address-multi-part-requests\ndescription: Ensures all distinct components of a user's multi-part request are acknowledged and addressed, preventing partial fulfillment.\nmetadata:\n  benchmark: tau2_retail_cheatsheets_v2\n---\n## Layer 1: Metadata & Description\n- Description: Ensures all distinct components of a user's multi-part request are acknowledged and addressed, preventing partial fulfillment.\n## Layer 2: Guidelines\n### General Guidelines\n- Always parse the user's initial statement for all explicit and implicit intents.\n- Confirm understanding of all parts of a multi-part request.\n- Do not assume prioritization of one request type over another.\n- Seek user clarification on which part to address first if multiple intents are present.\n- Avoid proceeding with any part of a request until all components are acknowledged.\n### Specific Guidelines\n- If a user asks questions AND requests an action, acknowledge both and ask,'I understand you have questions about products and also want to initiate returns. Which would you like to tackle first?'\n- Before initiating any transactional action (like returns), explicitly confirm the specific items or details involved.\n- If an informational query is present, ensure it is addressed or explicitly deferred with user consent.\n- Avoid immediately executing a transactional request if an informational query is also present.\n- Use a summary statement to confirm all understood parts of the request before proceeding with any action.\n## Layer 3: Context\n- Problem Pattern: Failing to address all distinct components of a multi-part user request.\n- State Signature: User's initial statement contains multiple, distinct requests or intents (e.g., informational query and transactional action).\n- Bypass Strategy:\n1. Identify all distinct intents within the user's utterance.\n2. Acknowledge each identified intent to the user.\n3. Explicitly ask the user which component they would like to address first.\n4. Before proceeding with any transactional component, confirm specific details related to that transaction."
+  },
+  {
+    "zh": "更多细节请见补充材料中随附的代码。",
+    "kind": "p",
+    "id": null,
+    "en": "For mode details, please see our code attached in the supplemental materials."
+  },
+  {
+    "zh": "B.2 τ²-Bench 修订",
+    "kind": "h3",
+    "id": "A2.SS2",
+    "en": "B.2 τ²-Bench Revisions"
+  },
+  {
+    "zh": "在 τ²-Bench 实验中，我们使用基于公开发布的 tau2-bench-revised 的修订版基准配置。² 根据发布的修订说明，这一资源提供了两项基准侧改动：",
+    "kind": "p",
+    "id": null,
+    "en": "For our τ²-Bench experiments, we used a revised benchmark configuration based on the public tau2-bench-revised release.2 According to the released revision notes, this resource provides two benchmark-side changes:"
+  },
+  {
+    "zh": "1. 航空领域任务修复，记录于航空任务修订文件。",
+    "kind": "p",
+    "id": null,
+    "en": "1. Airline domain task fixes, documented in the airline task revision file."
+  },
+  {
+    "zh": "2. 零售用户模拟提示词改进，旨在减少任务过早终止。",
+    "kind": "p",
+    "id": null,
+    "en": "2. Retail user simulation prompt improvements, intended to reduce premature task termination."
+  },
+  {
+    "zh": "我们使用这些修订后的基准文件替换相应的原始 τ²-Bench 资源。",
+    "kind": "p",
+    "id": null,
+    "en": "We used these revised benchmark files as replacements for the corresponding original τ²-Bench resources."
+  },
+  {
+    "zh": "B.3 跨基准的结构化技能格式",
+    "kind": "h3",
+    "id": "A2.SS3",
+    "en": "B.3 Structured Skill Format Across Benchmarks"
+  },
+  {
+    "zh": "所有技能均源自一个主要的 SKILL.md 文件，其中包含用于动态元数据提取的标准化 YAML 前置元数据：",
+    "kind": "p",
+    "id": null,
+    "en": "All skills originate from a primary SKILL.md file that includes a standardized YAML frontmatter for dynamic metadata extraction:"
+  },
+  {
+    "zh": "---\nname: <skill-name>\ndescription: <何时加载此技能，以及它有何帮助>\n---",
+    "kind": "code",
+    "id": null,
+    "en": "---\nname: <skill-name>\ndescription: <when to load this skill and what it helps with>\n---"
+  },
+  {
+    "zh": "对于 Tau-Bench 风格的对话技能，指南通常在这一单独文档中即可自成一体。正文聚焦可复用工具调用程序及对政策敏感的决策规则，组织为如下部分：",
+    "kind": "p",
+    "id": null,
+    "en": "For Tau-Bench style conversational skills, the guidance is typically self-contained within this single document. The body focuses on reusable tool-call procedures and policy-sensitive decision rules, organized into sections such as:"
+  },
+  {
+    "zh": "² https://github.com/AGI-Eval-Official/tau2-bench-revised",
+    "kind": "note",
+    "id": null,
+    "en": "2https://github.com/AGI-Eval-Official/ tau2-bench-revised"
+  },
+  {
+    "zh": "## 何时使用\n## 关键序列模式\n## 常见失败变体\n## 优选程序\n## 能力协调",
+    "kind": "code",
+    "id": null,
+    "en": "## When to Use\n## Key Sequence Pattern\n## Common Failure Variants\n## Preferred Procedure\n## Capability Reconciliation"
+  },
+  {
+    "zh": "对于 SWE-Bench 和 Terminal-Bench 风格的编码技能，组织方式本质上是分层的，以支持渐进式披露。根 SKILL.md 充当高层入口或操作手册：",
+    "kind": "p",
+    "id": null,
+    "en": "For SWE-Bench and Terminal-Bench style coding skills, the organization is inherently hierarchical to support progressive disclosure. The root SKILL.md acts as a high-level entry point or playbook:"
+  },
+  {
+    "zh": "## 上下文\n## 难点原因\n## 实现策略\n## 代码模式\n## 调试方法\n## 常见错误\n## 验证",
+    "kind": "code",
+    "id": null,
+    "en": "## Context\n## Why This Is Challenging\n## Implementation Strategy\n## Code Patterns\n## Debugging Approach\n## Common Mistakes\n## Verification"
+  },
+  {
+    "zh": "关键在于，为避免淹没智能体的上下文窗口，这个根文档不包含所有密集脚本或代码片段。相反，诸如 ## Debugging Approach 或 ## Code Patterns 的部分提供高层概述，并附上指向更深层专用子文档的明确文件路径。如果智能体判断某种调试策略与当前上下文相关，就可以继续调用工具，加载那些有针对性的、更长的代码模式和验证技术。这样，智能体只有在必要时才会动态深入复杂程序，从而最大化上下文空间与 token 效率。",
+    "kind": "p",
+    "id": null,
+    "en": "Crucially, to prevent overwhelming the agent’s context window, this root document does not contain every dense script or code snippet. Instead, sections like ## Debugging Approach or ## Code Patterns provide high-level summaries alongside explicit file paths pointing to deeper, specialized sub-documents. If the agent determines that a particular debugging strategy is relevant to its current context, it can issue subsequent tool calls to load those targeted, longer code patterns and verification techniques. This allows the agent to dynamically drill down into complex procedures only when necessary, maximizing both context space and token efficiency."
+  },
+  {
+    "zh": "B.4 统计分析",
+    "kind": "h3",
+    "id": "A2.SS4",
+    "en": "B.4 Statistical Analysis"
+  },
+  {
+    "zh": "显著性计算。由于一致性以从 Pass¹（例如 Pass@1）到 Pass⁵ 的曲线报告，我们从两个层次量化不确定性。对绘制的每一个 Passᵏ 值，报告通过对任务进行 bootstrap 重采样计算的 95% 置信区间：反复对评估任务进行有放回重采样，在每个重采样集上重新计算 Passᵏ，并取所得 bootstrap 分布的第 2.5 和第 97.5 百分位数。对于整体显著性，我们用一致性曲线下的归一化面积概括每个任务：",
+    "kind": "p",
+    "id": null,
+    "en": "Significance Calculation. Because consistency is reported as a curve over Pass1 (e.g. Pass @ 1)– Pass5, we quantify uncertainty at two levels. For each plotted Passk value, we report a 95% confidence interval computed by bootstrap resampling over tasks: we repeatedly resample the evaluation tasks with replacement, recompute Passk on each resample, and take the 2.5th and 97.5th percentiles of the resulting bootstrap distribution. For overall significance, we summarize each task by the normalized area under its consistency curve,"
+  },
+  {
+    "zh": "AUC_i = (1/5) ∑_{k=1}^5 Pass_i^k，",
+    "kind": "equation",
+    "id": null,
+    "en": "AUC_i = (1/5) ∑_{k=1}^5 Pass_i^k,"
+  },
+  {
+    "zh": "并对逐任务 AUC 值使用配对 Wilcoxon 符号秩检验，将各方法与 No Skill 基线比较。这样对所有 k 值赋予相同权重；其他权重方式（例如，为单次试验表现强调较小 k，或为一致性强调较大 k）会产生不同但相关的概括结果。",
+    "kind": "p",
+    "id": null,
+    "en": "and compare methods against the No Skill baseline using a paired Wilcoxon signed-rank test over the per-task AUC values. This weights all values of k equally; alternative weightings (e.g., emphasizing small k for single-trial performance or large k for consistency) would yield different but correlated summaries."
+  },
+  {
+    "zh": "B.5 流程统计",
+    "kind": "h3",
+    "id": "A2.SS5",
+    "en": "B.5 Pipeline Statistics."
+  },
+  {
+    "zh": "逐技能诊断。表 2 报告 τ²-Bench Airline（Gemini 3.0 Flash）上每个保留技能被智能体调用的频率，以及这些回合中成功的比例。",
+    "kind": "p",
+    "id": null,
+    "en": "Per-Skill Diagnostics Table 2 reports, for each retained skill on τ²-Bench Airline (Gemini 3.0 Flash), how often the agent invoked it and the fraction of those episodes that succeeded."
+  },
+  {
+    "zh": "调用集中在少数主导技能上。两个技能（modification-financial-validation 和 cancellation-refund-validation）占全部加载的 73%，另有三个技能触发少于 30 次。这种集中性表明，少数程序性决策点主导了该领域，与我们的动机判断一致：一致性失败源于一组数量有限、反复出现的失误模式，而非广泛的能力缺口。",
+    "kind": "p",
+    "id": null,
+    "en": "Invocations concentrate on a few dominant skills. Two skills (modification-financial-validation and cancellation-refund-validation) account for 73% of all loads, while three skills fire fewer than 30 times. This concentration suggests that a small number of procedural decision points dominate the domain, consistent with our motivating claim that consistency failures stem from a bounded set of recurring slip patterns rather than broad capability gaps."
+  },
+  {
+    "zh": "条件成功率存在差异，但平均仍高于基线。逐技能成功率从 33.3% 到 93.3% 不等，七个技能中有六个超过或接近无技能基线 55.2%。唯一例外（itinerary-search-optimization）被保留，是因为它在验证集上产生了正的平均影响（公式 4）——它有助于其被加载的那些任务，尽管那些任务本身就很难。",
+    "kind": "p",
+    "id": null,
+    "en": "Conditional success varies but stays above baseline on average. Per-skill success rates range from 33.3% to 93.3%, with six of seven skills exceeding or closely matching the no-skill baseline of 55.2%. The single exception (itinerary-search-optimization) was retained because it produced positive average impact on the validation split (Eq. 4)—it helps the tasks it loads on, even though those tasks are intrinsically hard."
+  },
+  {
+    "zh": "Token 效率。一个自然的问题是，正文报告的提升来自提取技能的内容、推理时提供技能的机制，还是两者兼有。为分离提供方式的贡献，我们固定技能池，只改变向智能体展示技能的方式：（i）No Skill，未增强的基线；（ii）Full Prompt Guidance，在回合开始时把所有保留技能串接到系统提示词中；（iii）On-Demand Loading，采用分层检索，默认只展示元数据，当智能体判断相关时才通过显式工具调用加载完整技能内容。",
+    "kind": "p",
+    "id": null,
+    "en": "Token Efficiency. A natural question is whether the gains reported in the main text come from the content of the extracted skills, the delivery mechanism used to surface them at inference time, or both. To isolate the contribution of delivery, we hold the skill pool fixed and vary only how skills are exposed to the agent: (i) No Skill, the unaugmented baseline; (ii) Full Prompt Guidance, in which all retained skills are concatenated into the system prompt at episode start; and (iii) On-Demand Loading, the hierarchical retrieval, where only metadata is exposed by default and full skill content is loaded through an explicit tool call when the agent judges it relevant."
+  },
+  {
+    "zh": "表 3 从四个维度报告 Terminal-Bench 结果：平均奖励、从单次试验到重复运行的一致性（Pass@1 → Pass⁵）、token 用量，以及按轮数衡量的对话长度。有三项观察尤为突出。首先，尽管与 On-Demand Loading 使用相同技能池，Full Prompt Guidance 的奖励甚至低于 No Skill 基线（0.493 对 0.512）。这表明，不论相关性如何都预加载全部指南，会用低效用内容冲淡智能体的推理，在没有适用技能的任务上还可能主动误导它。其次，On-Demand Loading 同时取得最佳奖励、从 Pass@1 到 Pass⁵ 的最小一致性下降，以及最低 token 用量，较 No Skill 减少 16.7% token，较 Full Prompt Guidance 减少 23.6%。节省 token 并不是牺牲质量的权衡，而是选择性检索的结果：只有当当前轨迹明确显示相关性时，智能体才加载详细程序性内容。第三，Full Prompt Guidance 使用的轮数（27.1）少于其他变体，但这反映的是过早终止而非效率；预加载上下文使智能体偏向最突出的技能，从而更早确定行动路线，这与其较低奖励一致。",
+    "kind": "p",
+    "id": null,
+    "en": "Table 3 reports results on Terminal-Bench across four axes: average reward, single-trial-to-repeated-run consistency (Pass@1 →Pass5), token usage, and conversation length in turns. Three observations stand out. First, Full Prompt Guidance underperforms even the No Skill baseline on reward (0.493 vs. 0.512), despite having access to the same skill pool as On-Demand Loading. This suggests that preloading all guidance regardless of relevance dilutes the agent’s reasoning with low-utility content and can actively mislead it on tasks where no skill applies. Second, On-Demand Loading achieves the best reward, the smallest consistency drop from Pass@1 to Pass5 , and the lowest token usage simultaneously, reducing tokens by 16.7% over No Skill and 23.6% over Full Prompt Guidance. The token savings are not a trade-off against quality but a consequence of selective retrieval: the agent loads detailed procedural content only when the current trajectory makes its relevance clear. Third, Full Prompt Guidance uses fewer turns (27.1) than the other variants, but this reflects premature termination rather than efficiency, the agent commits to a course of action earlier because the preloaded context biases it toward whichever skill is most prominent, which is consistent with its lower reward."
+  },
+  {
+    "zh": "综合来看，这些结果表明，对比依据（生成什么指南）与按需提供（何时展示指南）互为补充：在错误时机展示高质量技能，表现可能不如完全没有技能；而同样的技能经分层检索提供时，则在我们测量的每个维度上取得最强结果。",
+    "kind": "p",
+    "id": null,
+    "en": "Together, these results indicate that contrastive grounding (what guidance to generate) and on-demand delivery (when to surface it) are complementary: high-quality skills exposed at the wrong time can underperform no skills at all, while the same skills routed through hierarchical retrieval yield the strongest results on every axis we measure."
+  },
+  {
+    "zh": "B.6 任务适应性与渐进式披露",
+    "kind": "h3",
+    "id": "A2.SS6",
+    "en": "B.6 Task Adaptivity and Progressive Disclosure"
+  },
+  {
+    "zh": "程序性指南适当的深度与格式，取决于目标任务的复杂性特征。SkillForge 不强制单一技能模板；相反，每个技能的结构会根据任务需求调整。图 7 展示了两种代表性情形的对比。",
+    "kind": "p",
+    "id": null,
+    "en": "The appropriate depth and format of procedural guidance depends on the complexity profile of the target task. SkillForge does not enforce a single skill template; instead, the structure of each skill is adapted to match what the task demands. Fig. 7 illustrates this contrast along two representative regimes."
+  },
+  {
+    "zh": "对于短程、延迟敏感的任务——即所需工具调用较少、奖励快速果断回应的任务——轻量文本指南就已足够。这些设置的技能主要由触发条件和简洁的优选程序构成：简短的情境规则与决策边界，让智能体能快速吸收而不使上下文膨胀。Tau-Bench 代表了这种情形，其中大多数交互只涉及少量政策查询与工具调用。",
+    "kind": "p",
+    "id": null,
+    "en": "For short-horizon, latency-sensitive tasks— those that require relatively few tool calls and reward fast, decisive responses—lightweight text-based guidance is sufficient. Skills for these settings consist primarily of trigger conditions and a concise preferred procedure: short situational rules and decision boundaries that the agent can absorb quickly without context bloat. Tau-Bench, where most interactions involve a handful of policy lookups and tool calls, exemplifies this regime."
+  },
+  {
+    "zh": "对于长程、精度敏感的任务——即需要多次顺序工具调用、多步诊断或迭代修复的任务——技能受益于更深、渐进披露的结构。首先展示元数据与诊断模式，只有智能体识别出相关失败子类型后，才加载 shell 脚本、代码模板和逐步修复序列等更重的内容。Terminal-Bench 代表了这种情形，其中单个任务可能在诊断、补丁修改和验证中涉及数十次工具调用。例如，async-proxy-method-delegation 这类技能在元数据层包含 traceback 匹配模式，但将模板保留到按需检索时；若在已知失败子类型前就注入这些材料，会既无必要又分散注意力。",
+    "kind": "p",
+    "id": null,
+    "en": "For long-horizon, precision-sensitive tasks— those that require many sequential tool calls, multi-step diagnosis, or iterative repair—skills benefit from a deeper, progressively disclosed structure. Metadata and diagnostic patterns are exposed first, while heavier content such as shell scripts, code templates, and step-by-step repair sequences is loaded only after the agent identifies the relevant failure subtype. Terminal-Bench, where a single task may involve dozens of tool calls across diagnosis, patching, and verification, exemplifies this regime. For instance, a skill like async-proxy-method-delegation includes traceback-matching patterns at the metadata level but reserves its templates for on-demand retrieval, material that would be unnecessary and distracting if injected before the failure subtype is known."
+  },
+  {
+    "zh": "更广泛地说，设计原则是让技能粒度随任务复杂性扩展：简单任务需要简洁决策规则，复杂任务则受益于分层内容，随着轨迹缩小问题范围逐步展示。各基准技能格式的详细信息见附录 B.3。",
+    "kind": "p",
+    "id": null,
+    "en": "More broadly, the design principle is that skill granularity should scale with task complexity: simple tasks need concise decision rules, while complex tasks benefit from layered content that is revealed progressively as the trajectory narrows the problem. Details on the skill format for each benchmark are provided in Appendix B.3."
+  },
+  {
+    "zh": "B.7 技能集成：面向智能体的提示词与工具",
+    "kind": "h3",
+    "id": "A2.SS7",
+    "en": "B.7 Skill Integration: Agent-Facing Prompts and Tools"
+  },
+  {
+    "zh": "在推理时，我们支持两种互斥机制，向基础智能体展示技能：",
+    "kind": "p",
+    "id": null,
+    "en": "At inference time, we supported two mutually exclusive mechanisms for exposing skills to the base agent:"
+  },
+  {
+    "zh": "1. 基于工具的加载。在系统提示词中向智能体展示可用技能目录，包含每个技能的名称、描述及绝对文件路径。随后，智能体可调用 load_skill_report(path)，按需检索单个技能的完整内容。",
+    "kind": "p",
+    "id": null,
+    "en": "1. Tool-based loading. The agent is shown a catalog of available skills in the system prompt, including each skill’s name, description, and absolute file path. The agent may then call load_skill_report(path) to retrieve the full content of a single skill on demand."
+  },
+  {
+    "zh": "2. 内联注入。在初始化时加载全部技能内容，直接附加到系统提示词，不提供技能加载工具。",
+    "kind": "p",
+    "id": null,
+    "en": "2. Inline injection. All skill contents are loaded at initialization time and appended directly to the system prompt, without exposing a skill-loading tool."
+  },
+  {
+    "zh": "例如，τ²-Bench 中的基础智能体提示词为：",
+    "kind": "p",
+    "id": null,
+    "en": "For example, in τ²-Bench the base agent prompt is:"
+  },
+  {
+    "zh": "<instructions>\n你是一名客户服务智能体，根据下方提供的 <policy> 帮助用户。\n每一轮，你可以选择以下一种方式：\n• 向用户发送消息。\n• 发起工具调用。\n你不能同时做这两件事。\n尽量提供帮助，并始终遵循政策。\n始终确保只生成有效 JSON。\n</instructions>\n<policy> {{DOMAIN_POLICY}}</policy>",
+    "kind": "code",
+    "id": null,
+    "en": "<instructions>\nYou are a customer service agent that helps the user according to the\n<policy> provided below. In each turn you can either:\n• Send a message to the user.\n• Make a tool call. You cannot do both at the same time. Try to be helpful and always follow the policy. Always make sure you generate valid JSON only.\n</instructions>\n<policy> {{DOMAIN_POLICY}}</policy>"
+  },
+  {
+    "zh": "启用基于工具的加载时，会附加以下技能使用提示：",
+    "kind": "p",
+    "id": null,
+    "en": "When tool-based loading is enabled, the following skill-usage hint is appended:"
+  },
+  {
+    "zh": "技能是一套针对特定任务模式的可复用指令手册。每个列出的技能都包含描述和绝对文件路径。描述包括适用边界（何时使用、最少证据、何时不使用）。",
+    "kind": "p",
+    "id": null,
+    "en": "A skill is a reusable instruction playbook for a specific task pattern. Each listed skill includes a description and an absolute file path. Descriptions include applicability boundaries (use-when, minimum-evidence, do-not-use-when)."
+  },
+  {
+    "zh": "何时调用 load_skill_report：仅当当前用户场景明确匹配技能描述，且你即将执行该技能涵盖的相关程序或工具调用工作流时，才调用。",
+    "kind": "p",
+    "id": null,
+    "en": "When to call load_skill_report: call it only when the current user scenario clearly matches the skill description, and you are about to perform the related procedure or tool-calling workflow covered by that skill."
+  },
+  {
+    "zh": "何时不调用：场景不匹配描述触发条件时，不要加载技能；不要为不相关的工具或工作流加载技能；如果同一技能已在对话历史中较早加载，不要再次调用 load_skill_report。如果已加载技能不适用，继续执行，不要加载另一个不相关的技能。",
+    "kind": "p",
+    "id": null,
+    "en": "When NOT to call: do not load a skill when the scenario does not match the description trigger; do not load a skill for unrelated tools or workflows; and do not call load_skill_report again for the same skill if it was already loaded earlier in the conversation history. If a loaded skill is not applicable, continue without loading another unrelated skill."
+  },
+  {
+    "zh": "可用技能以结构化目录呈现：",
+    "kind": "p",
+    "id": null,
+    "en": "The available skills are rendered in a structured catalog:"
+  },
+  {
+    "zh": "<available_skills>\n<skill>\n<name>...</name>\n<description>...</description>\n<location>/path/to/SKILL.md</location>\n</skill>\n</available_skills>",
+    "kind": "code",
+    "id": null,
+    "en": "<available_skills>\n<skill>\n<name>...</name>\n<description>...</description>\n<location>/path/to/SKILL.md</location>\n</skill>\n</available_skills>"
+  },
+  {
+    "zh": "为防止任意文件访问，load_skill_report(path) 仅接受解析后位于已配置技能目录内的绝对路径。",
+    "kind": "p",
+    "id": null,
+    "en": "To prevent arbitrary file access, load_skill_report(path) only accepts absolute paths that resolve under the configured skill directories."
+  },
+  {
+    "zh": "附录 C 技能生成与评估的系统提示词",
+    "kind": "h2",
+    "id": "A3",
+    "en": "C System Prompts for Skill Generation and Evaluation"
+  },
+  {
+    "zh": "本附录提供实验中用于技能归纳与技能库构建的确切系统提示词模板。根据轨迹标注的可用性及所评估的具体基线，我们采用不同提示词变体，指导生成器 LLM 提取程序性指南。",
+    "kind": "p",
+    "id": null,
+    "en": "This appendix provides the exact system prompt templates used across our experiments for skill induction and library construction. Depending on the availability of trajectory annotations and the specific baseline being evaluated, we employ different prompt variants to instruct the generator LLM to extract procedural guidance."
+  },
+  {
+    "zh": "具体而言，我们使用以下提示词配置：",
+    "kind": "p",
+    "id": null,
+    "en": "Specifically, we utilize the following prompt configurations:"
+  },
+  {
+    "zh": "• 失败驱动归纳：图 8 详述仅从失败轨迹提取纠正技能与恢复策略的提示词。",
+    "kind": "p",
+    "id": null,
+    "en": "• Failure-Driven Induction: Figure 8 details the prompt used to extract corrective skills and recovery strategies exclusively from failed trajectories."
+  },
+  {
+    "zh": "• 无标签归纳：图 9 展示无标签设置的提示词，生成器 LLM 必须通过批判性分析未标注轨迹，推断较强与较弱的方法。",
+    "kind": "p",
+    "id": null,
+    "en": "• Unlabeled Induction: Figure 9 presents the prompt for the unlabeled setting, where the generator LLM must infer strong versus weak approaches by critically analyzing unannotated trajectories."
+  },
+  {
+    "zh": "• 自生成归纳：图 10 概述零样本基线提示词，模型直接从领域元数据与工具描述生成技能，不使用任何轨迹示范。",
+    "kind": "p",
+    "id": null,
+    "en": "• Self-Generated Induction: Figure 10 outlines the zero-shot baseline prompt, where the model generates skills directly from domain metadata and tool descriptions without any trajectory demonstrations."
+  },
+  {
+    "zh": "• 仅成功归纳：图 11 展示仅从成功轨迹提取高价值程序模式与捷径的提示词。",
+    "kind": "p",
+    "id": null,
+    "en": "• Success-Only Induction: Figure 11 shows the prompt used to extract high-value procedural patterns and shortcuts exclusively from successful trajectories."
+  },
+  {
+    "zh": "附录 D 定性案例研究",
+    "kind": "h2",
+    "id": "A4",
+    "en": "D Qualitative Case Studies"
+  },
+  {
+    "zh": "本节通过技能整合和技能精炼的两个具体示例，给出说明 SkillForge 如何在实践中影响智能体行为的定性案例研究，随后给出用于技能归纳和验证的完整提示词模板，以及正文引用的实际案例。更多示例和实现细节，请参阅随附代码文件。",
+    "kind": "p",
+    "id": null,
+    "en": "This section presents qualitative case studies illustrating how SkillForge affects agent behavior in practice with two concrete examples of skill consolidation and skill refinements , followed by the full prompt templates used for skill induction and validation and the actual case examples cited in the main paper. For additional examples and implementation details, we refer the reader to the accompanying code files."
+  },
+  {
+    "zh": "D.1 技能整合的完整示例",
+    "kind": "h3",
+    "id": "A4.SS1",
+    "en": "D.1 Worked Example of Skill Consolidation"
+  },
+  {
+    "zh": "本附录说明 SkillForge 如何将归纳出的候选技能整合到现有技能库。整合不是简单的追加操作：每个候选均会被规范化、与相近的已有技能比较、检查冗余或冲突，最终被合并、拒绝或作为新技能加入。",
+    "kind": "p",
+    "id": null,
+    "en": "This appendix illustrates how SKILLFORGE consolidates an induced candidate skill into the existing skill library. Consolidation is not a simple append operation: each candidate is normalized, compared against nearby existing skills, checked for redundancy or conflict, and either merged, rejected, or added as a new skill."
+  },
+  {
+    "zh": "归纳出的候选。考虑 TAU2-RETAIL 环境中的一条失败轨迹。用户询问：“你能检查一下我最近订单的收货地址吗？我可能需要修改它。”失败智能体立即更新用户个人资料地址，或未先展示当前地址并确认预期范围，就修改订单地址。相反，成功轨迹首先检索当前订单地址，向用户展示，询问修改适用于当前订单还是账户默认地址，并在执行更新前确认确切的新地址。归纳阶段从这一对比配对提出以下候选：",
+    "kind": "p",
+    "id": null,
+    "en": "Induced candidate. Consider a failed trajectory from the TAU2-RETAIL environment. The user asks: “Can you check the shipping address on my recent order? I might need it changed.” A failed agent immediately updates the user’s profile address, or changes an order address without first showing the current address and confirming the intended scope. In contrast, a successful trajectory first retrieves the current order address, shows it to the user, asks whether the change applies to the current order or to the account default, and confirms the exact new address before executing the update. From this contrastive pair, the induction stage proposes the following candidate: desc: distinguish checking, order"
+  },
+  {
+    "zh": "c = [name: confirm-address-update-scope\n     desc: 在执行之前区分检查、订单级更新和个人资料更新。]",
+    "kind": "code",
+    "id": null,
+    "en": "c = [name: confirm-address-update-scope; desc: distinguish checking, order-level updates, and profile updates prior to execution.]"
+  },
+  {
+    "zh": "步骤 1：规范化候选。首先，将候选重写为技能库使用的标准技能格式：名称、简短描述、使用条件、可选的不使用条件、程序性指南和失败特征。规范化使候选可与已有技能比较，并确保运行时智能体之后能仅从元数据决定是否加载。",
+    "kind": "p",
+    "id": null,
+    "en": "Step 1: Normalize the candidate. The candidate is first rewritten into the standard skill format used by the library: a name, short description, use condition, optional do-not-use condition, procedural guidance, and failure signature. This normalization makes the candidate comparable to existing skills and ensures that the runtime agent can later decide whether to load it from metadata alone."
+  },
+  {
+    "zh": "步骤 2：检索相近的已有技能。随后，SkillForge 在当前技能库中搜索任务触发条件、工具使用模式、约束或失败模式重叠的技能。对于地址更新候选，最相关的已有技能为：",
+    "kind": "p",
+    "id": null,
+    "en": "Step 2: Retrieve nearby existing skills. SKILLFORGE then searches the current library for skills with overlapping task triggers, tool-use patterns, constraints, or failure modes. For the addressupdate candidate, the most relevant existing skills are:"
+  },
+  {
+    "zh": "• prioritize-information-verification，涵盖“检查”“核实”或“确认”请求，指示智能体先显示所请求的信息再做修改；",
+    "kind": "p",
+    "id": null,
+    "en": "• prioritize-information-verification, which covers “check,” “verify,” or “confirm” requests and instructs the agent to display requested information before making changes;"
+  },
+  {
+    "zh": "• confirm-specific-modification-details，涵盖在执行前确认确切修改细节；",
+    "kind": "p",
+    "id": null,
+    "en": "• confirm-specific-modification-details, which covers confirming exact modification details before execution;"
+  },
+  {
+    "zh": "• prevent-unconfirmed-irreversible-action，防止未经明确确认就执行剧烈或不可逆操作。",
+    "kind": "p",
+    "id": null,
+    "en": "• prevent-unconfirmed-irreversible-action, which prevents drastic or irreversible actions without explicit confirmation."
+  },
+  {
+    "zh": "步骤 3：检查冗余与独特性。候选与已有验证和确认技能部分重叠，但并非完全冗余。已有技能涵盖宽泛的验证与修改确认行为，而该候选引入了更具体的边界条件：",
+    "kind": "p",
+    "id": null,
+    "en": "Step 3: Check redundancy and distinctness. The candidate partially overlaps with existing verification and confirmation skills, but it is not fully redundant. The existing skills cover broad verification and modification-confirmation behavior, while the candidate introduces a more specific boundary condition:"
+  },
+  {
+    "zh": "scope ∈ {仅显示，单个订单，个人资料／默认地址，多个订单}。",
+    "kind": "equation",
+    "id": null,
+    "en": "scope ∈ {display-only, single-order, profile/default, multiple orders}."
+  },
+  {
+    "zh": "相近技能没有明确区分这一范围。因此，候选贡献了一项独特且反复出现的失败特征：智能体可能在模糊的地址检查或修改请求后，更新错误的地址对象。",
+    "kind": "p",
+    "id": null,
+    "en": "This scope distinction is not explicit in the nearby skills. Therefore, the candidate contributes a distinct recurring failure signature: the agent may up- date the wrong address target after a vague addresscheck or address-change request."
+  },
+  {
+    "zh": "步骤 4：解决冲突并决定更新。由于候选是将已有验证行为具体化，而非与其矛盾，SkillForge 将它作为新技能加入，而不替换更宽泛的技能。整合决策为：",
+    "kind": "p",
+    "id": null,
+    "en": "Step 4: Resolve conflicts and decide the update. Because the candidate specializes existing verification behavior rather than contradicting it, SKILLFORGE adds it as a new skill rather than replacing the broader skills. The consolidation decision is:"
+  },
+  {
+    "zh": "Decision(c, L) = ADD_NEW_SKILL，",
+    "kind": "equation",
+    "id": null,
+    "en": "Decision(c, L) = ADD_NEW_SKILL,"
+  },
+  {
+    "zh": "其中 L 为当前技能库。当歧义具体涉及地址更新范围时，新技能有用；更宽泛的技能则继续适用于一般信息验证和修改确认。",
+    "kind": "p",
+    "id": null,
+    "en": "where L is the current skill library. The new skill is useful when the ambiguity is specifically about the scope of an address update, while the broader skills remain applicable to general information verification and modification confirmation."
+  },
+  {
+    "zh": "整合后的技能。最终整合技能作为新的 SKILL.md 文件加入技能库：",
+    "kind": "p",
+    "id": null,
+    "en": "Consolidated skill. The final consolidated skill is added to the library as a new SKILL.md file:"
+  },
+  {
+    "zh": "---\nname: confirm-address-update-scope\ndescription: 确保智能体在执行任何地址修改前，区分检查地址、更新某一订单的收货地址，以及更新个人资料／默认地址。\nmetadata:\n  benchmark: tau2_retail\n  source: consolidated_from_failures\n---\n## 何时使用\n当用户要求检查、核实、确认或修改地址，但操作的预期范围不明确时，使用此技能。\n## 何时不使用\n当用户已明确指定确切地址和确切范围时，不要使用此技能。\n## 程序性指南\n- 将包含“检查”“核实”或“确认”的地址请求优先视为信息验证。\n- 在提出或执行修改之前，检索并展示当前相关地址。\n- 如果用户说地址错误，询问更正后的地址，以及它适用于当前订单、多个订单，还是默认／个人资料地址。\n- 在执行更新前，重述确切订单 ID 或个人资料范围，以及新地址。\n- 除非用户明确要求，不要将地址变更应用于所有订单或个人资料。\n## 失败特征\n智能体在模糊的检查／修改请求后，执行范围错误的地址更新。\n## 绕过策略\n1. 识别是在检查还是修改。\n2. 检索并展示地址。\n3. 必要时询问更正后的地址。\n4. 询问修改适用于一个订单、多个订单，还是个人资料。\n5. 重述确切范围与地址。\n6. 确认后执行更新。",
+    "kind": "code",
+    "id": null,
+    "en": "---\nname: confirm-address-update-scope\ndescription: Ensures agent distinguishes between checking an address, updating one order's shipping address, and updating a profile/default address before executing any address change.\nmetadata:\n  benchmark: tau2_retail\n  source: consolidated_from_failures\n---\n## When to Use\nUse this skill when the user asks to check, verify, confirm, or change an address, but the intended scope of the action is ambiguous.\n## Do Not Use When\nDo not use this skill when the user has clearly specified both the exact address and the exact scope.\n## Procedural Guidance\n- Treat address requests containing \"check\", \"verify\", or \"confirm\" as information-verification first.\n- Retrieve and display the current relevant address before proposing or executing a change.\n- If the user says the address is wrong, ask for the corrected address and whether it applies to the current order only, multiple orders, or the default/profile address.\n- Before executing an update, restate the exact order ID or profile scope and the new address.\n- Do not apply an address change to all orders or to the profile unless explicitly requested.\n## Failure Signature\nAgent performs an address update with wrong scope after a vague check/change request.\n## Bypass Strategy\n1. Identify if checking or changing.\n2. Retrieve and display address.\n3. Ask for corrected address if needed.\n4. Ask if change applies to order, multiple orders, or profile.\n5. Restate exact scope and address.\n6. Execute update after confirmation."
+  },
+  {
+    "zh": "运行时效果。在运行时，智能体最初只看到技能元数据：",
+    "kind": "p",
+    "id": null,
+    "en": "Runtime effect. At runtime, the agent initially sees only the skill metadata:"
+  },
+  {
+    "zh": "<skill>\n<name>confirm-address-update-scope</name>\n<description>\n确保智能体在执行修改前，区分检查地址、更新某一订单地址，以及更新个人资料／默认地址。\n</description>\n<location>.../confirm-address-update-scope/SKILL.md</location>\n</skill>",
+    "kind": "code",
+    "id": null,
+    "en": "<skill>\n<name>confirm-address-update-scope</name>\n<description>\nEnsures agent distinguishes between checking an address, updating one order's address, and updating a profile/default address before executing a change.\n</description>\n<location>.../confirm-address-update-scope/SKILL.md</location>\n</skill>"
+  },
+  {
+    "zh": "如果当前任务涉及检查或修改地址，元数据足够具体，能让智能体加载该技能。因此，整合保留了运行时选择性：避免“行动前先验证”之类宽泛提醒，转而采用特定情境技能，明确何时验证、检查什么状态，以及工具调用前需要什么确认。",
+    "kind": "p",
+    "id": null,
+    "en": "If the current task involves checking or changing an address, the metadata is specific enough for the agent to load the skill. Thus, consolidation preserves runtime selectivity: broad reminders such as “verify before acting” are avoided in favor of a situation-specific skill that identifies when to verify, what state to inspect, and what confirmation is required before the tool call."
+  },
+  {
+    "zh": "小结。这个示例表明，整合依据三个问题过滤候选技能：",
+    "kind": "p",
+    "id": null,
+    "en": "Summary. This example shows that consolidation filters candidate skills according to three questions:"
+  },
+  {
+    "zh": "冗余？独特？冲突？",
+    "kind": "equation",
+    "id": null,
+    "en": "REDUNDANT? DISTINCT? CONFLICTING?"
+  },
+  {
+    "zh": "如果候选完全被已有技能覆盖，就合并其有用措辞，或丢弃候选。如果它增加了更明确的触发条件、新的失败特征或此前未覆盖的工具使用边界，则作为独立技能加入。如果它与已有技能冲突，则在插入前缩小适用范围。我们在随附补充代码的 situational_skill_builder.py 中提供完整提示词。",
+    "kind": "p",
+    "id": null,
+    "en": "If a candidate is fully covered by an existing skill, its useful wording is merged or the candidate is discarded. If it adds a sharper trigger, a new failure signature, or a previously uncovered tool-use boundary, it is added as a separate skill. If it conflicts with an existing skill, its applicability is narrowed before insertion. We provide the full prompt in situational_skill_builder.py in the accompanying supplemental code."
+  },
+  {
+    "zh": "D.2 被过滤候选的完整示例",
+    "kind": "h3",
+    "id": "A4.SS2",
+    "en": "D.2 Worked Examples of Filtered Candidates"
+  },
+  {
+    "zh": "为说明阶段 1 和阶段 3 的行为，我们在每个过滤阶段追踪一个被丢弃的候选。",
+    "kind": "p",
+    "id": null,
+    "en": "To illustrate the behavior of Stages 1 and 3, we trace one discarded candidate at each filtering stage."
+  },
+  {
+    "zh": "阶段 1：被 LLM 精炼丢弃。考虑从 τ²-Bench Retail 轨迹中起草的一个候选：",
+    "kind": "p",
+    "id": null,
+    "en": "Stage 1: discarded by LLM refinement. Consider a candidate drafted from τ²-Bench Retail trajectories:"
+  },
+  {
+    "zh": "name: verify-before-changing-things\ndescription: 当用户要求任何修改时加载。使用此技能在更新前再次核查细节。\nprocedure: 谨慎行事。再次核查用户请求。验证所有相关信息。",
+    "kind": "code",
+    "id": null,
+    "en": "name: verify-before-changing-things\ndescription: Load when the user asks for any change. Use this skill to double-check details before making updates.\nprocedure: Be careful. Double-check the user’s request. Verify all relevant information."
+  },
+  {
+    "zh": "阶段 1 的 LLM 审查器判定候选不符合四项核心标准中的三项。可操作性不通过，因为“谨慎行事”和“再次核查”不是可执行程序——技能未指出要检查的状态、要调用的工具或终止条件。范围不通过，因为触发条件（“任何修改”）混合了换货、地址更新、取消和商品修改，而这些需要不同程序。通用性以无益的方式不通过：候选措辞宽泛，却缺少具体、反复出现的失败特征，因此无法迁移到任何特定情形。严格来说，只有简洁性得到满足（候选很短），但精炼评分准则恰恰因此将少于 200 token 的候选视为可疑。该候选还与已保留技能（confirm-specific-modification-details、prevent-unconfirmed-irreversible-action）冗余，因此被丢弃而不是修改。",
+    "kind": "p",
+    "id": null,
+    "en": "The Stage 1 LLM reviewer rejects this candidate on three of the four core criteria. Actionability fails because “be careful” and “double-check” are not executable procedures—the skill names no state to inspect, no tool to call, and no termination condition. Scope fails because the trigger (“any change”) conflates exchanges, address updates, cancellations, and item modifications, which require distinct procedures. Generality fails in the unhelpful direction: the candidate is broadly worded but lacks a concrete recurring failure signature, so it transfers to nothing in particular. Only conciseness is technically satisfied (the candidate is short), but the refinement rubric treats sub-200-token candidates as suspect for exactly this reason. The candidate is also redundant with already-retained skills (confirm-specific-modification-details, prevent-unconfirmed-irreversible-action) and is discarded rather than revised."
+  },
+  {
+    "zh": "阶段 3：被经验验证丢弃。候选 escalate-emergency-flight-requests 通过了阶段 1 和 2，并在留出验证集上接受评估。记录的统计为：",
+    "kind": "p",
+    "id": null,
+    "en": "Stage 3: discarded by empirical validation. The candidate escalate-emergency-flight-requests survived Stages 1 and 2 and was evaluated on the held-out validation split. The recorded statistics are:"
+  },
+  {
+    "zh": "usage_count: 21, avg_reward_with: 0.714,\navg_reward_baseline: 0.810,\nreward_lift: −0.095, keep: false",
+    "kind": "code",
+    "id": null,
+    "en": "usage_count: 21, avg_reward_with: 0.714, avg_reward_baseline: 0.810, reward_lift:−0.095, keep: false"
+  },
+  {
+    "zh": "候选达到最低使用阈值（21 次调用 ≥ 5），但平均影响严格为负（δ̄^[s] = −0.095 < 0，不符合公式 4）。检查轨迹表明，该技能鼓励了过早升级处理：在本可通过标准工具序列解决的任务上，智能体转交人工或调用紧急程序，导致相对于相同匹配任务上的无技能基线，奖励下降。这个案例说明了阶段 3 的作用：候选可能格式良好、可操作且被频繁调用，却仍会降低部署表现。没有经验验证，这类技能就会悄然稀释技能池。",
+    "kind": "p",
+    "id": null,
+    "en": "The candidate met the minimum usage threshold (21 invocations ≥ 5) but showed a strictly negative average impact (¯ δ[s] =−0.095 < 0, violating Eq. 4). Inspection of its trajectories suggests the skill encouraged premature escalation: the agent transferred to a human or invoked emergency procedures on tasks that could have been resolved through standard tool sequences, lowering reward relative to the no-skill baseline on the same matched tasks. This case illustrates the role of Stage 3: a candidate may be well-formed, actionable, and frequently invoked, yet still degrade performance in deployment. Without empirical validation, such a skill would silently dilute the skill pool."
+  }
+]

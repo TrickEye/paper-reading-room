@@ -1,0 +1,194 @@
+[
+  {
+    "figure": 1,
+    "page": 1,
+    "file": "figure-01.png",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im1.png",
+    "width": 1586,
+    "height": 992,
+    "sha256": "c9926d409d4ee67ce9c41461e1f391aab88c898c7c42baa9f0b229d0147bf99d"
+  },
+  {
+    "figure": 2,
+    "page": 3,
+    "file": "figure-02.png",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im2.png",
+    "width": 1916,
+    "height": 821,
+    "sha256": "4e99b836343074e94f1e26af866b734e364fb84d42c40be35e2ced322f586bf3"
+  },
+  {
+    "figure": 3,
+    "page": 6,
+    "file": "figure-03.jpg",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im3.jpg",
+    "width": 1024,
+    "height": 474,
+    "sha256": "9d1b10d9ed87ed24b17ae560f792fbaaa68bbb889cf16c22c9f2a7938f5e1113"
+  },
+  {
+    "figure": 4,
+    "page": 7,
+    "file": "figure-04.png",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im1.png",
+    "width": 1600,
+    "height": 667,
+    "sha256": "e1a5b5e81c0ee9d16f9ea048ee158c05f62b0cd6bbba9393e5b7bcef4d4254cd"
+  },
+  {
+    "figure": 5,
+    "page": 8,
+    "file": "figure-05.png",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im5.png",
+    "width": 1672,
+    "height": 941,
+    "sha256": "29de13443b9c60e08741a49d009184b88bc3cc2161059a10fc2c44df3682be1f"
+  },
+  {
+    "figure": 6,
+    "page": 8,
+    "file": "figure-06.jpg",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im6.jpg",
+    "width": 1024,
+    "height": 710,
+    "sha256": "26a542b94f82cc07e72859d0cf1030cc4dd802dba2de2f09872506acf4edc51c"
+  },
+  {
+    "figure": 7,
+    "page": 16,
+    "file": "figure-07.jpg",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im7.jpg",
+    "width": 1024,
+    "height": 556,
+    "sha256": "ff3e213b7c072f5113f56232febabac71d7164b9529a6e6644b5143c44ca2469"
+  },
+  {
+    "figure": 8,
+    "page": 18,
+    "file": "figure-08.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      80,
+      70,
+      515,
+      423
+    ],
+    "width": 1305,
+    "height": 1059
+  },
+  {
+    "figure": 9,
+    "page": 21,
+    "file": "figure-09.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      80,
+      159,
+      515,
+      656
+    ],
+    "width": 1305,
+    "height": 1491
+  },
+  {
+    "figure": 10,
+    "page": 22,
+    "file": "figure-10.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      80,
+      129,
+      515,
+      687
+    ],
+    "width": 1305,
+    "height": 1674
+  },
+  {
+    "figure": 11,
+    "page": 23,
+    "file": "figure-11.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      77,
+      127,
+      283,
+      676
+    ],
+    "width": 618,
+    "height": 1647
+  },
+  {
+    "figure": 12,
+    "page": 23,
+    "file": "figure-12.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      310,
+      259,
+      521,
+      532
+    ],
+    "width": 633,
+    "height": 819
+  },
+  {
+    "figure": 13,
+    "page": 24,
+    "file": "figure-13.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      69,
+      78,
+      526,
+      313
+    ],
+    "width": 1371,
+    "height": 705
+  },
+  {
+    "figure": 14,
+    "page": 24,
+    "file": "figure-14.png",
+    "method": "original embedded image; unchanged bytes",
+    "pdf_image": "Im8.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "60682e9fc2f029aa32fad07d17cb7d38abf2843f6679cd71b3ab447d346ce89d"
+  },
+  {
+    "figure": 15,
+    "page": 25,
+    "file": "figure-15.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      69,
+      82,
+      526,
+      327
+    ],
+    "width": 1371,
+    "height": 735
+  },
+  {
+    "figure": 16,
+    "page": 25,
+    "file": "figure-16.png",
+    "method": "original PDF vector figure rendered in isolation; no page text or caption",
+    "bbox_top_left_points": [
+      69,
+      428,
+      526,
+      680
+    ],
+    "width": 1371,
+    "height": 756
+  }
+]

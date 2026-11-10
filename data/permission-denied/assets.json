@@ -1,0 +1,42 @@
+[
+  {
+    "figure": 1,
+    "file": "figure-01.svg",
+    "source_page": 4,
+    "method": "原 arXiv HTML 中的独立 SVG 图形文件，未重绘或裁切",
+    "width": 1500,
+    "height": 760,
+    "sha256": "6b2ee15809f176fec06c14542649044cc71901402161b70e9c6c841eb4f4227c",
+    "source_url": "https://arxiv.org/html/2608.02670v1"
+  },
+  {
+    "figure": 2,
+    "file": "figure-02.svg",
+    "source_page": 5,
+    "method": "原 arXiv HTML 中的独立 SVG 图形文件，未重绘或裁切",
+    "width": 751,
+    "height": 760,
+    "sha256": "2fd37daf04d708fbeb02aeea304091964dd58f566115c1ffa6d21cf09b949b6f",
+    "source_url": "https://arxiv.org/html/2608.02670v1"
+  },
+  {
+    "figure": 3,
+    "file": "figure-03.svg",
+    "source_page": 6,
+    "method": "原 arXiv HTML 中的独立 SVG 图形文件，未重绘或裁切",
+    "width": 239,
+    "height": 331,
+    "sha256": "191572fbe9446ab19327180316a521abf05da9897f10b74fa9cdb7a41f76934d",
+    "source_url": "https://arxiv.org/html/2608.02670v1"
+  },
+  {
+    "figure": 4,
+    "file": "figure-04.svg",
+    "source_page": 7,
+    "method": "原 arXiv HTML 中的独立 SVG 图形文件，未重绘或裁切",
+    "width": 300,
+    "height": 251,
+    "sha256": "7c74ada1ffb0b86d4c866eebedb7893153b176d22f9d37280118770d6b708ba7",
+    "source_url": "https://arxiv.org/html/2608.02670v1"
+  }
+]

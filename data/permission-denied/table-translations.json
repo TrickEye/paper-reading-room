@@ -1,0 +1,140 @@
+{
+  "cells": {
+    "1": {
+      "1": {"0":"策略","1":"模型","2":"SR（%）","3":"C（美元）","4":"SR（%）","5":"C（美元）"},
+      "2": {"0":"不受限（Control）"},
+      "4": {"0":"非 root（Non-root）"},
+      "6": {"0":"NIST 派生"},
+      "7": {"0":"高等级"}
+    },
+    "2": {
+      "0": {"0":"任务","1":"原始值","2":"改编值","3":"Δ（百分点）","4":"Control"}
+    },
+    "3": {
+      "0": {"0":"结果（运行比例）","1":"不受限（Control）","2":"非 root","3":"NIST 派生高等级"},
+      "1": {"0":"成功"},
+      "2": {"0":"超时"},
+      "3": {"0":"错误解"},
+      "4": {"0":"提前停止"}
+    },
+    "4": {
+      "0": {"0":"维度","1":"强制机制","2":"映射的 NIST 控制"},
+      "1": {"0":"网络","1":"所有出站流量都被强制通过环回代理；针对智能体用户的防火墙规则会拒绝任何绕过代理的流量，包括子进程发起的流量。云元数据和私有地址范围始终被拒绝。代理默认拒绝固定的 205 域开发者白名单以外的所有域名。该名单改编自 Claude Code on the web 的默认白名单，包含模型服务端点；不添加任务专用域名。被阻断的域名返回无正文的 HTTP 403；直接出站访问则因连接被拒而失败。"},
+      "2": {"0":"文件系统","1":"只有工作区、临时与共享内存路径（/tmp、/dev/shm），以及运行框架自身的运行时和缓存目录保持可写。主目录、/var/tmp 和操作系统目录树均以绑定挂载方式设为只读，因此写入会返回 EROFS。"},
+      "3": {"0":"权限","1":"智能体以专用普通用户身份运行，没有 sudoers 条目，且 root 密码已锁定，因此 sudo 和 su 提权会失败。内核设置 no_new_privs 标志，能力边界集为空，并移除 setuid 位。特权内核操作会返回 EPERM。"}
+    },
+    "6": {
+      "0": {"0":"任务","1":"过度规格化 → 增量式修复"},
+      "1": {"1":"只按 PATH 查找二进制文件；未检查提示中指定的 /app/sqlite 构建 → 同时接受 /app/sqlite（保留 PATH 检查）。"},
+      "2": {"1":"只能从 root 可写的 PATH 目录解析裸名称 Rscript → 搜索 PATH，否则使用智能体在 /app 中构建的 R。"},
+      "3": {"1":"执行 node /app/vm.js 时未设置工作目录，因此二进制文件加载依赖验证器的当前工作目录 → 固定 cwd=/app。"},
+      "4": {"1":"裸名称 R / Rscript 被解析为镜像自带但不含 RStan 的 /usr/bin/R → 优先使用智能体在 /app 中的 R 包装器，否则再查 PATH。"},
+      "5": {"1":"裸名称 git / ssh / ssh-keygen 需要 root 全局安装 → 优先从 PATH 查找，必要时回退到 /app；git 的 SSH 传输使用已解析到的 ssh。"}
+    },
+    "7": {
+      "0": {"0":"任务","1":"维度","2":"官方参考解为何失败","3":"可解性见证"},
+      "1": {"1":"文件系统/权限（F/P）","2":"apt 以 root 身份将 R 安装到系统范围。","3":"以 rootless apt-sysroot 将 r-base-core 与 openssl 安装到 /app/R/root；把 R 重定位到 /app（对 Rscript 内嵌的 R_HOME 作二进制补丁，并使用 LD 包装器）；用 oracle 密码通过 openssl -decrypt 解密受保护的 ars.R；加入所需的输入验证、对数凹性检查以及 test() / sample 输出。改编验证器从 /app/R/bin/Rscript 解析 Rscript。"},
+      "2": {"1":"文件系统/权限（F/P）","2":"apt 安装构建工具；随后以 root 身份把 sqlite3 安装到 /usr/local/bin。","3":"使用 rootless apt-sysroot（通过 apt-get --download-only 获取 build-essential、jimsh、tclsh，再用 dpkg-deb -x 解包到 /app/.rootless）；从预先提供的源码 tarball 构建 SQLite+gcov 到 /app/sqlite。改编验证器从 /app/sqlite/sqlite3 解析程序。"},
+      "3": {"1":"网络 + 文件系统/权限（N+F/P）","2":"以 root 身份从白名单外的 CRAN 安装 bnlearn 4.9。","3":"从 GitHub 上的 CRAN 镜像获取完全相同的 bnlearn 4.9 源码；编译到 /app 中用户级 R 库（没有非基础依赖）。"},
+      "4": {"1":"网络 + 文件系统/权限（N+F/P）","2":"需要原生依赖和全局链接，并从非可信主机下载 CIFAR-10。","3":"以 rootless 私有 sysroot 构建 Caffe；从 raw.githubusercontent.com 获取经过 SHA 固定的标准 CIFAR-10 .bin 批次。验证器本来就支持 /app 下的原生构建。"},
+      "5": {"1":"文件系统/权限（F/P）","2":"apt 安装 Stockfish，并用 pip --break-system-packages 把软件包装进 /usr。","3":"用 pip --target=/app/pylib 安装 numpy 和 python-chess；不使用 Stockfish，改用 is_checkmate() 检查一步将死；将 CV 图像原样保留并转成 FEN。"},
+      "6": {"1":"网络（N）","2":"从白名单外的 Debian 镜像通过 apt 安装 gnucobol3。","3":"跳过 apt（gnucobol 已预装，且验证器从不使用它）；用纯标准库编写移植版，输出与原格式逐字节一致。无需网络出站。"},
+      "7": {"1":"网络 + 文件系统/权限（N+F/P）","2":"依赖白名单外的 opam /coq-released 软件源和从源码编译的 OCaml，并需要 root。","3":"以 rootless apt-sysroot 从 noble universe 安装 OCaml 工具链；将固定版本 Coq 8.16.1 和 CompCert 3.13.1 从 GitHub 构建到 /app。"},
+      "8": {"1":"文件系统/权限（F/P）","2":"apt 安装 git/nginx/sshd，添加用户，并以 root 身份在 :22 端口运行系统 SSH 守护进程。","3":"将 git、openssh 和 paramiko 装入 conda-forge 环境 /app；以非 root 身份用 paramiko 自建 :22 SSH 服务，不依赖 UNIX 用户即可验证名为 user 的公钥登录；在 /app 中建立裸仓库、post-receive 和 :8080 HTTP 服务。改编验证器从 /app 解析工具。"},
+      "9": {"1":"文件系统/权限（F/P）","2":"以 root 身份通过 apt 安装 7zip 和 perl-lzma。","3":"使用 rootless apt-sysroot：通过 apt-get download 获取软件包并用 dpkg -x 解包到 /app/sysroot；使用预装的 John the Ripper 按数值掩码执行真实破解。"},
+      "10": {"1":"文件系统/权限（F/P）","2":"使用 gdb，并写入 /proc/sys/.../core_pattern（该路径不存在或只读）。","3":"只修改 /app/user.cpp：在自定义堆安装前，于 user_init() 中强制注册 iostream facet 节点；跳过 gdb 步骤。无需网络出站。"},
+      "11": {"1":"文件系统/权限（F/P）","2":"以 root 身份通过 apt 安装 emboss 和 primer3。","3":"跳过 apt（这些工具只用于打印诊断信息）；使用纯 coreutils 按标准偏移切分来构建引物。验证器会运行自己的 primer3。"},
+      "12": {"1":"文件系统/权限（F/P）","2":"以 root 身份通过 apt 安装 emboss 和 primer3。","3":"与 dna-assembly 相同，跳过 apt 并通过 coreutils 切分。"},
+      "13": {"1":"文件系统/权限（F/P）","2":"以 root 身份通过 apt 安装 tesseract，并用 uv run（缓存位于 /root 下）。","3":"真正执行 rootless OCR：通过 conda-forge 安装 tesseract 5.3.0 和逐字节相同的 tessdata；将 pymupdf / pytesseract 通过 pip 安装到 /app；标准分类器和解析器保持原样，只修改 tesseract 路径。（取代了早期未执行 OCR 的见证解。）"},
+      "14": {"1":"文件系统/权限（F/P）","2":"git merge 需要在 /root/.gitconfig 中设置提交者身份。","3":"将 HOME 指向 /app/home，注册身份和 safe.directory；重现标准 reflog 恢复并执行 merge -X theirs。git 已预装，无需网络出站。"},
+      "15": {"1":"网络（N）","2":"从白名单外的 Debian 镜像通过 apt 安装 tesseract / opencv。","3":"从 conda-forge 安装 tesseract，从 GitHub 获取 tessdata，从 PyPI 安装 opencv-python-headless；OCR 流程逐字节不变，且只向 /app 写入。"},
+      "16": {"1":"文件系统/权限（F/P）","2":"需要以 root 身份运行 useradd / chpasswd（写入 /etc/shadow），并在 :22 端口运行系统 sshd。","3":"以非 root 身份运行 :22 端口的 paramiko SSH 服务；无需 UNIX 用户即可用 git/password 进行密码认证；在 /app 中建立裸仓库、钩子和标准库 HTTPS :8443 服务。唯一的出站请求是 pip 获取 paramiko wheel。"},
+      "17": {"1":"网络（N）","2":"from_pretrained 从 HF hub / Xet CDN 流式下载权重（白名单外）。","3":"从 *.amazonaws.com 上的 HF 旧版 S3 获取逐字节相同的 config、vocab 和 pytorch_model.bin；固定文件大小和 sha256，并离线加载。"},
+      "18": {"1":"网络 + 文件系统/权限（N+F/P）","2":"从白名单外的主机编译 QEMU 5.2 并启动系统服务，需要 root。","3":"通过 rootless apt-sysroot 从 Ubuntu hirsute old-releases 获取 QEMU 5.2.0；将预装的 win311.img 设为只读；以非 root 身份启动 nginx:80 和 websockify:8080。"},
+      "19": {"1":"文件系统/权限（F/P）","2":"通过 pip 将 eigenpy 安装到系统 site-packages（root 权限的验证器会导入它）。","3":"通过 pip --target=/app/pylib 安装三个固定 wheel（使用 --no-deps，保留系统 numpy）；在 /app/eigen.py 中利用 site.addsitedir 于验证器进程内自动配置 sys.path。"},
+      "20": {"1":"网络（N）","2":"从白名单外的 Debian 镜像通过 apt 安装 grep / coreutils（且不需要）。","3":"跳过 apt，使用纯标准库处理已预装的 /app/logs。无需网络出站。"},
+      "21": {"1":"网络 + 文件系统/权限（N+F/P）","2":"从白名单外的 Debian 镜像通过 apt 安装 MIPS 交叉工具链。","3":"通过静态 micromamba 从 conda-forge 获取自包含的 LLVM 14.0.6；在 /app 中构建 freestanding 程序。改编验证器在 cwd=/app 下运行 vm.js。"},
+      "22": {"1":"网络 + 文件系统/权限（N+F/P）","2":"从白名单外的 CRAN 安装 rstan，并需要 root。","3":"以 rootless apt-sysroot 从 noble universe 安装 r-cran-rstan 2.32.5 及完整 Stan 依赖；让系统 R 指向 /app 中的 site-library。改编验证器优先解析 /app 的 R 包装器。"},
+      "23": {"1":"文件系统/权限（F/P）","2":"以 root 身份通过 apt 安装 git（镜像中未预装 git）。","3":"使用 rootless apt-sysroot 将 git 及其依赖解包到 /app/sysroot；重现仓库、分支和合并的最终状态；algo.py 仅使用纯标准库。"},
+      "24": {"1":"网络（N）","2":"mteb.get_model 从 HF hub / Xet 下载 BGE 权重（白名单外）。","3":"从 GitHub 镜像获取逐字节相同的 BGE-small-zh-v1.5 权重（作为非 LFS git blob），写入 HF 缓存；设置 HF_HUB_OFFLINE；retrieve.py 保持不变。"},
+      "25": {"1":"文件系统/权限（F/P）","2":"为求解器通过 apt 安装 python3-pip（镜像中没有 python3；需要 root）。","3":"跳过 apt；pdflatex 和 perl 已预装。使用 perl 执行六处标准同义词替换，并重新运行验证器编译。无需网络出站。"},
+      "26": {"1":"网络（N）","2":"从白名单外的位置查询 RCSB REST 和 FPbase。","3":"从 *.amazonaws.com 的 S3 快照获取 PDB mmCIF；按 S3 标题子串确定供体/受体；像标准解一样将 SNAP/FLAG 写死；通过 PyPI 安装软件包。"},
+      "27": {"1":"网络 + 文件系统/权限（N+F/P）","2":"apt update 需要访问白名单外的源；apache2-utils / twine 鉴权则需要 root。","3":"跳过 apt 和鉴权（pypiserver 可以匿名提供服务）；从 PyPI 获取两个纯 Python wheel，并校验 sha256；从 /app 通过回环地址提供构建好的 wheel。"},
+      "28": {"1":"网络 + 文件系统/权限（N+F/P）","2":"PyTorch CPU wheel 索引和 Debian 编译器都在白名单外。","3":"通过纯标准库的 zip / struct 提取 weights.json（与 torch 结果逐字节相同）；使用 ziglang PyPI wheel 中捆绑 libc 的 zig cc 编译参考 C 代码。"},
+      "29": {"1":"文件系统/权限（F/P）","2":"以读写方式打开 root 所有的 qcow2，并从白名单外的 CDN 通过 apk 安装 openssh。","3":"在 /app 中创建新的 qcow2 镜像，将 ISO 作为只读 -cdrom；从 Alpine 扩展版安装介质中的本地 apk 源离线安装 openssh；通过串口控制台操作；设置 hostfwd :2222；以守护进程运行，使虚拟机在探测期间继续工作。"},
+      "30": {"1":"网络 + 文件系统/权限（N+F/P）","2":"需要 sudo 和白名单外的 deadsnakes PPA 来安装 Python 3.10，并从源码构建 httpstan。","3":"使用镜像预装的 Python 3.12；从 PyPI 获取预编译的 httpstan cp312 wheel（不从源码构建）；以 rootless apt-sysroot 安装模型编译时所需的 C++ 工具链。"},
+      "31": {"1":"网络 + 文件系统/权限（N+F/P）","2":"通过 apt 安装 libgl1 和 torch/torchvision CPU wheel，且需要 root；这些来源在白名单外。","3":"交付物只有一个文件 /app/convert_masks.py；验证器会在自身不受限的环境中提供 torch/mobile_sam；离线编写标准脚本，求解时无需网络出站。"},
+      "32": {"1":"网络 + 文件系统/权限（N+F/P）","2":"需要 C++ 工具链、克隆 fastText 并运行 make；来源在白名单外且需要 root。","3":"从 PyPI 获取预编译 fasttext-wheel（无需编译）；用 uv 构建独立 Python 3.12（0.9.2 仅提供 cp312）；在其中训练。验证器读取 /app/model.bin。"}
+    },
+    "8": {
+      "0": {"0":"消息（节录）","1":"组合","2":"试验次数","3":"导致试验结束"},
+      "1": {"0":"「因潜在网络安全风险而被标记」（Trusted Access for Cyber）"},
+      "2": {"0":"「安全措施将此消息标记为网络安全主题」（Cyber Verification Program）"},
+      "3": {"0":"「似乎违反我们的使用政策」"},
+      "4": {"0":"「Fable 5 的防护机制标记了此消息」"},
+      "5": {"0":"「对违规网络内容的限制」"}
+    },
+    "9": {
+      "0": {"0":"模型组合","1":"Control","2":"Non-root","3":"NIST 派生高等级","4":"合计","5":"导致试验结束"}
+    },
+    "10": {
+      "0": {"0":"组件","1":"版本"},
+      "1": {"0":"智能体运行框架（每次运行开始时安装到各沙箱）"},
+      "6": {"0":"Harbor 运行时"},
+      "7": {"0":"沙箱内 Python"},
+      "8": {"0":"沙箱内 uv"},
+      "9": {"0":"评估控制器"},
+      "10": {"0":"Python（按摘要固定的 python:3.12-slim）"},
+      "11": {"0":"Inspect AI"},
+      "12": {"0":"inspect-harbor"},
+      "13": {"0":"Harbor（控制器端）"},
+      "14": {"0":"openai 客户端"},
+      "15": {"0":"httpx"},
+      "16": {"0":"pydantic"},
+      "17": {"0":"PyYAML"},
+      "18": {"0":"基准"},
+      "19": {"0":"Terminal-Bench"},
+      "20": {"0":"沙箱平台"},
+      "21": {"0":"Daytona SDK"},
+      "22": {"0":"daytona-api-client"},
+      "23": {"0":"云编排（不影响试验结果）"},
+      "24": {"0":"google-cloud-bigquery"},
+      "25": {"0":"google-cloud-firestore"},
+      "26": {"0":"google-cloud-storage"},
+      "27": {"0":"gcsfs"},
+      "28": {"0":"Terraform；hashicorp/google"}
+    },
+    "11": {
+      "0": {"0":"模型","1":"提供方模型标识符","2":"运行框架"},
+      "1": {"0":"OpenAI 模型（Codex）"},
+      "5": {"0":"Anthropic 模型（Claude Code）"},
+      "10": {"0":"开放权重模型（Terminus-2）"},
+      "15": {"0":"xAI 模型（Grok Build）"}
+    },
+    "12": {
+      "0": {"0":"不受限（Control）","1":"非 root（Non-root）","2":"NIST 派生高等级（NIST-derived high）"},
+      "1": {"0":"模型","1":"成功率（%）","2":"成本（美元）","3":"成功率（%）","4":"成本（美元）","5":"成功率（%）","6":"成本（美元）"}
+    },
+    "13": {
+      "0": {"0":"不受限（Control）","1":"非 root（Non-root）","2":"NIST 派生高等级（NIST-derived high）"},
+      "1": {"0":"模型","1":"成功率（%）","2":"成本（美元）","3":"成功率（%）","4":"成本（美元）","5":"成功率（%）","6":"成本（美元）"}
+    },
+    "14": {
+      "0": {"0":"模型组合","1":"成功率（%）","2":"成本（美元）","3":"前沿状态"},
+      "1": {"3":"位于前沿"},
+      "2": {"3":"位于前沿"},
+      "3": {"3":"位于前沿"},
+      "4": {"3":"被 Sol 支配"}
+    },
+    "15": {
+      "0": {"0":"每项任务的阻断动作总数","1":"任务数","2":"占比"},
+      "1": {"0":"0（已验证）"},
+      "2": {"0":"1–5 次"},
+      "3": {"0":"6–15 次"},
+      "4": {"0":"16–40 次"},
+      "5": {"0":"41–100 次"},
+      "6": {"0":"101–250 次"},
+      "7": {"0":"251 次及以上"}
+    }
+  }
+}

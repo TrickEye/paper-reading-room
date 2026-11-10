@@ -1,0 +1,587 @@
+[
+  {
+    "id": "unit-1",
+    "kind": "h1",
+    "en": "SkillCAT: Contrastive, Assessment-Augmented and Topology-Aware Skill Self-Evolution for LLM Agents"
+  },
+  {
+    "id": "abstract1.1",
+    "kind": "p",
+    "en": "Skill self-evolution methods for LLM agents aim to turn execution trajectories into reusable skill documents. However, current pipelines typically derive skill patches from a single trajectory per task, merge them indiscriminately, and load the entire skill corpus during inference. These choices lead to unreliable evidence extraction, the accumulation of low-quality or even harmful skill edits, and inefficient use of context due to irrelevant or conflicting skill content. We propose SkillCAT, a framework that decomposes this process into three stages. (1) Contrastive Causal Extraction (CCE) samples multiple trajectories per task and contrasts same-task success/failure pairs to find the evidence that explains outcome differences. (2) Assessment-Augmented Evolution (AAE) replays each candidate patch on source-task clones, retains only those that do not damage task outcomes, and then merges the retained patches hierarchically. (3) Topology-Aware Task Execution (TTE) compiles the evolved skills into routable sub-skill topologies, so that inference loads only task-relevant capability nodes. We evaluate SkillCAT on widely-used agent benchmarks, including SpreadsheetBench, WikiTableQuestions, and DocVQA, and further assess cross-model and out-of-distribution generalization. Across these settings, SkillCAT improves the average score over the initial skill by up to 49.69%, demonstrating reliable and effective skill evolution."
+  },
+  {
+    "id": "p1.1",
+    "kind": "p",
+    "en": "1School of Computer Science, Wuhan University, China"
+  },
+  {
+    "id": "p1.2",
+    "kind": "p",
+    "en": "2Nanyang Technological University, Singapore"
+  },
+  {
+    "id": "p1.3",
+    "kind": "p",
+    "en": "{chenkunfeng, liujuhua, dubo}@whu.edu.cn, qihuang.zhong@ntu.edu.sg"
+  },
+  {
+    "id": "unit-6",
+    "kind": "h2",
+    "en": "Introduction"
+  },
+  {
+    "id": "unit-7",
+    "kind": "figcaption",
+    "en": "Figure 1: Three limitations of Trace2Skill-style methods and the corresponding SkillCAT solutions."
+  },
+  {
+    "id": "Sx1.p1.1",
+    "kind": "p",
+    "en": "Large language model (LLM)-based agents have emerged as a general paradigm for solving complex interaction tasks (Wang et al. 2024; Yao et al. 2023; Schick et al. 2023; Wang et al. 2023). To support this capability, external skill documents provide an important mechanism for injecting reusable procedures, tool-use knowledge, and task experience at execution time (Xu and Yan 2026; Jiang et al. 2026b). Consequently, with such externalized guiding knowledge, agents can better handle the long-horizon decision processes involved in these tasks without updating model weights. Early skill libraries were mostly hand-written, while recent works enforce the LLM agent to extract and refine skills from its prior trajectories, commonly called skill self-evolution (Zhou et al. 2026; Yang et al. 2026b; Zhang et al. 2026c)."
+  },
+  {
+    "id": "Sx1.p2.1",
+    "kind": "p",
+    "en": "Early skill self-evolution methods usually follow a sequential update loop: each new trajectory edits the current skill once, and the pipeline then moves on to the next trajectory (Shinn et al. 2023; Madaan et al. 2023; Zhang et al. 2026b; Jiang et al. 2026a; Chen et al. 2026b). This procedure is simple, but later edits tend to yield diminishing returns, accumulating noise or overwriting useful behavior. Trace2Skill (Ni et al. 2026) recasts this process as an offline batch pipeline: it extracts one skill patch from each trajectory and then consolidates these patches into a more general skill edit. Building on this paradigm, SkillOpt (Yang et al. 2026a) models skill self-evolution as gradient descent and applies iterative optimization to further refine it. Overall, these methods establish a paradigm in which agents’ execution histories are distilled into reusable skill updates."
+  },
+  {
+    "id": "Sx1.p3.1",
+    "kind": "p",
+    "en": "Despite these advances, Trace2Skill-style pipelines still face three challenges as task complexity increases and the skill context grows. (1) Single-Trace Bias: a single trajectory often provides weak evidence for a task, i.e., a successful trace may reflect an accidental strategy, while a failed trace rarely reveals the root cause (Ni et al. 2026; Li et al. 2026b). (2) Unvalidated Merging: patches are merged without independently verifying whether they benefit the source task, so low-quality or even harmful patches may enter the skill corpus (Zhang et al. 2026a; Tian et al. 2026; Gou et al. 2024). (3) Context Overload: irrelevant or conflicting rules are fed into the agent during inference, increasing inference overhead and degrading performance (Li et al. 2026a; Meng et al. 2026; Chen et al. 2026a)."
+  },
+  {
+    "id": "Sx1.p4.1",
+    "kind": "p",
+    "en": "In response to these problems, we propose a Contrastive, Assessment-Augmented, and Topology-Aware skill self-evolution (namely SkillCAT), which decomposes the skill lifecycle into three observable stages and introduces targeted optimizations for each. Contrastive Causal Extraction (CCE) generates multiple trajectories per task via multi-seed sampling and builds same-task success/failure contrastive pairs, extracting candidate experience around the causal watershed between outcomes rather than summarizing the full trace. Assessment-Augmented Evolution (AAE) replays each candidate patch on source-task clones, assigns calibrated scores based on outcome transitions, and retains only patches that improve or preserve source-task behavior for hierarchical merging. Topology-Aware Task Execution (TTE) compiles the evolved skill into a routable topology of capability nodes and loads only task-relevant content during inference. In this way, SkillCAT addresses the three challenges by grounding skill edits in stronger contrastive evidence, filtering them through task-level validation, and exposing only relevant skill content during execution."
+  },
+  {
+    "id": "Sx1.p5.1",
+    "kind": "p",
+    "en": "Empirically, we evaluate SkillCAT under both same-model and cross-model skill-use settings. In the same-model setting, Qwen3.5-35B-A3B and Qwen3.5-122B-A10B each act as both skill author and skill user on agent-assisted office tasks (e.g., spreadsheet manipulation), and the evolved skills are further tested on out-of-distribution (OOD) table question answering. We then evaluate transfer to unseen skill users, including Gemma-4-31B-it and GPT-5.4-mini, and assess multimodal document question answering with Qwen-authored skills reused by two Qwen users. Across these settings, SkillCAT improves the average score over the initial skill by up to 49.69%. These results indicate that SkillCAT remains robust across weaker skill initialization, unseen task domains, and different user models, and our ablation studies further confirm that every component (CCE, AAE, and TTE) contributes to the final improvement."
+  },
+  {
+    "id": "Sx1.p6.1",
+    "kind": "p",
+    "en": "We summarize our contributions as follows:"
+  },
+  {
+    "id": "Sx1.I1.i1.p1.1",
+    "kind": "p",
+    "en": "We identify three practical problems that limit current skill self-evolution: single-trace bias, unvalidated merging, and inference-time context overload, which together lead to suboptimal performance and inefficient inference."
+  },
+  {
+    "id": "Sx1.I1.i2.p1.1",
+    "kind": "p",
+    "en": "We propose SkillCAT, which addresses these problems with three simple-yet-effective components: same-task success/failure contrastive extraction, source-task replay before merging, and topology-aware routing."
+  },
+  {
+    "id": "Sx1.I1.i3.p1.1",
+    "kind": "p",
+    "en": "Extensive experiments on four LLM agents and three agentic benchmarks show that SkillCAT improves the average score over matched initial-skill baselines by up to 49.69%, demonstrating its effectiveness and generality."
+  },
+  {
+    "id": "unit-17",
+    "kind": "figcaption",
+    "en": "Figure 2: Overview of SkillCAT pipeline, comprising three key components: (1) CCE extracts same-task contrastive evidence by comparing successful and failed trajectories, (2) AAE validates candidate patches and merges only the helpful ones into the skill, and (3) TTE organizes the skill into a routable topology and retrieves task-relevant nodes for agent execution."
+  },
+  {
+    "id": "unit-18",
+    "kind": "h2",
+    "en": "Related Work"
+  },
+  {
+    "id": "unit-19",
+    "kind": "h4",
+    "en": "Skill for LLM Agents."
+  },
+  {
+    "id": "Sx2.SS0.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "Agent skills encode reusable task workflows, tool-use strategies, and execution constraints as external artifacts, enabling task-specific guidance (Wang et al. 2023; Zhou et al. 2026). Such skills may be human-written or model-generated, yet their presence alone does not ensure better task performance. SkillsBench (Li et al. 2026b) finds that curated skills are generally helpful but automatically generated skills yield inconsistent gains. SkillLearnBench (Zhong et al. 2026) and SkillFlow (Zhang et al. 2026c) further show that continual updates can drift or regress. A separate line of work studies how agents select and compose skills from large collections, such as Graph of Skills (Li et al. 2026a), SkillRAE (Meng et al. 2026), and GraSP (Xia et al. 2026). These methods primarily address inter-skill retrieval and composition, typically assuming that useful skill artifacts already exist. Our setting is complementary: rather than expanding a skill library, we refine a single base skill into a more reliable artifact and expose only task-relevant parts of that same skill at test time."
+  },
+  {
+    "id": "unit-21",
+    "kind": "h4",
+    "en": "Skill Self-Evolution."
+  },
+  {
+    "id": "Sx2.SS0.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "Skill self-evolution turns execution experience into persistent updates to external skills without modifying the backbone model (Zhou et al. 2026). For instance, AutoSkill (Yang et al. 2026b), XSkill (Jiang et al. 2026a), and SkillClaw (Ma et al. 2026) extend this process to personalized, multimodal, and cross-user experience, respectively. Within execution-driven skill evolution, representative methods adopt different update strategies, including consolidating trajectory patches, optimizing a single skill document, and iteratively expanding and selecting a skill set. Specifically, Trace2Skill (Ni et al. 2026) starts from an initial skill, extracts trajectory-local patches in parallel from a fixed trace pool, and hierarchically consolidates them into a single skill directory. SkillOpt (Yang et al. 2026a) treats a single skill document as trainable external state, converts scored rollouts into bounded document edits, and accepts only updates that improve held-out validation performance. EvoSkill (Alzubi et al. 2026) follows failure-driven iterative evolution, creating or revising skills from execution failures and using held-out validation to select promising candidate agent configurations. Despite their effectiveness, these methods still neglect three practical problems: evidence drawn from isolated executions, patches integrated without checking their task-level effect, and indiscriminate full-skill loading. In response to these problems, SkillCAT systematically integrates same-task contrastive extraction, source-task replay validation, and topology-aware routing for a single evolving skill, enabling reliable refinement and task-selective deployment."
+  },
+  {
+    "id": "unit-23",
+    "kind": "h2",
+    "en": "Method"
+  },
+  {
+    "id": "Sx3.p1.1",
+    "kind": "p",
+    "en": "In this section, we introduce SkillCAT, which decomposes skill self-evolution into three stages: Contrastive Causal Extraction (CCE), Assessment-Augmented Evolution (AAE), and Topology-Aware Task Execution (TTE). Notably, CCE and AAE operate offline during skill learning, while TTE operates online during task deployment."
+  },
+  {
+    "id": "unit-25",
+    "kind": "h3",
+    "en": "Problem Formulation"
+  },
+  {
+    "id": "Sx3.SSx1.p1.1",
+    "kind": "p",
+    "en": "We consider a skill self-evolution setting in which an agent is given a base skill S_{0}, a set of evolution tasks \\mathcal{X}=\\{x_{1},\\ldots,x_{N}\\} and a set of test tasks \\mathcal{X^{*}}=\\{x^{*}_{1},\\ldots,x^{*}_{M}\\}. By executing each task multiple times, we collect diverse execution traces, each labeled as success or failure by the official evaluator. In SkillCAT, the offline stage outputs an evolved skill S^{*}, and the online execution stage assembles a routed skill S_{j} from S^{*} for each test task x^{*}_{j}\\in\\mathcal{X^{*}}. The objective of SkillCAT is to improve execution performance on unseen tasks while keeping the skill content injected into the agent context compact and task-relevant."
+  },
+  {
+    "id": "Sx3.SSx1.p2.1",
+    "kind": "p",
+    "en": "Therefore, our goal is not merely to summarize all past execution traces into experience patches and integrate them into S_{0} to produce a comprehensive skill document, but to make skill evolution selective. To this end, SkillCAT involves (1) identifying reliable execution evidence, (2) validating which candidate patches should be incorporated into the evolved skill, and (3) exposing only task-relevant skill content during execution. Figure 2 and Algorithm 1 summarize the complete pipeline. CCE extracts reliable candidate experience from multi-seed trajectories, AAE filters and merges candidate patches via source-task replay, and TTE assembles a task-relevant skill with a routable topology. These three modules correspond to evidence acquisition, patch validation and integration, and test-time skill deployment, respectively."
+  },
+  {
+    "id": "unit-28",
+    "kind": "h3",
+    "en": "Contrastive Causal Extraction (CCE)"
+  },
+  {
+    "id": "Sx3.SSx2.p1.1",
+    "kind": "p",
+    "en": "CCE forms same-task success/failure pairs from multi-seed runs and extracts skill evidence at the meaningful divergence between them. Since each pair of samples shares the same input, tools, and evaluator, the extracted evidence can be used to explain why two different execution choices lead to different execution results."
+  },
+  {
+    "id": "unit-30",
+    "kind": "h4",
+    "en": "Contrastive pair construction."
+  },
+  {
+    "id": "Sx3.SSx2.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "For task x_{i}, we conduct multiple runs with different random seeds. Let \\mathcal{T}_{i}^{+} and \\mathcal{T}_{i}^{-} denote the sets of successful and failed trajectories, respectively. When both sets are non-empty, CCE randomly samples one trajectory from each to form a contrastive pair (\\tau_{i}^{+},\\tau_{i}^{-}). This same-task pairing isolates the critical behaviors that distinguish success from failure."
+  },
+  {
+    "id": "unit-32",
+    "kind": "h4",
+    "en": "Causal comparison."
+  },
+  {
+    "id": "Sx3.SSx2.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "Given a contrastive pair (\\tau_{i}^{+},\\tau_{i}^{-}), CCE guides an LLM-based contrastive extractor E to identify the point where the action sequences in the successful and failed traces diverge. Then E uses this divergence as an internal reasoning clue to write a candidate experience record r_{i}, including local evidence, the cause of failure and a skill-editable lesson. This process can be formulated as:"
+  },
+  {
+    "id": "Sx3.SSx2.SSS0.Px2.p3.1",
+    "kind": "p",
+    "en": "Unlike existing methods that summarize the full trace (Ni et al. 2026; Alzubi et al. 2026), our candidate experience record focuses on the behavioral difference where outcomes diverge. For tasks lacking contrastive outcomes (i.e., pure success or failure), CCE retains a single-trajectory pipeline to extract non-contrastive records. Finally, a skill editor combines the extracted record r_{i} with the base skill S_{0} to generate candidate skill editing patch p_{i}, which is then passed to AAE for validation and merging."
+  },
+  {
+    "id": "unit-35",
+    "kind": "h3",
+    "en": "Assessment-Augmented Evolution (AAE)"
+  },
+  {
+    "id": "Sx3.SSx3.p1.1",
+    "kind": "p",
+    "en": "AAE treats each candidate patch as a hypothesis to be verified rather than a rule to be merged directly. It isolates the patch in a temporary skill, replays it on source-task, and scores the resulting outcome transition before skill merging."
+  },
+  {
+    "id": "unit-37",
+    "kind": "h4",
+    "en": "Patch evaluation."
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "Given a candidate patch p_{i}, AAE replays the temporary skill induced by p_{i} on the associated source-task clones and records both the original and replay outcomes. For simplicity, let y_{i},\\hat{y}_{i}\\in\\{0,1\\} denote the original and replay outcomes, respectively, where 1 denotes success and 0 denotes failure. AAE ranks the four outcome transitions directly:"
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px1.p3.1",
+    "kind": "p",
+    "en": "This scoring rule ranks candidate patches by how they change the source-task outcome. The transition of (failure\\tosuccess) receives the highest score, as the patch repairs the source task, whereas (success\\tosuccess) is accepted as behavior preservation. The transition of (failure\\tofailure) is downweighted, and (success\\tofailure) is rejected."
+  },
+  {
+    "id": "unit-40",
+    "kind": "h4",
+    "en": "Score-guided merge."
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "We only merge patches whose scores are greater than the threshold \\theta:"
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px2.p1.2",
+    "kind": "p",
+    "en": "where \\theta=2.0 in our work. Therefore, the retained patches either repair a source-task failure or preserve a known success, whereas patches that leave failures unresolved or turn successes into failures are excluded from the global skill."
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px2.p2.1",
+    "kind": "p",
+    "en": "After thresholding, AAE groups the retained patches into score tiers and merges them from the lowest tier to the highest. Let \\ell index the merge tier, L denote the number of tiers, and \\mathcal{P}_{\\theta}^{(\\ell)} denote the selected patches at tier \\ell. Let \\mu denote the skill-merge operator:"
+  },
+  {
+    "id": "Sx3.SSx3.SSS0.Px2.p3.1",
+    "kind": "p",
+    "en": "where S^{(0)}=S_{0} and the final evolved skill is S^{*}=S^{(L)}. This ordering gives higher-scoring patches priority in later stages, while still letting lower-scoring, validated ones contribute their non-conflicting rules. Besides patch selection and merge order, AAE directly reuses Trace2Skill’s edit procedure, extracting general principles from recurrent edits rather than memorizing instance-specific fixes."
+  },
+  {
+    "id": "unit-45",
+    "kind": "figcaption",
+    "en": "Algorithm 1 SkillCAT Pipeline"
+  },
+  {
+    "id": "unit-46",
+    "kind": "figcaption",
+    "en": "Table 1: Main results on SpreadsheetBench and WikiTableQuestions (WikiTQ). SpreadsheetBench evaluates held-out accuracy, while WikiTQ assesses OOD generalization. Our results are averaged over three random seeds to minimize uncertainty. Subscript arrows indicate performance changes relative to the corresponding initial-skill baselines. Best results are in bold."
+  },
+  {
+    "id": "unit-47",
+    "kind": "h3",
+    "en": "Topology-Aware Task Execution (TTE)"
+  },
+  {
+    "id": "Sx3.SSx4.p1.1",
+    "kind": "p",
+    "en": "TTE casts test-time skill use as a context-selection problem. It compiles the evolved skill S^{*} into a routable topology and assembles a compact routed skill S_{j} for each task, avoiding the cost and distraction of loading the full skill."
+  },
+  {
+    "id": "unit-49",
+    "kind": "h4",
+    "en": "Topology construction."
+  },
+  {
+    "id": "Sx3.SSx4.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "TTE compiles the AAE-generated skill S^{*} into a core skill S_{c} and a set of capability nodes \\mathcal{V}. For each node, TTE keeps the original body B_{v} for later assembly and extracts its title, keywords, summary, and dependencies as routing metadata. The node metadata and dependency edges form a compact topology summary \\mathcal{G}, in which edges denote procedural or tool-use dependencies between nodes. In this way, routing reads only \\mathcal{G}, whereas assembly accesses the original bodies of the selected nodes."
+  },
+  {
+    "id": "unit-51",
+    "kind": "h4",
+    "en": "Skill routing."
+  },
+  {
+    "id": "Sx3.SSx4.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "Let R denote the LLM router and A denote the LLM skill assembler. Given a test task x^{*}_{j} and a node budget k, R selects relevant capability nodes from the topology summary \\mathcal{G}."
+  },
+  {
+    "id": "Sx3.SSx4.SSS0.Px2.p1.2",
+    "kind": "p",
+    "en": "The assembler A then constructs the runtime skill S_{j} from the core skill and the selected node bodies."
+  },
+  {
+    "id": "unit-54",
+    "kind": "h2",
+    "en": "Experiments"
+  },
+  {
+    "id": "unit-55",
+    "kind": "h3",
+    "en": "Experimental Setup"
+  },
+  {
+    "id": "unit-56",
+    "kind": "h4",
+    "en": "Datasets and Evaluation."
+  },
+  {
+    "id": "Sx4.SSx1.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "Our primary benchmark for evaluating domain-specific agent skills is SpreadsheetBench-Verified, a human-validated subset of SpreadsheetBench (Ma et al. 2024). It contains real-world Excel forum questions covering cell- and sheet-level spreadsheet manipulation. Following Trace2Skill (Ni et al. 2026) and SkillOpt (Yang et al. 2026a), we split its 400 samples into 200 for evolution and the other 200 for held-out testing. The protocol executes the solution on the input workbook and compares output cells against the gold workbook, scoring a task as correct only when all answers match. To test out-of-distribution (OOD) generalization, we also evaluate on WikiTableQuestions (Pasupat and Liang 2015) (WikiTQ), a semi-structured table QA benchmark over Wikipedia tables, comparing predicted and gold answer denotations under the official protocol and reporting accuracy. To test multimodal generalization, we evaluate on DocVQA (Mathew et al. 2021) using its official validation split, which contains 5,349 question–image pairs. The first 2,700 question-image pairs are used for evolution and the remaining 2,649 are for evaluation, and we report the ANLS (Mathew et al. 2021) and Acc (ANLS \\geq 0.5) results. To minimize uncertainty, our results are averaged over 3 random seeds."
+  },
+  {
+    "id": "unit-58",
+    "kind": "h4",
+    "en": "Baseline and Models."
+  },
+  {
+    "id": "Sx4.SSx1.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "Following Ni et al. (2026), in addition to the No-Skill baseline, we evaluate our SkillCAT under two skill-based settings: 1) Human-Written, which starts from Anthropic’s official xlsx skill; and 2) LLM-Gen, which starts from a skill generated by the corresponding LLM-based skill authors. In both settings, we compare SkillCAT against three cutting-edge counterparts: Trace2Skill (Ni et al. 2026), EvoSkill (Alzubi et al. 2026), and SkillOpt (Yang et al. 2026a). The full details of all baselines are provided in the supplementary material. Similar to Trace2Skill, we employ Qwen3.5-35B-A3B and Qwen3.5-122B-A10B (Team 2026b) as both skill authors and skill users. Moreover, for cross-model evaluation, we reuse the skills evolved by the Qwen models under the Human-Written setting and evaluate them on two additional models, i.e., Gemma-4-31B-it (Team 2026a) and GPT-5.4-mini (Singh et al. 2025)."
+  },
+  {
+    "id": "unit-60",
+    "kind": "h4",
+    "en": "Implementation Details."
+  },
+  {
+    "id": "Sx4.SSx1.SSS0.Px3.p1.1",
+    "kind": "p",
+    "en": "All agents run in a ReAct-style (Yao et al. 2023) harness with filesystem and spreadsheet tools. Specifically, in SkillCAT, CCE samples 5 trajectory seeds per evolution task to collect success/failure evidence. AAE evaluates candidate patches on source-task clones and keeps only patches with a_{i}\\geq 2.0 before hierarchical merging, and TTE uses the graph-based router with Top-k=7, followed by task-specific skill injection."
+  },
+  {
+    "id": "unit-62",
+    "kind": "figcaption",
+    "en": "Figure 3: Multimodal evaluation on DocVQA. Skills authored by Qwen3.5-35B-A3B are tested with matched and Qwen3.5-122B-A10B users."
+  },
+  {
+    "id": "unit-63",
+    "kind": "h3",
+    "en": "Main Results"
+  },
+  {
+    "id": "unit-64",
+    "kind": "h4",
+    "en": "SkillCAT improves average performance across in-domain and OOD settings."
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "The main results in Table 1 show that SkillCAT achieves the highest overall average for all four combinations of Qwen skill user and skill initialization, outperforming all initialization and skill-evolution baselines. Its largest margin over the strongest skill-evolution baseline occurs for the Qwen3.5-35B-A3B user with Human-Written initialization: when averaged across the two skill authors and both tasks, SkillCAT reaches 59.04%, compared with 42.21% for the second-best (EvoSkill), a margin of 16.83%. In the stronger Human-Written setting with Qwen3.5-122B-A10B as both author and user, the strongest competing method differs by task: Trace2Skill leads SkillCAT by 0.66% on SpreadsheetBench, whereas SkillCAT leads the strongest WikiTQ competitor, EvoSkill, by 0.32%. Despite these task-level differences, SkillCAT retains the highest aggregate score at 72.95%. These small task-level differences may occur because the strong initial skill already performs well, leaving relatively little room for improvement."
+  },
+  {
+    "id": "unit-66",
+    "kind": "h4",
+    "en": "SkillCAT skills show average gains on unseen user models without re-evolution."
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "The cross-model evaluation further tests whether the improvements stem from reusable skill content rather than author-specific behavior. As shown in Table 1, skills produced by either Qwen author improve the average score of both unseen users without re-evolution: by 11.23% and 14.27% for Gemma-4-31B-it and by 7.14 and 7.22 points for GPT-5.4-mini. However, task-level gains appear to depend on the recipient’s baseline performance. On SpreadsheetBench, where Gemma scores 46.17% without skills, SkillCAT gains 21.50 and 30.17 points over Human-Written. On WikiTQ, Gemma’s No-Skill score is already 77.99%, while the two variants reach 77.67% and 75.08%, or +0.97 and -1.62 points relative to Human-Written. This suggests that the benefits of cross-model skills maybe relatively small when the recipient has already performed strongly in the task."
+  },
+  {
+    "id": "unit-68",
+    "kind": "h4",
+    "en": "SkillCAT achieves consistent gains in multimodal settings."
+  },
+  {
+    "id": "Sx4.SSx2.SSS0.Px3.p1.1",
+    "kind": "p",
+    "en": "The multimodal evaluation provides further evidence for the effectiveness of SkillCAT and underscores the benefits of selectively merging patches. As shown in Figure 3, SkillCAT consistently achieves substantial gains over No-Skill on both user model scales. Compared to Trace2Skill, SkillCAT also demonstrates a clear advantage. On the matched Qwen3.5-35B-A3B user, SkillCAT outperforms Trace2Skill in both metrics. When applied to the larger Qwen3.5-122B-A10B user, although both methods yield comparable ANLS, SkillCAT still ensures higher Accuracy. This consistency suggests that validating candidate edits helps prevent noisy, approximate matches and instead yields higher-quality, more precise generation behavior."
+  },
+  {
+    "id": "unit-70",
+    "kind": "figcaption",
+    "en": "Table 2: Component ablation on SpreadsheetBench with the Human-Written initialization, using Qwen3.5-35B-A3B for both author and user models."
+  },
+  {
+    "id": "unit-71",
+    "kind": "figcaption",
+    "en": "Figure 4: Additional analyses of CCE, AAE, and TTE. (a) CCE accuracy and sampling cost across different numbers of trajectories. (b) AAE bucket accuracy by replay transition, with Trace2Skill as the reference. (c) Accuracy and context reduction of embedding and LLM graph routing across Top-k. All results are from Qwen3.5-35B-A3B on SpreadsheetBench."
+  },
+  {
+    "id": "unit-72",
+    "kind": "h3",
+    "en": "Ablation Study"
+  },
+  {
+    "id": "Sx4.SSx3.p1.1",
+    "kind": "p",
+    "en": "Table 2 reports the ablation of Qwen3.5-35B-A3B with Human-Written initialization, using Trace2Skill (29.67%) as reference. The whole SkillCAT pipeline reaches 55.00% (+25.33%), while every leave-one-out variant declines, confirming that the modules are complementary. Specifically, without CCE, performance is 32.50% (+2.83%). This is because AAE can filter patches but cannot recover the same-task contrasts required for effective localized editing. Without AAE, performance falls to 26.00% (-3.67%), because bypassing replay validation and score-guided merging introduces error rules into the global skill. TTE can route but not correct these errors. Therefore, reliable skill content requires both contrastive evidence and patch validation. In contrast, when TTE is absent and CCE and AAE are retained, we still achieve 46.50% (+16.83%) performance improvement. The gap to the full pipeline shows that routing further improves execution by suppressing irrelevant content. The single-module results further reinforce this dependency. Only CCE and Only AAE reach 39.00% (+9.33%) and 34.00% (+4.33%), respectively, while Only TTE reaches 27.50% (-2.17%). This is because routing neither creates nor validates rules, and fixed Top-k selection over an unrefined skill would omit useful content and select error rules. Overall, CCE improves edit evidence, AAE validates candidate edits, and TTE selectively deploys the evolved skill."
+  },
+  {
+    "id": "unit-74",
+    "kind": "h3",
+    "en": "More Analyses"
+  },
+  {
+    "id": "unit-75",
+    "kind": "h4",
+    "en": "How many trajectories does CCE need to form useful contrastive pairs?"
+  },
+  {
+    "id": "Sx4.SSx4.SSS0.Px1.p1.1",
+    "kind": "p",
+    "en": "Figure 4 (a) reports SpreadsheetBench held-out performance and CCE-stage inference time for different numbers of trajectories per task. Performance rises from 32.50% with one trajectory to 55.00% with five, but drops to 46.00% and 41.50% with seven and nine trajectories respectively, while inference time grows from 23 minutes to 282 minutes. This decline indicates that larger per-task pools include more incidental failures. Success/failure pairs built from such failures yield patches targeting unnecessary rather than task-critical behavior, adding noise to the evolved skill. Therefore, we sample five trajectories by default in our work."
+  },
+  {
+    "id": "unit-77",
+    "kind": "h4",
+    "en": "Is it necessary to filter out low-reward skill patches using AAE?"
+  },
+  {
+    "id": "Sx4.SSx4.SSS0.Px2.p1.1",
+    "kind": "p",
+    "en": "In our SkillCAT, instead of merging all skill patches into a single skill, AAE measures the reward (a_{i} in Eq. 2) of each patch and selects only the high-reward ones for merging. Here, to investigate the effect of patches with different rewards, we first construct four patch buckets that contain the same number of patches but differ in reward, i.e., F\\xrightarrow{}S (a_{i}=3), S\\xrightarrow{}S (a_{i}=2), F\\xrightarrow{}F (a_{i}=1), and S\\xrightarrow{}F (a_{i}=0), where F and S denote failure and success, respectively. In this way, four skills are obtained and used for the subsequent TTE stage. The comparative results of Qwen3.5-35B-A3B on SpreadsheetBench are presented in Figure 4 (b), from which we observe a strong correlation between the reward and the final performance. Specifically, high-reward patches (i.e., F\\xrightarrow{}S and S\\xrightarrow{}S) yield substantial performance gains, whereas low-reward patches yield either marginal improvements (i.e., F\\xrightarrow{}F) or degrade performance (i.e., S\\xrightarrow{}F). Thus, we use the F\\xrightarrow{}S and S\\xrightarrow{}S patches (i.e., threshold \\theta=2 in Eq. 3) in our work."
+  },
+  {
+    "id": "unit-79",
+    "kind": "h4",
+    "en": "Does topology-aware routing improve accuracy while reducing inference context?"
+  },
+  {
+    "id": "Sx4.SSx4.SSS0.Px3.p1.1",
+    "kind": "p",
+    "en": "As shown in Figure 4 (c), TTE successfully unleashes higher evolved-skill gains by routing and retaining only the most effective context. To filter skill content, we designed two routing mechanisms: a graph-based router and an embedding-based router. The former leverages the LLM to analyze the topological structure formed by skill content, subsequently selecting the Top-k most relevant nodes, while the latter retrieves the Top-k nodes based on embedding similarity computed by third-party Qwen3-Embedding-0.6B (Zhang et al. 2025). Both routers stay above this reference for most budgets while using fewer tokens. We chose the prompt-based method because of its competitive performance and its independence from an external embedding model, which avoids introducing additional system complexity."
+  },
+  {
+    "id": "unit-81",
+    "kind": "h2",
+    "en": "Conclusion"
+  },
+  {
+    "id": "Sx5.p1.1",
+    "kind": "p",
+    "en": "This paper studies three limitations of existing skill self-evolution methods for LLM agents: single-trace bias, unvalidated merging, and inference-time context overload. SkillCAT addresses them by extracting same-task contrastive evidence with CCE, filtering candidate patches through source-task replay with AAE, and loading only task-relevant skill content through TTE. To assess the effectiveness of SkillCAT, we conducted evaluations on several popular agent benchmarks, such as SpreadsheetBench, WikiTableQuestions, and DocVQA, while also investigating its cross-model and OOD generalization. Under these conditions, SkillCAT outperforms comparable baselines by increasing the average score by up to 49.69 percentage points, while ablations and more analyses confirm the contribution of each module."
+  },
+  {
+    "id": "unit-83",
+    "kind": "h2",
+    "en": "References"
+  },
+  {
+    "id": "bib.bib19",
+    "kind": "li",
+    "en": "Alzubi et al. (2026) S. Alzubi, N. Provenzano, J. Bingham, W. Chen, and T. Vu Evoskill: automated skill discovery for multi-agent systems. arXiv preprint arXiv:2603.02766. Cited by: Skill Self-Evolution., Causal comparison., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib16",
+    "kind": "li",
+    "en": "Chen et al. (2026a) K. Chen, Q. Zhong, J. Liu, B. Du, and D. Tao Try, check and retry: a divide-and-conquer framework for boosting long-context tool-calling performance of llms. arXiv preprint arXiv:2603.11495. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib21",
+    "kind": "li",
+    "en": "Chen et al. (2026b) S. Chen, J. Gai, R. Zhou, J. Zhang, T. Zhu, J. Li, K. Wang, Z. Wang, Z. Chen, K. Kaleb, et al. Skillcraft: can llm agents learn to use tools skillfully?. arXiv preprint arXiv:2603.00718. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib15",
+    "kind": "li",
+    "en": "Gou et al. (2024) Z. Gou, Z. Shao, Y. Gong, Y. Yang, N. Duan, W. Chen, et al. Critic: large language models can self-correct with tool-interactive critiquing. In International Conference on Learning Representations, Vol. 2024, pp. 57734–57811. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib22",
+    "kind": "li",
+    "en": "Jiang et al. (2026a) G. Jiang, Z. Su, X. Qu, and Y. R. Fung Xskill: continual learning from experience and skills in multimodal agents. arXiv preprint arXiv:2603.12056. Cited by: Introduction, Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib3",
+    "kind": "li",
+    "en": "Jiang et al. (2026b) Y. Jiang, D. Li, H. Deng, B. Ma, X. Wang, Q. Wang, and G. Yu SoK: agentic skills–beyond tool use in llm agents. arXiv preprint arXiv:2602.20867. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib24",
+    "kind": "li",
+    "en": "Li et al. (2026a) D. Li, Z. Li, H. Du, X. Wu, S. Gui, Y. Kuang, and L. Sun Graph of skills: dependency-aware structural retrieval for massive agent skills. arXiv preprint arXiv:2604.05333. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib23",
+    "kind": "li",
+    "en": "Li et al. (2026b) X. Li, W. Chen, Y. Liu, S. Zheng, X. Chen, Y. He, Y. Li, B. You, H. Shen, J. Sun, et al. SkillsBench: benchmarking how well agent skills work across diverse tasks. arXiv preprint arXiv:2602.12670. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib5",
+    "kind": "li",
+    "en": "Ma et al. (2024) Z. Ma, B. Zhang, J. Zhang, J. Yu, X. Zhang, X. Zhang, S. Luo, X. Wang, and J. Tang Spreadsheetbench: towards challenging real world spreadsheet manipulation. In Advances in Neural Information Processing Systems, Vol. 37, pp. 94871–94908. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib25",
+    "kind": "li",
+    "en": "Ma et al. (2026) Z. Ma, S. Yang, Y. Ji, X. Wang, Y. Wang, Y. Hu, T. Huang, and X. Chu Skillclaw: let skills evolve collectively with agentic evolver. arXiv preprint arXiv:2604.08377. Cited by: Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib14",
+    "kind": "li",
+    "en": "Madaan et al. (2023) A. Madaan, N. Tandon, P. Gupta, S. Hallinan, L. Gao, S. Wiegreffe, U. Alon, N. Dziri, S. Prabhumoye, Y. Yang, et al. Self-refine: iterative refinement with self-feedback. Advances in neural information processing systems 36, pp. 46534–46594. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib7",
+    "kind": "li",
+    "en": "Mathew et al. (2021) M. Mathew, D. Karatzas, and C. Jawahar Docvqa: a dataset for vqa on document images. In Proceedings of the IEEE/CVF winter conference on applications of computer vision, pp. 2200–2209. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib32",
+    "kind": "li",
+    "en": "Meng et al. (2026) X. Meng, S. Wang, and Y. Fang SkillRAE: agent skill-based context compilation for retrieval-augmented execution. arXiv preprint arXiv:2605.10114. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib17",
+    "kind": "li",
+    "en": "Ni et al. (2026) J. Ni, Y. Liu, X. Liu, Y. Sun, M. Zhou, P. Cheng, D. Wang, E. Zhao, X. Jiang, and G. Jiang Trace2skill: distill trajectory-local lessons into transferable agent skills. arXiv preprint arXiv:2603.25158. Cited by: Introduction, Introduction, Skill Self-Evolution., Causal comparison., Datasets and Evaluation., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib6",
+    "kind": "li",
+    "en": "Pasupat and Liang (2015) P. Pasupat and P. Liang Compositional semantic parsing on semi-structured tables. In Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pp. 1470–1480. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib11",
+    "kind": "li",
+    "en": "Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom Toolformer: language models can teach themselves to use tools. Advances in neural information processing systems 36, pp. 68539–68551. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib13",
+    "kind": "li",
+    "en": "Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao Reflexion: language agents with verbal reinforcement learning. Advances in neural information processing systems 36, pp. 8634–8652. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib10",
+    "kind": "li",
+    "en": "Singh et al. (2025) A. Singh, A. Fry, A. Perelman, A. Tart, A. Ganesh, A. El-Kishky, A. McLaughlin, A. Low, A. Ostrow, A. Ananthram, et al. Openai gpt-5 system card. arXiv preprint arXiv:2601.03267. Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib9",
+    "kind": "li",
+    "en": "Team (2026a) G. Team Gemma 4 technical report. External Links: 2607.02770, Link Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib8",
+    "kind": "li",
+    "en": "Team (2026b) Q. Team Qwen3.5: accelerating productivity with native multimodal agents. External Links: Link Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib30",
+    "kind": "li",
+    "en": "Tian et al. (2026) Y. Tian, J. Chen, L. Zheng, M. Tao, X. Zeng, Z. Yin, H. Su, and X. Sun Skills-coach: a self-evolving skill optimizer via training-free grpo. arXiv preprint arXiv:2604.27488. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib12",
+    "kind": "li",
+    "en": "Wang et al. (2023) G. Wang, Y. Xie, Y. Jiang, A. Mandlekar, C. Xiao, Y. Zhu, L. Fan, and A. Anandkumar Voyager: an open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib1",
+    "kind": "li",
+    "en": "Wang et al. (2024) L. Wang, C. Ma, X. Feng, Z. Zhang, H. Yang, J. Zhang, Z. Chen, J. Tang, X. Chen, Y. Lin, et al. A survey on large language model based autonomous agents. Frontiers of Computer Science 18 (6), pp. 186345. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib28",
+    "kind": "li",
+    "en": "Xia et al. (2026) T. Xia, L. Hu, Y. Sun, M. Xu, L. Xu, S. Wang, W. Xu, and J. Jiang GraSP: graph-structured skill compositions for llm agents. arXiv preprint arXiv:2604.17870. Cited by: Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib2",
+    "kind": "li",
+    "en": "Xu and Yan (2026) R. Xu and Y. Yan Agent skills for large language models: architecture, acquisition, security, and the path forward. arXiv preprint arXiv:2602.12430. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib33",
+    "kind": "li",
+    "en": "Yang et al. (2026a) Y. Yang, Z. Gong, W. Huang, Q. Yang, Z. Zhou, Z. Huang, Y. Li, X. Gao, Q. Dai, B. Liu, et al. Skillopt: executive strategy for self-evolving agent skills. arXiv preprint arXiv:2605.23904. Cited by: Introduction, Skill Self-Evolution., Datasets and Evaluation., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib20",
+    "kind": "li",
+    "en": "Yang et al. (2026b) Y. Yang, J. Li, Q. Pan, B. Zhan, Y. Cai, L. Du, J. Zhou, K. Chen, Q. Chen, X. Li, et al. Autoskill: experience-driven lifelong learning via skill self-evolution. arXiv preprint arXiv:2603.01145. Cited by: Introduction, Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib4",
+    "kind": "li",
+    "en": "Yao et al. (2023) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao React: synergizing reasoning and acting in language models. In International Conference on Learning Representations, Cited by: Introduction, Implementation Details.."
+  },
+  {
+    "id": "bib.bib26",
+    "kind": "li",
+    "en": "Zhang et al. (2026a) H. Zhang, S. Fan, H. P. Zou, Y. Chen, Z. Wang, J. Zhou, C. Li, W. Huang, Y. Yao, K. Zheng, et al. Evoskills: self-evolving agent skills via co-evolutionary verification. arXiv preprint arXiv:2604.01687. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib18",
+    "kind": "li",
+    "en": "Zhang et al. (2026b) H. Zhang, Q. Long, J. Bao, T. Feng, W. Zhang, H. Yue, and W. Wang MemSkill: learning and evolving memory skills for self-evolving agents. arXiv preprint arXiv:2602.02474. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib34",
+    "kind": "li",
+    "en": "Zhang et al. (2025) Y. Zhang, M. Li, D. Long, X. Zhang, H. Lin, B. Yang, P. Xie, A. Yang, D. Liu, J. Lin, F. Huang, and J. Zhou Qwen3 embedding: advancing text embedding and reranking through foundation models. arXiv preprint arXiv:2506.05176. Cited by: Does topology-aware routing improve accuracy while reducing inference context?."
+  },
+  {
+    "id": "bib.bib27",
+    "kind": "li",
+    "en": "Zhang et al. (2026c) Z. Zhang, K. Shi, S. Huang, A. Nie, Y. Zeng, Y. Zhao, Z. Fang, Q. Su, H. Qiu, W. Yang, et al. SkillFlow: benchmarking lifelong skill discovery and evolution for autonomous agents. arXiv preprint arXiv:2604.17308. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib29",
+    "kind": "li",
+    "en": "Zhong et al. (2026) S. Zhong, Y. Lu, J. Ning, Y. Wan, L. Feng, Y. Ao, L. F. Ribeiro, M. Dreyer, S. Ammirati, and C. Xiong SkillLearnBench: benchmarking continual learning methods for agent skill generation on real-world tasks. arXiv preprint arXiv:2604.20087. Cited by: Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib31",
+    "kind": "li",
+    "en": "Zhou et al. (2026) Y. Zhou, W. Shu, Y. Su, W. Du, Y. Fang, and X. Lin A comprehensive survey on agent skills: taxonomy, techniques, and applications. arXiv preprint arXiv:2605.07358. Cited by: Introduction, Skill for LLM Agents., Skill Self-Evolution.."
+  }
+]

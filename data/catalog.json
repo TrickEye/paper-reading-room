@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ace",
+    "pdf": "2510.04618.pdf",
+    "figures": 14,
+    "tables": 22,
+    "builder": null
+  },
+  {
+    "id": "skillforge",
+    "pdf": "2026.emnlp-main.1954.pdf",
+    "figures": 16,
+    "tables": 4,
+    "builder": "skillforge.py"
+  },
+  {
+    "id": "permission-denied",
+    "pdf": "Permission-Denied-2608.02670v1.pdf",
+    "figures": 4,
+    "tables": 15,
+    "builder": "permission_denied.py"
+  },
+  {
+    "id": "skillcat",
+    "pdf": "SkillCAT-2606.13317v2.pdf",
+    "figures": 4,
+    "tables": 2,
+    "builder": "skillcat.py"
+  }
+]

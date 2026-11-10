@@ -1,0 +1,342 @@
+[
+  {
+    "id": "bib.bib19",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Alzubi et al. (2026) S. Alzubi, N. Provenzano, J. Bingham, W. Chen, and T. Vu Evoskill: automated skill discovery for multi-agent systems. arXiv preprint arXiv:2603.02766. Cited by: Skill Self-Evolution., Causal comparison., Baseline and Models..",
+    "zh": "Alzubi et al. (2026) S. Alzubi, N. Provenzano, J. Bingham, W. Chen, and T. Vu. Evoskill: automated skill discovery for multi-agent systems（EvoSkill：面向多智能体系统的自动技能发现）. arXiv preprint arXiv:2603.02766. Cited by: Skill Self-Evolution., Causal comparison., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib16",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Chen et al. (2026a) K. Chen, Q. Zhong, J. Liu, B. Du, and D. Tao Try, check and retry: a divide-and-conquer framework for boosting long-context tool-calling performance of llms. arXiv preprint arXiv:2603.11495. Cited by: Introduction.",
+    "zh": "Chen et al. (2026a) K. Chen, Q. Zhong, J. Liu, B. Du, and D. Tao. Try, check and retry: a divide-and-conquer framework for boosting long-context tool-calling performance of llms（尝试、检查并重试：提升 LLM 长上下文工具调用性能的分治框架）. arXiv preprint arXiv:2603.11495. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib21",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Chen et al. (2026b) S. Chen, J. Gai, R. Zhou, J. Zhang, T. Zhu, J. Li, K. Wang, Z. Wang, Z. Chen, K. Kaleb, et al. Skillcraft: can llm agents learn to use tools skillfully?. arXiv preprint arXiv:2603.00718. Cited by: Introduction.",
+    "zh": "Chen et al. (2026b) S. Chen, J. Gai, R. Zhou, J. Zhang, T. Zhu, J. Li, K. Wang, Z. Wang, Z. Chen, K. Kaleb, et al. Skillcraft: can llm agents learn to use tools skillfully?（SkillCraft：LLM 智能体能否学会熟练使用工具？）. arXiv preprint arXiv:2603.00718. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib15",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Gou et al. (2024) Z. Gou, Z. Shao, Y. Gong, Y. Yang, N. Duan, W. Chen, et al. Critic: large language models can self-correct with tool-interactive critiquing. In International Conference on Learning Representations, Vol. 2024, pp. 57734–57811. Cited by: Introduction.",
+    "zh": "Gou et al. (2024) Z. Gou, Z. Shao, Y. Gong, Y. Yang, N. Duan, W. Chen, et al. Critic: large language models can self-correct with tool-interactive critiquing（Critic：大语言模型可通过与工具交互的批评进行自我纠正）. In International Conference on Learning Representations, Vol. 2024, pp. 57734–57811. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib22",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Jiang et al. (2026a) G. Jiang, Z. Su, X. Qu, and Y. R. Fung Xskill: continual learning from experience and skills in multimodal agents. arXiv preprint arXiv:2603.12056. Cited by: Introduction, Skill Self-Evolution..",
+    "zh": "Jiang et al. (2026a) G. Jiang, Z. Su, X. Qu, and Y. R. Fung. Xskill: continual learning from experience and skills in multimodal agents（XSkill：多模态智能体从经验和技能中持续学习）. arXiv preprint arXiv:2603.12056. Cited by: Introduction, Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib3",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Jiang et al. (2026b) Y. Jiang, D. Li, H. Deng, B. Ma, X. Wang, Q. Wang, and G. Yu SoK: agentic skills–beyond tool use in llm agents. arXiv preprint arXiv:2602.20867. Cited by: Introduction.",
+    "zh": "Jiang et al. (2026b) Y. Jiang, D. Li, H. Deng, B. Ma, X. Wang, Q. Wang, and G. Yu. SoK: agentic skills–beyond tool use in llm agents（SoK：LLM 智能体中的智能体技能——超越工具使用）. arXiv preprint arXiv:2602.20867. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib24",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Li et al. (2026a) D. Li, Z. Li, H. Du, X. Wu, S. Gui, Y. Kuang, and L. Sun Graph of skills: dependency-aware structural retrieval for massive agent skills. arXiv preprint arXiv:2604.05333. Cited by: Introduction, Skill for LLM Agents..",
+    "zh": "Li et al. (2026a) D. Li, Z. Li, H. Du, X. Wu, S. Gui, Y. Kuang, and L. Sun. Graph of skills: dependency-aware structural retrieval for massive agent skills（技能图：面向海量智能体技能的依赖感知结构化检索）. arXiv preprint arXiv:2604.05333. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib23",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Li et al. (2026b) X. Li, W. Chen, Y. Liu, S. Zheng, X. Chen, Y. He, Y. Li, B. You, H. Shen, J. Sun, et al. SkillsBench: benchmarking how well agent skills work across diverse tasks. arXiv preprint arXiv:2602.12670. Cited by: Introduction, Skill for LLM Agents..",
+    "zh": "Li et al. (2026b) X. Li, W. Chen, Y. Liu, S. Zheng, X. Chen, Y. He, Y. Li, B. You, H. Shen, J. Sun, et al. SkillsBench: benchmarking how well agent skills work across diverse tasks（SkillsBench：评测智能体技能在多样任务中的效果）. arXiv preprint arXiv:2602.12670. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib5",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Ma et al. (2024) Z. Ma, B. Zhang, J. Zhang, J. Yu, X. Zhang, X. Zhang, S. Luo, X. Wang, and J. Tang Spreadsheetbench: towards challenging real world spreadsheet manipulation. In Advances in Neural Information Processing Systems, Vol. 37, pp. 94871–94908. Cited by: Datasets and Evaluation..",
+    "zh": "Ma et al. (2024) Z. Ma, B. Zhang, J. Zhang, J. Yu, X. Zhang, X. Zhang, S. Luo, X. Wang, and J. Tang. Spreadsheetbench: towards challenging real world spreadsheet manipulation（SpreadsheetBench：迈向具有挑战性的真实世界电子表格操作）. In Advances in Neural Information Processing Systems, Vol. 37, pp. 94871–94908. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib25",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Ma et al. (2026) Z. Ma, S. Yang, Y. Ji, X. Wang, Y. Wang, Y. Hu, T. Huang, and X. Chu Skillclaw: let skills evolve collectively with agentic evolver. arXiv preprint arXiv:2604.08377. Cited by: Skill Self-Evolution..",
+    "zh": "Ma et al. (2026) Z. Ma, S. Yang, Y. Ji, X. Wang, Y. Wang, Y. Hu, T. Huang, and X. Chu. Skillclaw: let skills evolve collectively with agentic evolver（SkillClaw：让技能与智能体演化器协同演化）. arXiv preprint arXiv:2604.08377. Cited by: Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib14",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Madaan et al. (2023) A. Madaan, N. Tandon, P. Gupta, S. Hallinan, L. Gao, S. Wiegreffe, U. Alon, N. Dziri, S. Prabhumoye, Y. Yang, et al. Self-refine: iterative refinement with self-feedback. Advances in neural information processing systems 36, pp. 46534–46594. Cited by: Introduction.",
+    "zh": "Madaan et al. (2023) A. Madaan, N. Tandon, P. Gupta, S. Hallinan, L. Gao, S. Wiegreffe, U. Alon, N. Dziri, S. Prabhumoye, Y. Yang, et al. Self-refine: iterative refinement with self-feedback（Self-Refine：利用自反馈进行迭代改进）. Advances in neural information processing systems 36, pp. 46534–46594. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib7",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Mathew et al. (2021) M. Mathew, D. Karatzas, and C. Jawahar Docvqa: a dataset for vqa on document images. In Proceedings of the IEEE/CVF winter conference on applications of computer vision, pp. 2200–2209. Cited by: Datasets and Evaluation..",
+    "zh": "Mathew et al. (2021) M. Mathew, D. Karatzas, and C. Jawahar. Docvqa: a dataset for vqa on document images（DocVQA：面向文档图像视觉问答的数据集）. In Proceedings of the IEEE/CVF winter conference on applications of computer vision, pp. 2200–2209. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib32",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Meng et al. (2026) X. Meng, S. Wang, and Y. Fang SkillRAE: agent skill-based context compilation for retrieval-augmented execution. arXiv preprint arXiv:2605.10114. Cited by: Introduction, Skill for LLM Agents..",
+    "zh": "Meng et al. (2026) X. Meng, S. Wang, and Y. Fang. SkillRAE: agent skill-based context compilation for retrieval-augmented execution（SkillRAE：基于智能体技能的上下文编译，用于检索增强执行）. arXiv preprint arXiv:2605.10114. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib17",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Ni et al. (2026) J. Ni, Y. Liu, X. Liu, Y. Sun, M. Zhou, P. Cheng, D. Wang, E. Zhao, X. Jiang, and G. Jiang Trace2skill: distill trajectory-local lessons into transferable agent skills. arXiv preprint arXiv:2603.25158. Cited by: Introduction, Introduction, Skill Self-Evolution., Causal comparison., Datasets and Evaluation., Baseline and Models..",
+    "zh": "Ni et al. (2026) J. Ni, Y. Liu, X. Liu, Y. Sun, M. Zhou, P. Cheng, D. Wang, E. Zhao, X. Jiang, and G. Jiang. Trace2skill: distill trajectory-local lessons into transferable agent skills（Trace2Skill：将轨迹局部经验提炼为可迁移的智能体技能）. arXiv preprint arXiv:2603.25158. Cited by: Introduction, Introduction, Skill Self-Evolution., Causal comparison., Datasets and Evaluation., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib6",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Pasupat and Liang (2015) P. Pasupat and P. Liang Compositional semantic parsing on semi-structured tables. In Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pp. 1470–1480. Cited by: Datasets and Evaluation..",
+    "zh": "Pasupat and Liang (2015) P. Pasupat and P. Liang. Compositional semantic parsing on semi-structured tables（半结构化表格上的组合语义解析）. In Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pp. 1470–1480. Cited by: Datasets and Evaluation.."
+  },
+  {
+    "id": "bib.bib11",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom Toolformer: language models can teach themselves to use tools. Advances in neural information processing systems 36, pp. 68539–68551. Cited by: Introduction.",
+    "zh": "Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom. Toolformer: language models can teach themselves to use tools（Toolformer：语言模型可以自学使用工具）. Advances in neural information processing systems 36, pp. 68539–68551. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib13",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao Reflexion: language agents with verbal reinforcement learning. Advances in neural information processing systems 36, pp. 8634–8652. Cited by: Introduction.",
+    "zh": "Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao. Reflexion: language agents with verbal reinforcement learning（Reflexion：具有语言强化学习的语言智能体）. Advances in neural information processing systems 36, pp. 8634–8652. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib10",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Singh et al. (2025) A. Singh, A. Fry, A. Perelman, A. Tart, A. Ganesh, A. El-Kishky, A. McLaughlin, A. Low, A. Ostrow, A. Ananthram, et al. Openai gpt-5 system card. arXiv preprint arXiv:2601.03267. Cited by: Baseline and Models..",
+    "zh": "Singh et al. (2025) A. Singh, A. Fry, A. Perelman, A. Tart, A. Ganesh, A. El-Kishky, A. McLaughlin, A. Low, A. Ostrow, A. Ananthram, et al. Openai gpt-5 system card（OpenAI GPT-5 系统卡）. arXiv preprint arXiv:2601.03267. Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib9",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Team (2026a) G. Team Gemma 4 technical report. External Links: 2607.02770, Link Cited by: Baseline and Models..",
+    "zh": "Team (2026a) G. Team. Gemma 4 technical report（Gemma 4 技术报告）. External Links: 2607.02770, Link. Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib8",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Team (2026b) Q. Team Qwen3.5: accelerating productivity with native multimodal agents. External Links: Link Cited by: Baseline and Models..",
+    "zh": "Team (2026b) Q. Team. Qwen3.5: accelerating productivity with native multimodal agents（Qwen3.5：利用原生多模态智能体提升生产力）. External Links: Link. Cited by: Baseline and Models.."
+  },
+  {
+    "id": "bib.bib30",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Tian et al. (2026) Y. Tian, J. Chen, L. Zheng, M. Tao, X. Zeng, Z. Yin, H. Su, and X. Sun Skills-coach: a self-evolving skill optimizer via training-free grpo. arXiv preprint arXiv:2604.27488. Cited by: Introduction.",
+    "zh": "Tian et al. (2026) Y. Tian, J. Chen, L. Zheng, M. Tao, X. Zeng, Z. Yin, H. Su, and X. Sun. Skills-coach: a self-evolving skill optimizer via training-free grpo（Skills-Coach：通过免训练 GRPO 实现自我演化的技能优化器）. arXiv preprint arXiv:2604.27488. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib12",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Wang et al. (2023) G. Wang, Y. Xie, Y. Jiang, A. Mandlekar, C. Xiao, Y. Zhu, L. Fan, and A. Anandkumar Voyager: an open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291. Cited by: Introduction, Skill for LLM Agents..",
+    "zh": "Wang et al. (2023) G. Wang, Y. Xie, Y. Jiang, A. Mandlekar, C. Xiao, Y. Zhu, L. Fan, and A. Anandkumar. Voyager: an open-ended embodied agent with large language models（Voyager：基于大语言模型的开放式具身智能体）. arXiv preprint arXiv:2305.16291. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib1",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Wang et al. (2024) L. Wang, C. Ma, X. Feng, Z. Zhang, H. Yang, J. Zhang, Z. Chen, J. Tang, X. Chen, Y. Lin, et al. A survey on large language model based autonomous agents. Frontiers of Computer Science 18 (6), pp. 186345. Cited by: Introduction.",
+    "zh": "Wang et al. (2024) L. Wang, C. Ma, X. Feng, Z. Zhang, H. Yang, J. Zhang, Z. Chen, J. Tang, X. Chen, Y. Lin, et al. A survey on large language model based autonomous agents（基于大语言模型的自主智能体综述）. Frontiers of Computer Science 18 (6), pp. 186345. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib28",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Xia et al. (2026) T. Xia, L. Hu, Y. Sun, M. Xu, L. Xu, S. Wang, W. Xu, and J. Jiang GraSP: graph-structured skill compositions for llm agents. arXiv preprint arXiv:2604.17870. Cited by: Skill for LLM Agents..",
+    "zh": "Xia et al. (2026) T. Xia, L. Hu, Y. Sun, M. Xu, L. Xu, S. Wang, W. Xu, and J. Jiang. GraSP: graph-structured skill compositions for llm agents（GraSP：面向 LLM 智能体的图结构技能组合）. arXiv preprint arXiv:2604.17870. Cited by: Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib2",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Xu and Yan (2026) R. Xu and Y. Yan Agent skills for large language models: architecture, acquisition, security, and the path forward. arXiv preprint arXiv:2602.12430. Cited by: Introduction.",
+    "zh": "Xu and Yan (2026) R. Xu and Y. Yan. Agent skills for large language models: architecture, acquisition, security, and the path forward（大语言模型的智能体技能：架构、获取、安全与未来方向）. arXiv preprint arXiv:2602.12430. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib33",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Yang et al. (2026a) Y. Yang, Z. Gong, W. Huang, Q. Yang, Z. Zhou, Z. Huang, Y. Li, X. Gao, Q. Dai, B. Liu, et al. Skillopt: executive strategy for self-evolving agent skills. arXiv preprint arXiv:2605.23904. Cited by: Introduction, Skill Self-Evolution., Datasets and Evaluation., Baseline and Models..",
+    "zh": "Yang et al. (2026a) Y. Yang, Z. Gong, W. Huang, Q. Yang, Z. Zhou, Z. Huang, Y. Li, X. Gao, Q. Dai, B. Liu, et al. Skillopt: executive strategy for self-evolving agent skills（SkillOpt：智能体技能自我演化的执行策略）. arXiv preprint arXiv:2605.23904. Cited by: Introduction, Skill Self-Evolution., Datasets and Evaluation., Baseline and Models.."
+  },
+  {
+    "id": "bib.bib20",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Yang et al. (2026b) Y. Yang, J. Li, Q. Pan, B. Zhan, Y. Cai, L. Du, J. Zhou, K. Chen, Q. Chen, X. Li, et al. Autoskill: experience-driven lifelong learning via skill self-evolution. arXiv preprint arXiv:2603.01145. Cited by: Introduction, Skill Self-Evolution..",
+    "zh": "Yang et al. (2026b) Y. Yang, J. Li, Q. Pan, B. Zhan, Y. Cai, L. Du, J. Zhou, K. Chen, Q. Chen, X. Li, et al. Autoskill: experience-driven lifelong learning via skill self-evolution（AutoSkill：通过技能自我演化实现经验驱动的终身学习）. arXiv preprint arXiv:2603.01145. Cited by: Introduction, Skill Self-Evolution.."
+  },
+  {
+    "id": "bib.bib4",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Yao et al. (2023) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao React: synergizing reasoning and acting in language models. In International Conference on Learning Representations, Cited by: Introduction, Implementation Details..",
+    "zh": "Yao et al. (2023) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao. React: synergizing reasoning and acting in language models（ReAct：让语言模型中的推理与行动协同）. In International Conference on Learning Representations. Cited by: Introduction, Implementation Details.."
+  },
+  {
+    "id": "bib.bib26",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhang et al. (2026a) H. Zhang, S. Fan, H. P. Zou, Y. Chen, Z. Wang, J. Zhou, C. Li, W. Huang, Y. Yao, K. Zheng, et al. Evoskills: self-evolving agent skills via co-evolutionary verification. arXiv preprint arXiv:2604.01687. Cited by: Introduction.",
+    "zh": "Zhang et al. (2026a) H. Zhang, S. Fan, H. P. Zou, Y. Chen, Z. Wang, J. Zhou, C. Li, W. Huang, Y. Yao, K. Zheng, et al. Evoskills: self-evolving agent skills via co-evolutionary verification（EvoSkills：通过协同演化验证实现智能体技能自我演化）. arXiv preprint arXiv:2604.01687. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib18",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhang et al. (2026b) H. Zhang, Q. Long, J. Bao, T. Feng, W. Zhang, H. Yue, and W. Wang MemSkill: learning and evolving memory skills for self-evolving agents. arXiv preprint arXiv:2602.02474. Cited by: Introduction.",
+    "zh": "Zhang et al. (2026b) H. Zhang, Q. Long, J. Bao, T. Feng, W. Zhang, H. Yue, and W. Wang. MemSkill: learning and evolving memory skills for self-evolving agents（MemSkill：为自我演化智能体学习和演化记忆技能）. arXiv preprint arXiv:2602.02474. Cited by: Introduction."
+  },
+  {
+    "id": "bib.bib34",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhang et al. (2025) Y. Zhang, M. Li, D. Long, X. Zhang, H. Lin, B. Yang, P. Xie, A. Yang, D. Liu, J. Lin, F. Huang, and J. Zhou Qwen3 embedding: advancing text embedding and reranking through foundation models. arXiv preprint arXiv:2506.05176. Cited by: Does topology-aware routing improve accuracy while reducing inference context?.",
+    "zh": "Zhang et al. (2025) Y. Zhang, M. Li, D. Long, X. Zhang, H. Lin, B. Yang, P. Xie, A. Yang, D. Liu, J. Lin, F. Huang, and J. Zhou. Qwen3 embedding: advancing text embedding and reranking through foundation models（Qwen3 Embedding：通过基础模型推进文本嵌入与重排序）. arXiv preprint arXiv:2506.05176. Cited by: Does topology-aware routing improve accuracy while reducing inference context?."
+  },
+  {
+    "id": "bib.bib27",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhang et al. (2026c) Z. Zhang, K. Shi, S. Huang, A. Nie, Y. Zeng, Y. Zhao, Z. Fang, Q. Su, H. Qiu, W. Yang, et al. SkillFlow: benchmarking lifelong skill discovery and evolution for autonomous agents. arXiv preprint arXiv:2604.17308. Cited by: Introduction, Skill for LLM Agents..",
+    "zh": "Zhang et al. (2026c) Z. Zhang, K. Shi, S. Huang, A. Nie, Y. Zeng, Y. Zhao, Z. Fang, Q. Su, H. Qiu, W. Yang, et al. SkillFlow: benchmarking lifelong skill discovery and evolution for autonomous agents（SkillFlow：评测自主智能体的终身技能发现与演化）. arXiv preprint arXiv:2604.17308. Cited by: Introduction, Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib29",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhong et al. (2026) S. Zhong, Y. Lu, J. Ning, Y. Wan, L. Feng, Y. Ao, L. F. Ribeiro, M. Dreyer, S. Ammirati, and C. Xiong SkillLearnBench: benchmarking continual learning methods for agent skill generation on real-world tasks. arXiv preprint arXiv:2604.20087. Cited by: Skill for LLM Agents..",
+    "zh": "Zhong et al. (2026) S. Zhong, Y. Lu, J. Ning, Y. Wan, L. Feng, Y. Ao, L. F. Ribeiro, M. Dreyer, S. Ammirati, and C. Xiong. SkillLearnBench: benchmarking continual learning methods for agent skill generation on real-world tasks（SkillLearnBench：评测面向真实世界任务的智能体技能生成持续学习方法）. arXiv preprint arXiv:2604.20087. Cited by: Skill for LLM Agents.."
+  },
+  {
+    "id": "bib.bib31",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2606.13317v2"
+    },
+    "en": "Zhou et al. (2026) Y. Zhou, W. Shu, Y. Su, W. Du, Y. Fang, and X. Lin A comprehensive survey on agent skills: taxonomy, techniques, and applications. arXiv preprint arXiv:2605.07358. Cited by: Introduction, Skill for LLM Agents., Skill Self-Evolution..",
+    "zh": "Zhou et al. (2026) Y. Zhou, W. Shu, Y. Su, W. Du, Y. Fang, and X. Lin. A comprehensive survey on agent skills: taxonomy, techniques, and applications（智能体技能综述：分类、技术与应用）. arXiv preprint arXiv:2605.07358. Cited by: Introduction, Skill for LLM Agents., Skill Self-Evolution.."
+  }
+]

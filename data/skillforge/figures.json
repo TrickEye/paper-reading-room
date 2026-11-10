@@ -1,0 +1,82 @@
+[
+  {
+    "number": 1,
+    "zh": "图 1：动机。比较同一任务上的成功与失败轨迹，会揭示一个决定性分歧点；在该处归纳出的规则，使智能体在未来相似任务上保持稳定。",
+    "en": "Figure 1: Motivation. Comparing successful and failed trajectories on the same task reveals a decisive divergence point; the rule induced there stabilizes the agent on future similar tasks."
+  },
+  {
+    "number": 2,
+    "zh": "图 2：SkillForge 的详细工作流。从混合结果轨迹出发，SkillForge 提示 LLM，通过对比成功与失败运行提取程序性指南。随后整合并验证指南技能。在测试时，智能体只读取元数据，并且仅当当前上下文匹配相关触发条件时，才按需检索完整技能内容。",
+    "en": "Figure 2: Detailed workflow of SkillForge. Starting from mixed-outcome trajectories, SkillForge prompts an LLM to extract procedural guidance by contrasting successful and failed runs. Guidance skills are then consolidated and validated. At test time, the agent reads only metadata and retrieves full skill content on demand only when the current context matches a relevant trigger condition."
+  },
+  {
+    "number": 3,
+    "zh": "图 3：技能构建期间的轨迹预算扩展。增加轨迹采样预算会提高一致性，直至 12 条轨迹。将预算增加到 16 条轨迹，不再带来明显额外收益；混合结果示例比例（中）及加载技能的任务比例（右）均进入平台期，表明新增对比信号递减。",
+    "en": "Figure 3: Trajectory-budget scaling during skill construction. Increasing the trajectory sampling budget improves consistency up to 12 trajectories. Increasing the budget to 16 trajectories yields no clear additional gain, while both the proportion of mixed-outcome examples (middle) and the fraction of tasks on which a skill is loaded (right) plateau, indicating diminishing additional contrastive signal."
+  },
+  {
+    "number": 4,
+    "zh": "图 4：不同设计变体的一致性与 token 效率消融比较。SkillForge 取得最佳整体权衡：在各 k 值上具有最强一致性，同时在使用技能的变体中具有最低 token 成本。此基准上的 No Skill 基线比任何使用技能的变体都消耗更少 token，因为它从不加载技能内容；因此，有意义的比较对象是其他使用技能的变体。",
+    "en": "Figure 4: Ablation comparison of consistency and token efficiency across design variants. SKILLFORGE achieves the best overall trade-off: the strongest consistency across k together with the lowest token cost among the skill-using variants. The No Skill baseline uses fewer tokens than any skill-using variant on this benchmark, since it never loads skill content; the comparison of interest is therefore against the other skill-using variants."
+  },
+  {
+    "number": 5,
+    "zh": "图 5：案例研究：用户施压下具备政策意识的工作流控制。两个智能体均正确识别预订 EHGLP3 不可退款，但无技能智能体编造了无效工作流，而 SkillForge 调用相关程序性指南并正确处理问题。",
+    "en": "Figure 5: Case study: policy-aware workflow control under user pressure. Both agents correctly identify that reservation EHGLP3 is non-refundable, but the no-skill agent invents an invalid workflow, whereas SKILLFORGE invokes the relevant procedural guidance and correctly addresses the issue."
+  },
+  {
+    "number": 6,
+    "zh": "图 6：轨迹采样中的真实监督与 LLM 评判器代理监督。真实标签产生最强一致性，但代理监督仍是实用替代，在所有 k 值上保留了一致性提升。",
+    "en": "Figure 6: Golden vs. LLM-judge proxy supervision for trajectory sampling. Golden labels produce the strongest consistency, but proxy supervision remains a practical alternative, preserving the consistency gain across all values of k."
+  },
+  {
+    "number": 7,
+    "zh": "图 7：渐进式披露适应任务。对话任务（τ²-Bench）对延迟敏感，通常停留在轻量元数据或简短情境片段就能受益。工程任务（Terminal-Bench）更常需要更深的分阶段检索，只有识别失败子类型后，才展示专门的修复模板。",
+    "en": "Figure 7: Progressive disclosure is task-adaptive. Conversational tasks (τ2-Bench) are latency-sensitive and often benefit from stopping after lightweight metadata or short situational snippets. Engineering tasks (Terminal-Bench) more often justify deeper staged retrieval, exposing specialised repair templates only after the failure subtype is identified."
+  },
+  {
+    "number": 8,
+    "zh": "图 8：失败驱动的编码技能归纳提示词模板。",
+    "en": "Figure 8: Prompt template for failure-driven coding skill induction."
+  },
+  {
+    "number": 9,
+    "zh": "图 9：无标签情境技能归纳提示词模板。",
+    "en": "Figure 9: Prompt template for unlabeled situational skill induction."
+  },
+  {
+    "number": 10,
+    "zh": "图 10：自生成（无轨迹）技能归纳提示词模板。",
+    "en": "Figure 10: Prompt template for self-generated (no-trajectory) skill induction."
+  },
+  {
+    "number": 11,
+    "zh": "图 11：仅从成功轨迹归纳情境技能的提示词模板。",
+    "en": "Figure 11: Prompt template for success-only situational skill induction."
+  },
+  {
+    "number": 12,
+    "zh": "图 12：用于评估轨迹是否满足自然语言预期结果、以估计奖励的提示词模板。",
+    "en": "Figure 12: Prompt template used to evaluate whether a trajectory satisfies natural-language expected outcomes for reward estimation."
+  },
+  {
+    "number": 13,
+    "zh": "图 13：案例研究：τ-bench 航空领域中由技能引导的政策遵守（任务 31）。没有检索到的政策技能时（左），智能体编造了并不存在的“升舱后可修改”例外，处理了无效变更，违反 Basic Economy 规则。按需加载相关技能后（右），触发条件在查询预订后立即生效，智能体执行文档规定的拒绝，并转交人工，获得完整奖励。",
+    "en": "Figure 13: Case study: skill-guided policy compliance on τ-bench airline (Task 31). Without the retrieved policy skill (left), the agent fabricates a non-existent “upgrade-to-modify” exception and processes an invalid change, violating the Basic Economy rule. With the relevant skill loaded on demand (right), the trigger condition fires immediately after the reservation lookup, and the agent enforces the documented refusal and transfers to a human, earning full reward."
+  },
+  {
+    "number": 14,
+    "zh": "图 14：τ²-Bench Retail 任务 5 的失败案例。用户反复在换货与退货请求间转变后，智能体未能完全重置工作流状态，保留了过时的动作策略。加载的技能（CX.skill: delivered-order-returns）与任务“先换货、后退货”的结构不匹配，说明不精确的技能选择可能降低而非改善表现。",
+    "en": "Figure 14: Failure case on τ2-Bench Retail Task 5. After repeated user pivots between exchange and return requests, the agent fails to fully reset its workflow state, retaining a stale action policy. The loaded skill (CX.skill: delivered-order-returns) is mismatched to the task’s exchange-then-return structure, illustrating how imprecise skill selection can degrade rather than improve performance."
+  },
+  {
+    "number": 15,
+    "zh": "图 15：相同输入上的混合结果轨迹（τ-bench 零售）。同一智能体针对同一用户请求的三次独立运行，共享完全相同的三步前缀（上），却在第 4 步分歧。试验 0（左）未验证键盘目录就发起无效的多商品换货；试验 1–2（右）检查可用性，并正确地只更换恒温器。这种共享前缀上的结果分裂，正是 SkillForge 为提取程序性指南而挖掘的信号。",
+    "en": "Figure 15: Mixed-outcome trajectories on identical inputs (τ-bench retail). Three independent runs of the same agent on the same user request share an identical 3-step prefix (top) but diverge at step 4. Trial 0 (left) issues an invalid multi-item exchange without verifying the keyboard catalog, while Trials 1–2 (right) check availability and correctly exchange only the thermostat. This kind of outcome split on a shared prefix is precisely the signal SkillForge mines to extract procedural guidance."
+  },
+  {
+    "number": 16,
+    "zh": "图 16：失败模式：扁平检索下的技能干扰。当一次展示所有候选技能时（a），用户措辞（“更早”“直达”）与无关技能（find_cheapest_flight_deals）的表面关键词重叠，导致检索器加载无关技能，而正确技能（manage_basic_economy_restrictions）排名更低（b）。随后，智能体执行错误技能的指令并违反政策。这促成了 SkillForge 使用的按需、由触发条件约束的检索设计，它依据结构化触发条件而非仅依据自由文本相似性，控制技能加载。",
+    "en": "Figure 16: Failure mode: skill interference under flat retrieval. When all candidate skills are exposed at once (a), surface keyword overlap between the user’s phrasing (“sooner,” “non-stop”) and unrelated skills (find_cheapest_flight_deals) causes the retriever to load an irrelevant skill while the correct one (manage_basic_economy_restrictions) is ranked lower (b). The agent then executes the spurious skill’s instructions and violates policy. This motivates the on-demand, trigger-conditioned retrieval design used by SkillForge, which gates skill loading on structured trigger conditions rather than free-text similarity alone."
+  }
+]

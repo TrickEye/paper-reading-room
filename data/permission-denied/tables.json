@@ -1,0 +1,1009 @@
+[
+  {
+    "number": 1,
+    "source_id": "Sx5.T1",
+    "rows": [
+      [
+        "Control",
+        "Luna",
+        "71.9",
+        "13.28",
+        "34.5",
+        "12.85"
+      ],
+      [
+        "",
+        "Grok 4.5",
+        "76.8",
+        "61.69",
+        "82.0",
+        "46.20"
+      ],
+      [
+        "Non-root",
+        "Luna",
+        "56.6",
+        "14.25",
+        "27.3",
+        "9.04"
+      ],
+      [
+        "",
+        "Grok 4.5",
+        "65.5",
+        "98.83",
+        "73.0",
+        "81.59"
+      ],
+      [
+        "NIST-derived",
+        "Luna",
+        "53.9",
+        "15.41",
+        "25.5",
+        "10.26"
+      ],
+      [
+        "high",
+        "Grok 4.5",
+        "62.9",
+        "122.32",
+        "74.9",
+        "123.49"
+      ]
+    ],
+    "en": "Table 1: Grok 4.5 remains the higher-cost model under either harness at every policy, while both crossed pairings reduce success. Success rate (S​RSR) and mean 89-task replicate cost (CC) for the 2×22\\times 2 model–harness ablation, with three valid trials per task (267 trials per policy); trials on blocked-by-design tasks count as non-passing.",
+    "zh": "表 1：无论使用哪种运行框架，Grok 4.5 在每种策略下都是成本更高的模型；两种交叉配对都会降低成功率。此为 2×2 模型—运行框架消融实验的成功率（SR）和 89 项任务平均重复成本（C，美元）；每项任务进行三次有效试验（每种策略 267 次）。设计上受阻任务中的试验计为未通过。"
+  },
+  {
+    "number": 2,
+    "source_id": "Sx5.T2",
+    "rows": [
+      [
+        "sqlite-with-gcov",
+        "0.0%",
+        "80.6%",
+        "+80.6",
+        "97.2%"
+      ],
+      [
+        "adaptive-rejection-sampler",
+        "0.0%",
+        "19.4%",
+        "+19.4",
+        "61.1%"
+      ],
+      [
+        "configure-git-webserver",
+        "19.4%",
+        "19.4%",
+        "0.0",
+        "58.3%"
+      ],
+      [
+        "mcmc-sampling-stan",
+        "0.0%",
+        "0.0%",
+        "0.0",
+        "88.9%"
+      ],
+      [
+        "make-doom-for-mips",
+        "0.0%",
+        "0.0%",
+        "0.0",
+        "0.0%"
+      ]
+    ],
+    "en": "Table 2: The original verifiers failed to credit valid solutions on two of the five tasks. Success rate under NIST-derived high scored by the original (Orig.) and by the adapted verifier, and in control with the original verifier. Each cell is 36 trials: twelve model–harness bundles, three trials each. Δ\\Delta is Adapted minus Orig. in percentage points; the gap between Adapted and Control is the residual policy effect.",
+    "zh": "表 2：五项任务中有两项的原始验证器未能认可有效解。在 NIST-derived high 下分别由原始验证器（Orig.）和改编验证器评分的成功率，以及使用原始验证器在 Control 下的成功率。每格包含 36 次试验：十二个模型—运行框架组合，每个组合三次。Δ 为改编值减去原始值，单位为百分点；改编值与 Control 之间的差距是剩余策略影响。"
+  },
+  {
+    "number": 3,
+    "source_id": "Sx5.T3",
+    "rows": [
+      [
+        "Success",
+        "72.5",
+        "66.9",
+        "65.1"
+      ],
+      [
+        "Timeout",
+        "12.0",
+        "14.5",
+        "16.4"
+      ],
+      [
+        "Wrong solution",
+        "12.8",
+        "15.5",
+        "15.5"
+      ],
+      [
+        "Early stop",
+        "2.4",
+        "2.6",
+        "2.7"
+      ]
+    ],
+    "en": "Table 3: Hardening converts successes into timeouts and wrong solutions, not into early stops. Run outcomes per policy condition on the 82 solvable-witness tasks (12 bundles, three trials per task, 2,952 runs per condition). A failed run counts as a timeout when its agent runtime reaches 95% of the task’s wall-clock budget, as an early stop when it ends in the bottom decile of that task’s runtimes, and as a wrong solution otherwise; a residual 0.4% of runs per condition (provider- and verifier-side errors) is excluded.",
+    "zh": "表 3：加固使成功运行转变为超时和错误解，而不是提前停止。表中为 82 项具有可解性见证的任务在各策略条件下的运行结果（十二个组合、每项任务三次试验，每种条件 2,952 次运行）。若失败运行的智能体运行时间达到任务墙钟预算的 95%，则计为超时；若其结束时间落在该任务运行时长最低的十分位，则计为提前停止；否则计为错误解。每种条件下另有 0.4% 的提供方侧和验证器侧错误运行被排除。"
+  },
+  {
+    "number": 4,
+    "source_id": "Sx9.T4",
+    "rows": [
+      [
+        "Network",
+        "All egress is forced through a loopback proxy; a firewall rule scoped to the agent’s user rejects any traffic that bypasses it, including from child processes. Cloud-metadata and private-address ranges are always denied. The proxy default-denies every domain outside a fixed 205-domain developer allowlist adapted from the default allowlist for Claude Code on the web, which includes the model-serving endpoints; no task-specific domains are added. A blocked domain returns a bare HTTP 403; direct egress fails with a refused connection.",
+        "SC-7, SC-7(5), SC-7(8)"
+      ],
+      [
+        "Filesystem",
+        "Only the workspace, temporary and shared-memory paths (/tmp, /dev/shm), and the harness runtime and cache directories remain writable. The home directory, /var/tmp, and the operating-system trees are bind-remounted read-only, so writes fail with EROFS.",
+        "AC-3, SC-39, AC-4, SC-4, AC-4(4), SC-7(21), CM-5(1)"
+      ],
+      [
+        "Privilege",
+        "The agent runs as a dedicated ordinary user. It has no sudoers entry, and the root password is locked, so sudo and su escalation fail. The kernel’s no_new_privs flag is set, the capability bounding set is empty, and setuid bits are removed. Privileged kernel operations fail with EPERM.",
+        "AC-6, AC-6(2), AC-6(3), AC-6(5), AC-6(10), CM-5(1)"
+      ]
+    ],
+    "en": "Table 4: Every restriction is a native operating-system mechanism rather than a policy shim, mapped to the NIST SP 800-53 controls it projects onto the runtime; the agent observes only ordinary system errors (HTTP 403, EROFS, EPERM). The three runtime-hardening axes, network (NN), filesystem (FF), and privilege (PP), under the NIST-derived high policy. The model-serving endpoints are the OpenRouter domains (api.openrouter.ai, openrouter.ai, *.openrouter.ai); the running harness’s own vendor endpoint (e.g., api.anthropic.com for Claude Code, chatgpt.com for Codex) is admitted at runtime. The harness runtime and cache directories are ~/.cache, ~/.config, ~/.local, and the running harness’s own directory (e.g., ~/.claude, ~/.codex).",
+    "zh": "表 4：每项限制都是原生操作系统机制，而非策略垫片；表中列出这些机制映射到的 NIST SP 800-53 控制。智能体只会观察到普通系统错误（HTTP 403、EROFS、EPERM）。表中为 NIST-derived high 下三个运行时加固维度：网络（N）、文件系统（F）和权限（P）。模型服务端点为 OpenRouter 域名（api.openrouter.ai、openrouter.ai、*.openrouter.ai）；当前运行框架自己的厂商端点（例如 Claude Code 使用 api.anthropic.com，Codex 使用 chatgpt.com）会在运行时放行。运行框架的运行时和缓存目录包括 ~/.cache、~/.config、~/.local，以及当前运行框架自己的目录（如 ~/.claude、~/.codex）。"
+  },
+  {
+    "number": 5,
+    "source_id": "Sx9.T5",
+    "rows": [],
+    "en": "Table 5: The fixed 205-domain egress allowlist of NIST-derived high. All egress passes a default-deny proxy admitting only these domains. A bare entry matches its exact host only; a *.-prefixed entry matches strict subdomains at any depth, so openrouter.ai and *.openrouter.ai are distinct entries. The running harness’s own vendor endpoint is additionally admitted at runtime, and no task-specific domains are added.",
+    "zh": "表 5：NIST-derived high 使用的固定 205 域出站白名单。所有出站流量都经过默认拒绝代理，只放行这些域名。未加前缀的条目仅匹配完全相同的主机名；以 *. 开头的条目匹配任意深度的严格子域名，因此 openrouter.ai 与 *.openrouter.ai 是不同条目。当前运行框架自己的厂商端点会在运行时额外放行；不添加任务专用域名。"
+  },
+  {
+    "number": 6,
+    "source_id": "Sx10.T6",
+    "rows": [
+      [
+        "sqlite-with-gcov",
+        "Binary resolved via PATH alone; the prompt-pinned /app/sqlite build was never checked →\\rightarrow also accept /app/sqlite (PATH check retained)."
+      ],
+      [
+        "adaptive-rejection-sampler",
+        "Bare-name Rscript, resolvable only from a root-writable PATH directory →\\rightarrow PATH, else the agent’s /app R build."
+      ],
+      [
+        "make-doom-for-mips",
+        "node /app/vm.js run with an unset working directory, so the binary load depended on the verifier’s cwd →\\rightarrow pin cwd=/app."
+      ],
+      [
+        "mcmc-sampling-stan",
+        "Bare-name R/Rscript resolved to the image’s baked, RStan-less /usr/bin/R →\\rightarrow prefer the agent’s /app R wrapper, else PATH."
+      ],
+      [
+        "configure-git-webserver",
+        "Bare-name git/ssh/ssh-keygen, requiring a system-wide root install →\\rightarrow resolve PATH-first with /app fallback; git’s SSH transport routed through the resolved ssh."
+      ]
+    ],
+    "en": "Table 6: Each repair only generalizes a hard-coded root-owned resolution mechanism (a PATH entry or working directory); every substantive assertion is untouched, and the identical repaired verifier runs at every policy condition, including control. The five over-specified verifiers and their additive repairs, for tools the task statements only required to function. Original-verifier outcomes are preserved for audit, and full task-statement quotes with per-assertion details accompany the released verifier diffs.",
+    "zh": "表 6：每项修复都只推广一个硬编码的 root 所有路径解析机制（PATH 条目或工作目录）；所有实质性断言均保持不变，修复后的同一验证器会在每个策略条件（包括 Control）下运行。表中列出五个过度规格化验证器及其增量修复，涉及任务说明仅要求正常工作的工具。原验证器结果仍保留供审计；发布的验证器差异文件还附有完整任务引文和逐项断言细节。"
+  },
+  {
+    "number": 7,
+    "source_id": "Sx10.T7",
+    "rows": [
+      [
+        "adaptive-rejection-sampler",
+        "F/P",
+        "apt installs R system-wide (root).",
+        "Rootless apt-sysroot r-base-core+openssl into /app/R/root; relocate R under /app (binary-patch Rscript’s embedded R_HOME + LD wrapper); openssl-decrypt the protected ars.R with the oracle password; inject the required input-validation, log-concavity check, and test()/sample outputs. Adapted verifier resolves /app/R/bin/Rscript."
+      ],
+      [
+        "sqlite-with-gcov",
+        "F/P",
+        "apt build tools; installs /usr/local/bin/sqlite3 (root).",
+        "Rootless apt-sysroot (apt-get --download-only build-essential jimsh tclsh; dpkg-deb -x into /app/.rootless); build SQLite+gcov from the pre-vendored source tarball into /app/sqlite. Adapted verifier resolves /app/sqlite/sqlite3."
+      ],
+      [
+        "bn-fit-modify",
+        "N+F/P",
+        "R-installs bnlearn 4.9 from CRAN (off-list), root.",
+        "Fetch identical bnlearn 4.9 source from the GitHub CRAN mirror; compile into a user R library in /app (zero non-base deps)."
+      ],
+      [
+        "caffe-cifar-10",
+        "N+F/P",
+        "Native deps + global links + CIFAR-10 from a non-trusted host.",
+        "Rootless private-sysroot Caffe build; SHA-pinned canonical CIFAR-10 .bin batches from raw.githubusercontent.com. Verifier already /app-native."
+      ],
+      [
+        "chess-best-move",
+        "F/P",
+        "apt stockfish + pip --break-system-packages into /usr.",
+        "pip --target=/app/pylib numpy+python-chess; drop stockfish, use is_checkmate() mate-in-one scan; CV image→\\toFEN kept verbatim."
+      ],
+      [
+        "cobol-modernization",
+        "N",
+        "apt gnucobol3 from Debian mirror (off-list).",
+        "Skip apt (gnucobol baked, never used by verifier); emit pure-stdlib port with byte-identical fixed-width output. Zero egress."
+      ],
+      [
+        "compile-compcert",
+        "N+F/P",
+        "opam/coq-released repos (off-list) + OCaml from source, root.",
+        "Rootless apt-sysroot OCaml toolchain from noble universe; build pinned Coq 8.16.1 + CompCert 3.13.1 from GitHub, all in /app."
+      ],
+      [
+        "configure-git-webserver",
+        "F/P",
+        "apt git/nginx/sshd, adduser, system sshd on :22 (root).",
+        "conda-forge git+openssh+paramiko into /app; custom paramiko SSH server binds :22 non-root, pubkey-auths “user” with no UNIX account; bare repo + post-receive + HTTP :8080 in /app. Adapted verifier resolves the /app tools."
+      ],
+      [
+        "crack-7z-hash",
+        "F/P",
+        "apt 7zip + perl-lzma (root).",
+        "Rootless apt-sysroot: apt-get download + dpkg -x into /app/sysroot; genuine crack with baked John the Ripper (numeric mask)."
+      ],
+      [
+        "custom-memory-heap-crash",
+        "F/P",
+        "Uses gdb + writes /proc/sys/.../core_pattern (absent / RO).",
+        "Edit only /app/user.cpp: force iostream facet-node registration in user_init() before the custom heap installs; drop gdb steps. Zero egress."
+      ],
+      [
+        "dna-assembly",
+        "F/P",
+        "apt emboss+primer3 (root).",
+        "Skip apt (tools only print diagnostics); build primers by pure-coreutils slicing at the canonical offsets. Verifier runs its own primer3."
+      ],
+      [
+        "dna-insert",
+        "F/P",
+        "apt emboss+primer3 (root).",
+        "Same skip-apt coreutils-slicing route as dna-assembly."
+      ],
+      [
+        "financial-document-processor",
+        "F/P",
+        "apt tesseract + uv run (root; cache under /root).",
+        "Genuine rootless OCR: conda-forge tesseract 5.3.0 + byte-identical tessdata; pip pymupdf/pytesseract into /app; canonical classifier/parser verbatim, only the tesseract pointer changed. (Supersedes an earlier witness that did not perform the OCR.)"
+      ],
+      [
+        "fix-git",
+        "F/P",
+        "git merge needs committer identity set in /root/.gitconfig.",
+        "Point HOME=/app/home, register identity + safe.directory; reproduce the canonical reflog recovery + merge -X theirs. git baked, zero egress."
+      ],
+      [
+        "gcode-to-text",
+        "N",
+        "apt tesseract/opencv from Debian mirror (off-list).",
+        "conda-forge tesseract + tessdata from GitHub + opencv-python-headless from PyPI; OCR pipeline byte-for-byte, write only /app."
+      ],
+      [
+        "git-multibranch",
+        "F/P",
+        "useradd/chpasswd (/etc/shadow) + system sshd :22 (root).",
+        "paramiko SSH server :22 non-root, password-auths git/password with no UNIX user; bare repo + hook + stdlib HTTPS :8443 in /app. Only egress: pip paramiko wheel."
+      ],
+      [
+        "hf-model-inference",
+        "N",
+        "from_pretrained streams weights from HF hub/Xet CDN (off-list).",
+        "Byte-identical config/vocab/pytorch_model.bin from HF legacy S3 (*.amazonaws.com), size+sha256 pinned, load offline."
+      ],
+      [
+        "install-windows-3.11",
+        "N+F/P",
+        "Compiles QEMU 5.2 from an off-list host + services (root).",
+        "Rootless apt-sysroot QEMU 5.2.0 from Ubuntu hirsute old-releases; baked win311.img read-only; start rootless nginx:80 + websockify:8080."
+      ],
+      [
+        "largest-eigenval",
+        "F/P",
+        "pip install eigenpy to system site-packages (root verifier imports it).",
+        "pip --target=/app/pylib 3 pinned wheels (--no-deps, keep system numpy); /app/eigen.py self-bootstraps sys.path via site.addsitedir in the verifier process."
+      ],
+      [
+        "log-summary-date-ranges",
+        "N",
+        "apt grep/coreutils from Debian mirror (off-list, redundant).",
+        "Skip apt; pure stdlib over baked /app/logs. Zero egress."
+      ],
+      [
+        "make-doom-for-mips",
+        "N+F/P",
+        "apt MIPS cross toolchain from Debian mirror (off-list).",
+        "Self-contained LLVM 14.0.6 from conda-forge via static micromamba; freestanding build in /app. Adapted verifier runs vm.js with cwd=/app."
+      ],
+      [
+        "mcmc-sampling-stan",
+        "N+F/P",
+        "Installs rstan from CRAN (off-list), root.",
+        "Rootless apt-sysroot r-cran-rstan 2.32.5 + Stan closure from noble universe; point system R at the /app site-library. Adapted verifier resolves the /app R wrapper first."
+      ],
+      [
+        "merge-diff-arc-agi-task",
+        "F/P",
+        "apt git (root; git not baked).",
+        "Rootless apt-sysroot git + closure into /app/sysroot; reproduce repo/branch/merge end-state; algo.py pure-stdlib."
+      ],
+      [
+        "mteb-retrieve",
+        "N",
+        "mteb.get_model pulls BGE weights from HF hub/Xet (off-list).",
+        "Byte-identical BGE-small-zh-v1.5 weights as non-LFS git blobs from GitHub mirrors into the HF cache; HF_HUB_OFFLINE; unchanged retrieve.py."
+      ],
+      [
+        "overfull-hbox",
+        "F/P",
+        "apt python3-pip for the solver (no python3 in image; root).",
+        "Skip apt; pdflatex+perl already baked; do the six reference synonym swaps in perl; replay verifier compile. Zero egress."
+      ],
+      [
+        "protein-assembly",
+        "N",
+        "Queries RCSB REST + FPbase (off-list).",
+        "PDB mmCIF from the S3 archive snapshot (*.amazonaws.com); donor/acceptor by S3 title substring; SNAP/FLAG hardcoded as the canonical does; pip from PyPI."
+      ],
+      [
+        "pypi-server",
+        "N+F/P",
+        "apt update (off-list) + apache2-utils/twine auth (root).",
+        "Skip apt/auth (pypiserver serves anonymously); two pure-python wheels from PyPI, sha256-gated; serve the built wheel over loopback from /app."
+      ],
+      [
+        "pytorch-model-cli",
+        "N+F/P",
+        "PyTorch CPU wheel index + Debian compiler (both off-list).",
+        "weights.json via pure-stdlib zip/struct extraction (byte-identical to torch); compile the reference C with zig cc from the ziglang PyPI wheel (bundled libc)."
+      ],
+      [
+        "qemu-alpine-ssh",
+        "F/P",
+        "Root-owned qcow2 opened rw + apk add openssh via off-list CDN.",
+        "Fresh qcow2 in /app, ISO read-only via -cdrom; openssh installed offline from the alpine-extended on-media apk repo; serial-console driven; hostfwd :2222; daemonized so the VM survives to the probe."
+      ],
+      [
+        "rstan-to-pystan",
+        "N+F/P",
+        "sudo + deadsnakes PPA (off-list) for Py3.10 + httpstan from source.",
+        "Use baked Python 3.12; prebuilt httpstan cp312 wheel from PyPI (no source build); rootless apt-sysroot for the C++ toolchain used at model-compile time."
+      ],
+      [
+        "sam-cell-seg",
+        "N+F/P",
+        "apt libgl1 + torch/torchvision +cpu wheels (off-list, root).",
+        "Deliverable is one file /app/convert_masks.py; verifier supplies torch/mobile_sam in its own unrestricted environment; author the canonical script offline, zero solve-time egress."
+      ],
+      [
+        "train-fasttext",
+        "N+F/P",
+        "C++ toolchain + clone fastText + make (off-list, root).",
+        "Prebuilt fasttext-wheel from PyPI (no compile); materialize a python-build-standalone 3.12 via uv (0.9.2 ships cp312 only); train inside it. Verifier reads /app/model.bin."
+      ]
+    ],
+    "en": "Table 7: The 32 solvability witnesses. Each is a study-authored, policy-compliant reference solution that reaches the official passing state under NIST-derived high where the shipped one fails. Axis: which policy axes foreclose the official reference (N network, F filesystem, P privilege); combined entries list every foreclosing axis, and the separators carry no meaning beyond conjunction. None of the witnesses signals artifact locations to the verifier; discovery of the non-root agent’s /app artifacts is handled by the additive adapted verifiers, applied uniformly across every policy condition.",
+    "zh": "表 7：32 个可解性见证。每项见证都是本研究编写的策略兼容参考解；在随附参考解于 NIST-derived high 下失败时，这些见证能够达到官方通过状态。维度列说明哪些策略维度会阻断官方参考解（N 为网络、F 为文件系统、P 为权限）；组合条目列出所有阻断维度，分隔符只表示这些维度同时作用。见证不会向验证器透露产物位置；非 root 智能体在 /app 中生成的产物由增量改编验证器发现，且该验证器在所有策略条件下统一应用。"
+  },
+  {
+    "number": 8,
+    "source_id": "Sx12.T8",
+    "rows": [
+      [
+        "“flagged for possible cybersecurity risk” (Trusted Access for Cyber)",
+        "GPT-5.6 Sol",
+        "43",
+        "18"
+      ],
+      [
+        "“safety measures … flagged this message for a cybersecurity topic” (Cyber Verification Program)",
+        "Claude Opus 5",
+        "38",
+        "38"
+      ],
+      [
+        "“appears to violate our Usage Policy”",
+        "Claude Opus 4.8, Claude Sonnet 5",
+        "9",
+        "9"
+      ],
+      [
+        "“Fable 5’s safeguards flagged this message”",
+        "Claude Fable 5",
+        "7",
+        "7"
+      ],
+      [
+        "“restrictions on violative cyber content”",
+        "Claude Opus 5",
+        "1",
+        "1"
+      ]
+    ],
+    "en": "Table 8: Only the OpenAI route retries a refused request; every Anthropic refusal ends the trial where it fires. The five distinct provider-side refusal messages observed, the bundles that received them, the number of trials in which each appeared, and the number of those trials the message ended. The Codex CLI reconnects after a dropped stream, so 25 of the 43 flagged GPT-5.6 Sol trials resumed and completed. Each bundle contributes 801 trials (89 tasks, three trials, three policy conditions).",
+    "zh": "表 8：只有 OpenAI 路由会重试被拒绝的请求；Anthropic 的每次拒绝都会结束触发它的试验。表中列出观察到的五种不同提供方侧拒绝消息、收到消息的模型组合、消息出现的试验次数，以及消息导致试验结束的次数。Codex CLI 会在流中断后重新连接，因此被标记的 GPT-5.6 Sol 试验中有 43 次里的 25 次恢复并完成。每个组合共进行 801 次试验（89 项任务、三次重复、三个策略条件）。"
+  },
+  {
+    "number": 9,
+    "source_id": "Sx12.T9",
+    "rows": [
+      [
+        "GPT-5.6 Sol",
+        "14",
+        "16",
+        "13",
+        "43",
+        "18"
+      ],
+      [
+        "Claude Opus 5",
+        "8",
+        "20",
+        "11",
+        "39",
+        "39"
+      ],
+      [
+        "Claude Fable 5",
+        "2",
+        "2",
+        "3",
+        "7",
+        "7"
+      ],
+      [
+        "Claude Sonnet 5",
+        "3",
+        "2",
+        "2",
+        "7",
+        "7"
+      ],
+      [
+        "Claude Opus 4.8",
+        "1",
+        "1",
+        "0",
+        "2",
+        "2"
+      ],
+      [
+        "Total",
+        "28",
+        "41",
+        "29",
+        "98",
+        "73"
+      ]
+    ],
+    "en": "Table 9: Intervention incidence does not rise with policy severity. Flagged trials per bundle and policy condition, out of 267 trials per cell (89 tasks, three trials each); HH is NIST-derived high. “Ended” counts the flagged trials the intervention terminated. The seven bundles not listed recorded no interventions in any condition.",
+    "zh": "表 9：干预发生率不会随着策略严重程度上升。表中列出各组合和策略条件下被标记的试验次数，每格总数为 267 次（89 项任务，每项三次）；H 表示 NIST-derived high。Ended 列统计干预终止的被标记试验。未列出的七个组合在任何条件下都没有干预记录。"
+  },
+  {
+    "number": 10,
+    "source_id": "Sx13.T10",
+    "rows": [
+      [
+        "Component",
+        "Version"
+      ],
+      [
+        "Agent harnesses (installed into each sandbox at run start)",
+        "Agent harnesses (installed into each sandbox at run start)"
+      ],
+      [
+        "Claude Code (Anthropic models)",
+        "2.1.206a"
+      ],
+      [
+        "Codex CLI (OpenAI models)",
+        "rust-v0.142.5"
+      ],
+      [
+        "Grok Build (xAI models)",
+        "0.2.87"
+      ],
+      [
+        "Terminus-2 (all other models)",
+        "2.0.0"
+      ],
+      [
+        "Harbor runtime",
+        "0.13.1"
+      ],
+      [
+        "in-sandbox Python",
+        "3.12.11"
+      ],
+      [
+        "in-sandbox uv",
+        "0.11.16"
+      ],
+      [
+        "Evaluation controller",
+        "Evaluation controller"
+      ],
+      [
+        "Python",
+        "3.12 (digest-pinned python:3.12-slim)"
+      ],
+      [
+        "Inspect AI (inspect-ai)",
+        "0.3.239"
+      ],
+      [
+        "inspect-harbor",
+        "0.5.9"
+      ],
+      [
+        "harbor (controller side)",
+        "0.13.1"
+      ],
+      [
+        "openai clientb",
+        "2.41.0"
+      ],
+      [
+        "httpx",
+        "0.28.1"
+      ],
+      [
+        "pydantic",
+        "2.13.4"
+      ],
+      [
+        "PyYAML",
+        "6.0.3"
+      ],
+      [
+        "Benchmark",
+        "Benchmark"
+      ],
+      [
+        "Terminal-Bench",
+        "2.1 (digest-pinned datasetc)"
+      ],
+      [
+        "Sandbox platform",
+        "Sandbox platform"
+      ],
+      [
+        "Daytona SDK (daytona-sdk)",
+        "0.187.0"
+      ],
+      [
+        "daytona-api-client",
+        "0.187.0"
+      ],
+      [
+        "Cloud orchestration (does not touch trial outcomes)",
+        "Cloud orchestration (does not touch trial outcomes)"
+      ],
+      [
+        "google-cloud-bigquery",
+        "3.42.1"
+      ],
+      [
+        "google-cloud-firestore",
+        "2.27.0"
+      ],
+      [
+        "google-cloud-storage",
+        "3.11.0"
+      ],
+      [
+        "gcsfs",
+        "2025.9.0"
+      ],
+      [
+        "Terraform",
+        "≥\\geq1.5; hashicorp/google ≥\\geq5.40, <<7"
+      ]
+    ],
+    "en": "Table 10: Software versions used for all reported runs. aClaude Opus 5 only was run on Claude Code 2.1.220 (documented below); all other Claude models used 2.1.206. bUsed only to initialize Inspect’s OpenRouter provider; the harness inside the sandbox, not the controller, performs model calls. cHarbor registry package terminal-bench/terminal-bench-2-1, pinned at digest sha256:7d7bdc1cbedad549fc1140404bd4dc45e5fd0ea7c4186773687d177ad3a0699a.",
+    "zh": "表 10：所有已报告运行所用的软件版本。a：只有 Claude Opus 5 使用 Claude Code 2.1.220（详见下文）；其他 Claude 模型均使用 2.1.206。b：仅用于初始化 Inspect 的 OpenRouter 提供方；模型调用由沙箱内的运行框架完成，而非控制器。c：Harbor 注册表软件包 terminal-bench/terminal-bench-2-1，按摘要 sha256:7d7bdc1cbedad549fc1140404bd4dc45e5fd0ea7c4186773687d177ad3a0699a 固定。"
+  },
+  {
+    "number": 11,
+    "source_id": "Sx13.T11",
+    "rows": [
+      [
+        "Model",
+        "Provider model identifier",
+        "Harness"
+      ],
+      [
+        "OpenAI (Codex)",
+        "OpenAI (Codex)",
+        "OpenAI (Codex)"
+      ],
+      [
+        "GPT-5.6 Sol",
+        "openai/gpt-5.6-sol",
+        "Codex"
+      ],
+      [
+        "GPT-5.6 Terra",
+        "openai/gpt-5.6-terra",
+        "Codex"
+      ],
+      [
+        "GPT-5.6 Luna",
+        "openai/gpt-5.6-luna",
+        "Codex"
+      ],
+      [
+        "Anthropic (Claude Code)",
+        "Anthropic (Claude Code)",
+        "Anthropic (Claude Code)"
+      ],
+      [
+        "Claude Sonnet 5",
+        "anthropic/claude-sonnet-5",
+        "Claude Code"
+      ],
+      [
+        "Claude Opus 4.8",
+        "anthropic/claude-opus-4.8",
+        "Claude Code"
+      ],
+      [
+        "Claude Fable 5",
+        "anthropic/claude-fable-5",
+        "Claude Code"
+      ],
+      [
+        "Claude Opus 5",
+        "anthropic/claude-opus-5",
+        "Claude Code"
+      ],
+      [
+        "Open-weight (Terminus-2)",
+        "Open-weight (Terminus-2)",
+        "Open-weight (Terminus-2)"
+      ],
+      [
+        "Kimi K3",
+        "moonshotai/kimi-k3",
+        "Terminus-2"
+      ],
+      [
+        "GLM-5.2",
+        "z-ai/glm-5.2",
+        "Terminus-2"
+      ],
+      [
+        "Qwen3.7 Max",
+        "qwen/qwen3.7-max",
+        "Terminus-2"
+      ],
+      [
+        "MiniMax M3",
+        "minimax/minimax-m3",
+        "Terminus-2"
+      ],
+      [
+        "xAI (Grok Build)",
+        "xAI (Grok Build)",
+        "xAI (Grok Build)"
+      ],
+      [
+        "Grok 4.5",
+        "x-ai/grok-4.5",
+        "Grok Build"
+      ]
+    ],
+    "en": "Table 11: Provider model identifiers and harness assignment. Each identifier is the exact OpenRouter model string used for inference; the harness column names the agent CLI that issued the calls, held fixed across all policies and repetitions. Harness version pins are in Table 10.",
+    "zh": "表 11：提供方模型标识符与运行框架分配。每个标识符都是推理时使用的确切 OpenRouter 模型字符串；运行框架列指出发起调用的智能体 CLI，该配置在所有策略和重复试验中保持不变。运行框架版本固定项见表 10。"
+  },
+  {
+    "number": 12,
+    "source_id": "Sx14.T12",
+    "rows": [
+      [
+        "GPT-5.6 Sol",
+        "83.9±1.983.9_{\\pm 1.9}",
+        "45.5945.59",
+        "72.3±3.272.3_{\\pm 3.2}",
+        "50.4950.49",
+        "74.2±2.474.2_{\\pm 2.4}",
+        "58.8858.88"
+      ],
+      [
+        "GPT-5.6 Terra",
+        "79.0±3.279.0_{\\pm 3.2}",
+        "24.6024.60",
+        "65.2±1.865.2_{\\pm 1.8}",
+        "29.4629.46",
+        "63.3±1.963.3_{\\pm 1.9}",
+        "30.2730.27"
+      ],
+      [
+        "GPT-5.6 Luna",
+        "71.9±1.671.9_{\\pm 1.6}",
+        "13.2813.28",
+        "56.6±3.756.6_{\\pm 3.7}",
+        "14.2514.25",
+        "53.9±1.853.9_{\\pm 1.8}",
+        "15.4115.41"
+      ],
+      [
+        "Claude Sonnet 5",
+        "73.4±2.173.4_{\\pm 2.1}",
+        "113.89113.89",
+        "60.3±1.960.3_{\\pm 1.9}",
+        "135.58135.58",
+        "55.1±2.855.1_{\\pm 2.8}",
+        "138.21138.21"
+      ],
+      [
+        "Claude Opus 4.8",
+        "74.9±1.474.9_{\\pm 1.4}",
+        "123.44123.44",
+        "62.9±0.962.9_{\\pm 0.9}",
+        "147.31147.31",
+        "63.3±3.763.3_{\\pm 3.7}",
+        "164.23164.23"
+      ],
+      [
+        "Claude Fable 5",
+        "79.0±0.579.0_{\\pm 0.5}",
+        "316.44316.44",
+        "65.9±4.765.9_{\\pm 4.7}",
+        "317.68317.68",
+        "67.8±1.467.8_{\\pm 1.4}",
+        "375.30375.30"
+      ],
+      [
+        "Claude Opus 5",
+        "77.5±1.677.5_{\\pm 1.6}",
+        "215.26215.26",
+        "68.2±0.568.2_{\\pm 0.5}",
+        "213.05213.05",
+        "65.2±2.465.2_{\\pm 2.4}",
+        "290.11290.11"
+      ],
+      [
+        "Kimi K3",
+        "72.3±2.372.3_{\\pm 2.3}",
+        "24.9324.93",
+        "60.3±1.960.3_{\\pm 1.9}",
+        "32.4532.45",
+        "54.7±1.454.7_{\\pm 1.4}",
+        "36.6236.62"
+      ],
+      [
+        "GLM-5.2",
+        "73.4±1.973.4_{\\pm 1.9}",
+        "30.1230.12",
+        "59.6±2.459.6_{\\pm 2.4}",
+        "36.4636.46",
+        "55.8±2.655.8_{\\pm 2.6}",
+        "39.4039.40"
+      ],
+      [
+        "Qwen3.7 Max",
+        "56.9±1.956.9_{\\pm 1.9}",
+        "19.8219.82",
+        "45.3±2.945.3_{\\pm 2.9}",
+        "29.7729.77",
+        "40.4±0.940.4_{\\pm 0.9}",
+        "26.6326.63"
+      ],
+      [
+        "MiniMax M3",
+        "59.6±4.859.6_{\\pm 4.8}",
+        "19.3419.34",
+        "46.8±1.146.8_{\\pm 1.1}",
+        "35.0335.03",
+        "44.2±1.944.2_{\\pm 1.9}",
+        "26.2626.26"
+      ],
+      [
+        "Grok 4.5",
+        "82.0±1.682.0_{\\pm 1.6}",
+        "46.2046.20",
+        "73.0±0.973.0_{\\pm 0.9}",
+        "81.5981.59",
+        "74.9±1.474.9_{\\pm 1.4}",
+        "123.49123.49"
+      ]
+    ],
+    "en": "Table 12: Per-bundle success rate and cost under each policy on the full 89-task pool (the set plotted in Figure 1 of the main paper). Success rate is the percentage of passing trials, subscript the standard deviation across the three repetitions; cost is the mean 89-task replicate cost in US dollars.",
+    "zh": "表 12：完整 89 项任务池中，各策略下逐组合的成功率和成本（即主文图 1 使用的任务集）。成功率是通过试验的百分比，下标表示三次重复的标准差；成本是 89 项任务的平均重复成本，单位为美元。"
+  },
+  {
+    "number": 13,
+    "source_id": "Sx14.T13",
+    "rows": [
+      [
+        "GPT-5.6 Sol",
+        "82.5±2.182.5_{\\pm 2.1}",
+        "41.6541.65",
+        "77.2±3.577.2_{\\pm 3.5}",
+        "46.2046.20",
+        "79.3±2.679.3_{\\pm 2.6}",
+        "51.6751.67"
+      ],
+      [
+        "GPT-5.6 Terra",
+        "77.2±3.577.2_{\\pm 3.5}",
+        "22.7422.74",
+        "69.9±2.169.9_{\\pm 2.1}",
+        "27.7627.76",
+        "67.5±2.167.5_{\\pm 2.1}",
+        "28.0928.09"
+      ],
+      [
+        "GPT-5.6 Luna",
+        "69.5±1.769.5_{\\pm 1.7}",
+        "12.5412.54",
+        "61.0±4.061.0_{\\pm 4.0}",
+        "13.5213.52",
+        "57.3±2.057.3_{\\pm 2.0}",
+        "13.6313.63"
+      ],
+      [
+        "Claude Sonnet 5",
+        "72.4±1.572.4_{\\pm 1.5}",
+        "104.26104.26",
+        "64.2±2.164.2_{\\pm 2.1}",
+        "127.16127.16",
+        "58.9±2.558.9_{\\pm 2.5}",
+        "125.03125.03"
+      ],
+      [
+        "Claude Opus 4.8",
+        "72.8±1.572.8_{\\pm 1.5}",
+        "116.35116.35",
+        "67.1±1.067.1_{\\pm 1.0}",
+        "133.85133.85",
+        "68.7±4.068.7_{\\pm 4.0}",
+        "141.28141.28"
+      ],
+      [
+        "Claude Fable 5",
+        "77.6±0.677.6_{\\pm 0.6}",
+        "288.92288.92",
+        "70.3±5.170.3_{\\pm 5.1}",
+        "283.90283.90",
+        "73.6±1.573.6_{\\pm 1.5}",
+        "320.40320.40"
+      ],
+      [
+        "Claude Opus 5",
+        "76.8±2.076.8_{\\pm 2.0}",
+        "196.84196.84",
+        "72.8±0.672.8_{\\pm 0.6}",
+        "204.82204.82",
+        "70.7±2.670.7_{\\pm 2.6}",
+        "267.23267.23"
+      ],
+      [
+        "Kimi K3",
+        "71.1±3.071.1_{\\pm 3.0}",
+        "23.9023.90",
+        "64.6±2.064.6_{\\pm 2.0}",
+        "27.8927.89",
+        "58.9±2.158.9_{\\pm 2.1}",
+        "28.6328.63"
+      ],
+      [
+        "GLM-5.2",
+        "73.2±1.073.2_{\\pm 1.0}",
+        "28.5728.57",
+        "63.4±2.663.4_{\\pm 2.6}",
+        "25.7225.72",
+        "60.2±3.260.2_{\\pm 3.2}",
+        "30.8330.83"
+      ],
+      [
+        "Qwen3.7 Max",
+        "55.7±0.655.7_{\\pm 0.6}",
+        "18.3718.37",
+        "48.8±3.448.8_{\\pm 3.4}",
+        "23.1723.17",
+        "43.9±1.043.9_{\\pm 1.0}",
+        "23.0123.01"
+      ],
+      [
+        "MiniMax M3",
+        "58.9±4.158.9_{\\pm 4.1}",
+        "18.9818.98",
+        "50.4±1.550.4_{\\pm 1.5}",
+        "19.4619.46",
+        "48.0±2.148.0_{\\pm 2.1}",
+        "19.8719.87"
+      ],
+      [
+        "Grok 4.5",
+        "81.7±1.781.7_{\\pm 1.7}",
+        "44.9244.92",
+        "78.0±1.078.0_{\\pm 1.0}",
+        "52.3152.31",
+        "79.3±1.779.3_{\\pm 1.7}",
+        "75.6475.64"
+      ]
+    ],
+    "en": "Table 13: Per-bundle success rate and cost under each policy on the 82 tasks that admit a solvability witness under NIST-derived high (Appendix B). The seven blocked-by-design tasks (build-cython-ext, build-pmars, build-pov-ray, count-dataset-tokens, mailman, nginx-request-logging, kv-store-grpc) are excluded. Columns are as in Table 12.",
+    "zh": "表 13：NIST-derived high 下具有可解性见证的 82 项任务中，各策略下逐组合的成功率和成本（附录 B）。七项设计上受阻的任务（build-cython-ext、build-pmars、build-pov-ray、count-dataset-tokens、mailman、nginx-request-logging、kv-store-grpc）不计入。列定义与表 12 相同。"
+  },
+  {
+    "number": 14,
+    "source_id": "Sx14.T14",
+    "rows": [
+      [
+        "GPT-5.6 Luna",
+        "57.3",
+        "13.63",
+        "on frontier"
+      ],
+      [
+        "GPT-5.6 Terra",
+        "67.5",
+        "28.09",
+        "on frontier"
+      ],
+      [
+        "GPT-5.6 Sol",
+        "79.3",
+        "51.67",
+        "on frontier"
+      ],
+      [
+        "Grok 4.5",
+        "79.3",
+        "75.64",
+        "dominated by Sol"
+      ]
+    ],
+    "en": "Table 14: Success–cost Pareto frontier under NIST-derived high (82-task pool). The three non-dominated bundles, plus Grok 4.5, which ties GPT-5.6 Sol on success but at higher cost and so leaves the frontier as the costlier of the two. Success rates are point estimates; the Sol–Grok success tie is within replicate variation (Table 13), and the ordering is decided on cost. Computed from Table 13.",
+    "zh": "表 14：NIST-derived high 下、82 项任务池的成功率—成本帕累托前沿。表中列出三个不受支配组合，以及与 GPT-5.6 Sol 成功率相同、但成本更高而退出前沿的 Grok 4.5。成功率为点估计；Sol 与 Grok 的成功率相同处于重复试验变异范围内（表 13），排序由成本决定。根据表 13 计算。"
+  },
+  {
+    "number": 15,
+    "source_id": "Sx15.T15",
+    "rows": [
+      [
+        "0 (verified)",
+        "14",
+        "15.9%"
+      ],
+      [
+        "1–5",
+        "34",
+        "38.6%"
+      ],
+      [
+        "6–15",
+        "7",
+        "8.0%"
+      ],
+      [
+        "16–40",
+        "11",
+        "12.5%"
+      ],
+      [
+        "41–100",
+        "10",
+        "11.4%"
+      ],
+      [
+        "101–250",
+        "5",
+        "5.7%"
+      ],
+      [
+        "251 or more",
+        "7",
+        "8.0%"
+      ]
+    ],
+    "en": "Table 15: Most tasks barely touch the policy; a small head absorbs most of it. Tasks bucketed by total blocked actions under NIST-derived high, summed over all bundles and verified trials. Shares are of the 88 tasks with at least one verified-complete trial.",
+    "zh": "表 15：大多数任务几乎没有触及策略，少数任务承担了大部分阻断。根据 NIST-derived high 下各组合、证据完整试验的阻断动作总数对任务分组。比例以具有至少一次已验证完整试验的 88 项任务为分母。"
+  }
+]

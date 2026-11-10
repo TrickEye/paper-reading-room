@@ -1,0 +1,137 @@
+[
+  {
+    "id": "bib.bib1",
+    "en": "Andriushchenko et al. (2024) Andriushchenko, M.; Souly, A.; Dziemian, M.; Duenas, D.; Lin, M.; Wang, J.; Hendrycks, D.; Zou, A.; Kolter, Z.; Fredrikson, M.; Winsor, E.; Wynne, J.; Gal, Y.; and Davies, X. 2024. AgentHarm: A Benchmark for Measuring Harmfulness of LLM Agents. Version Number: 3.",
+    "zh": "AgentHarm：衡量大语言模型智能体有害性的基准"
+  },
+  {
+    "id": "bib.bib2",
+    "en": "Chen, Zaharia, and Zou (2024) Chen, L.; Zaharia, M.; and Zou, J. 2024. FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance. Transactions on Machine Learning Research. Version Number: 1.",
+    "zh": "FrugalGPT：如何在降低成本的同时使用大语言模型并提升性能"
+  },
+  {
+    "id": "bib.bib3",
+    "en": "Debenedetti et al. (2025) Debenedetti, E.; Shumailov, I.; Fan, T.; Hayes, J.; Carlini, N.; Fabian, D.; Kern, C.; Shi, C.; Terzis, A.; and Tramèr, F. 2025. Defeating Prompt Injections by Design. Version Number: 2.",
+    "zh": "从设计上抵御提示注入"
+  },
+  {
+    "id": "bib.bib4",
+    "en": "Gupta (2026) Gupta, A. 2026. ReliabilityBench: Evaluating LLM Agent Reliability Under Production-Like Stress Conditions. Version Number: 1.",
+    "zh": "ReliabilityBench：在类生产压力条件下评估大语言模型智能体可靠性"
+  },
+  {
+    "id": "bib.bib5",
+    "en": "Jimenez et al. (2023) Jimenez, C. E.; Yang, J.; Wettig, A.; Yao, S.; Pei, K.; Press, O.; and Narasimhan, K. 2023. SWE-bench: Can Language Models Resolve Real-World GitHub Issues? Version Number: 3.",
+    "zh": "SWE-bench：大语言模型能否解决真实世界的 GitHub 问题？"
+  },
+  {
+    "id": "bib.bib6",
+    "en": "Joint Task Force Interagency Working Group (2020) Joint Task Force Interagency Working Group. 2020. Security and Privacy Controls for Information Systems and Organizations. Technical report, National Institute of Standards and Technology. Edition: Revision 5.",
+    "zh": "信息系统与组织的安全和隐私控制"
+  },
+  {
+    "id": "bib.bib7",
+    "en": "Kapoor et al. (2025) Kapoor, S.; Stroebl, B.; Siegel, Z. S.; Nadgir, N.; and Narayanan, A. 2025. AI Agents That Matter. Transactions on Machine Learning Research. Version Number: 1.",
+    "zh": "有意义的 AI 智能体"
+  },
+  {
+    "id": "bib.bib8",
+    "en": "Kara, Faisal, and Nath (2025) Kara, S.; Faisal, F.; and Nath, S. 2025. WAREX: Web Agent Reliability Evaluation on Existing Benchmarks. Version Number: 1.",
+    "zh": "WAREX：基于现有基准评估网页智能体可靠性"
+  },
+  {
+    "id": "bib.bib9",
+    "en": "Levy et al. (2026) Levy, I.; Wiesel, B.; Marreed, S.; Oved, A.; Yaeli, A.; Mashkif, N.; and Shlomov, S. 2026. ST-WebAgentBench: A Benchmark for Evaluating Safety and Trustworthiness in Web Agents. ArXiv:2410.06703 [cs.AI].",
+    "zh": "ST-WebAgentBench：评估网页智能体安全性与可信度的基准"
+  },
+  {
+    "id": "bib.bib10",
+    "en": "Li et al. (2026) Li, H.; Wen, R.; Shi, S.; Zhang, N.; Vorobeychik, Y.; and Xiao, C. 2026. AgentDyn: Are Your Agent Security Defenses Deployable in Real-World Dynamic Environments? Version Number: 3.",
+    "zh": "AgentDyn：你的智能体安全防御能否部署于真实动态环境？"
+  },
+  {
+    "id": "bib.bib11",
+    "en": "Liu et al. (2026) Liu, J.; Qian, C.; Su, Z.; Zong, Q.; Huang, S.; He, B.; and Fung, Y. R. 2026. CostBench: Evaluating Multi-Turn Cost-Optimal Planning and Adaptation in Dynamic Environments for LLM Tool-Use Agents. Version Number: 3.",
+    "zh": "CostBench：评估大语言模型工具使用智能体在动态环境中的多轮成本最优规划与适应"
+  },
+  {
+    "id": "bib.bib12",
+    "en": "Ma et al. (2024) Ma, X.; Wang, Y.; Yao, Y.; Yuan, T.; Zhang, A.; Zhang, Z.; and Zhao, H. 2024. Caution for the Environment: Multimodal LLM Agents are Susceptible to Environmental Distractions. Version Number: 3.",
+    "zh": "谨慎对待环境：多模态大语言模型智能体容易受到环境干扰"
+  },
+  {
+    "id": "bib.bib13",
+    "en": "Merrill et al. (2026) Merrill, M. A.; Shaw, A. G.; Carlini, N.; Li, B.; Raj, H.; Bercovich, I.; Shi, L.; Shin, J. Y.; Walshe, T.; Buchanan, E. K.; Shen, J.; Ye, G.; Lin, H.; Poulos, J.; Wang, M.; Nezhurina, M.; Jitsev, J.; Lu, D.; Mastromichalakis, O. M.; Xu, Z.; Chen, Z.; Liu, Y.; Zhang, R.; Chen, L. L.; Kashyap, A.; Uslu, J.-L.; Li, J.; Wu, J.; Yan, M.; Bian, S.; Sharma, V.; Sun, K.; Dillmann, S.; Anand, A.; Lanpouthakoun, A.; Koopah, B.; Hu, C.; Guha, E.; Dreiman, G. H. S.; Zhu, J.; Krauth, K.; Zhong, L.; Muennighoff, N.; Amanfu, R.; Tan, S.; Pimpalgaonkar, S.; Aggarwal, T.; Lin, X.; Lan, X.; Zhao, X.; Liang, Y.; Wang, Y.; Wang, Z.; Zhou, C.; Heineman, D.; Liu, H.; Trivedi, H.; Yang, J.; Lin, J.; Shetty, M.; Yang, M.; Omi, N.; Raoof, N.; Li, S.; Zhuo, T. Y.; Lin, W.; Dai, Y.; Wang, Y.; Chai, W.; Zhou, S.; Wahdany, D.; She, Z.; Hu, J.; Dong, Z.; Zhu, Y.; Cui, S.; Saiyed, A.; Kolbeinsson, A.; Hu, J.; Rytting, C. M.; Marten, R.; Wang, Y.; Dimakis, A.; Konwinski, A.; and Schmidt, L. 2026. Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces. ArXiv:2601.11868 [cs.SE].",
+    "zh": "Terminal-Bench：在命令行界面中对困难且真实的任务评估智能体"
+  },
+  {
+    "id": "bib.bib14",
+    "en": "Ong et al. (2024) Ong, I.; Almahairi, A.; Wu, V.; Chiang, W.-L.; Wu, T.; Gonzalez, J. E.; Kadous, M. W.; and Stoica, I. 2024. RouteLLM: Learning to Route LLMs with Preference Data. Version Number: 4.",
+    "zh": "RouteLLM：用偏好数据学习大语言模型路由"
+  },
+  {
+    "id": "bib.bib15",
+    "en": "Ruan et al. (2023) Ruan, Y.; Dong, H.; Wang, A.; Pitis, S.; Zhou, Y.; Ba, J.; Dubois, Y.; Maddison, C. J.; and Hashimoto, T. 2023. Identifying the Risks of LM Agents with an LM-Emulated Sandbox. Version Number: 2.",
+    "zh": "用大语言模型模拟沙箱识别语言模型智能体的风险"
+  },
+  {
+    "id": "bib.bib16",
+    "en": "Sah et al. (2026) Sah, T.; Srivastava, V.; Sah, D.; and Jordan, K. 2026. The Verifier Tax: Horizon Dependent Safety–Success Tradeoffs in Tool Using LLM Agents. In Proceedings of the ACM Conference on AI and Agentic Systems, 785–799. San Jose CA USA: ACM. ISBN 979-8-4007-2415-2.",
+    "zh": "验证器税：工具使用大语言模型智能体中随任务时域变化的安全—成功权衡"
+  },
+  {
+    "id": "bib.bib17",
+    "en": "Sharifloo et al. (2025) Sharifloo, A. M.; Heydari, M.; Kazerooni, P.; Maninger, D.; and Mezini, M. 2025. Where Do LLMs Still Struggle? An In-Depth Analysis of Code Generation Benchmarks. In 2025 2nd IEEE/ACM International Conference on AI-powered Software (AIware), 249–253. ArXiv:2511.04355 [cs.SE].",
+    "zh": "大语言模型仍在哪些方面遇到困难？代码生成基准的深入分析"
+  },
+  {
+    "id": "bib.bib18",
+    "en": "Shi et al. (2025) Shi, T.; He, J.; Wang, Z.; Li, H.; Wu, L.; Guo, W.; and Song, D. 2025. Progent: Securing AI Agents with Privilege Control. Version Number: 3.",
+    "zh": "Progent：通过权限控制保护 AI 智能体"
+  },
+  {
+    "id": "bib.bib19",
+    "en": "South et al. (2025) South, T.; Marro, S.; Hardjono, T.; Mahari, R.; Whitney, C. D.; Greenwood, D.; Chan, A.; and Pentland, A. 2025. Authenticated Delegation and Authorized AI Agents.",
+    "zh": "经过身份验证的委派与获得授权的 AI 智能体"
+  },
+  {
+    "id": "bib.bib20",
+    "en": "Taori et al. (2020) Taori, R.; Dave, A.; Shankar, V.; Carlini, N.; Recht, B.; and Schmidt, L. 2020. Measuring Robustness to Natural Distribution Shifts in Image Classification. Version Number: 2.",
+    "zh": "衡量图像分类中对自然分布变化的鲁棒性"
+  },
+  {
+    "id": "bib.bib21",
+    "en": "Wang et al. (2021) Wang, B.; Xu, C.; Wang, S.; Gan, Z.; Cheng, Y.; Gao, J.; Awadallah, A. H.; and Li, B. 2021. Adversarial GLUE: A Multi-Task Benchmark for Robustness Evaluation of Language Models. Version Number: 2.",
+    "zh": "Adversarial GLUE：用于评估语言模型鲁棒性的多任务基准"
+  },
+  {
+    "id": "bib.bib22",
+    "en": "Xie et al. (2024) Xie, T.; Zhang, D.; Chen, J.; Li, X.; Zhao, S.; Cao, R.; Hua, T. J.; Cheng, Z.; Shin, D.; Lei, F.; Liu, Y.; Xu, Y.; Zhou, S.; Savarese, S.; Xiong, C.; Zhong, V.; and Yu, T. 2024. OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments. Version Number: 2.",
+    "zh": "OSWorld：对真实计算机环境中的开放式任务进行多模态智能体基准测试"
+  },
+  {
+    "id": "bib.bib23",
+    "en": "Xiong et al. (2025) Xiong, W.; Wang, K.; Song, Y.; Liu, H.; Zhou, S.; Peng, W.; and Li, S. 2025. More Vulnerable than You Think: On the Stability of Tool-Integrated LLM Agents. ArXiv:2506.21967 [cs.CL].",
+    "zh": "比你想象的更脆弱：工具集成型大语言模型智能体的稳定性"
+  },
+  {
+    "id": "bib.bib24",
+    "en": "Yao et al. (2024) Yao, S.; Shinn, N.; Razavi, P.; and Narasimhan, K. 2024. $τ\\tau$-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains. ArXiv:2406.12045 [cs.AI].",
+    "zh": "τ-bench：真实领域中工具—智能体—用户交互的基准"
+  },
+  {
+    "id": "bib.bib25",
+    "en": "Yehudai et al. (2026) Yehudai, A.; Eden, L.; Li, A.; Uziel, G.; Zhao, Y.; Bar-Haim, R.; Cohan, A.; and Shmueli-Scheuer, M. 2026. A Survey on Evaluation of LLM-based Agents. In Findings of the Association for Computational Linguistics: ACL 2026, 26690–26714. San Diego, California, United States: Association for Computational Linguistics.",
+    "zh": "大语言模型智能体评估综述"
+  },
+  {
+    "id": "bib.bib26",
+    "en": "Zhou et al. (2026) Zhou, Q.; Zhang, J.; Wang, H.; Hao, R.; Wang, J.; Han, M.; Yang, Y.; Wu, S.; Pan, F.; Fan, L.; Tu, D.; and Zhang, Z. 2026. FeatureBench: Benchmarking Agentic Coding for Complex Feature Development. Version Number: 1.",
+    "zh": "FeatureBench：面向复杂功能开发的智能体式编码基准"
+  },
+  {
+    "id": "bib.bib27",
+    "en": "Zhu et al. (2023) Zhu, K.; Wang, J.; Zhou, J.; Wang, Z.; Chen, H.; Wang, Y.; Yang, L.; Ye, W.; Zhang, Y.; Gong, N. Z.; and Xie, X. 2023. PromptRobust: Towards Evaluating the Robustness of Large Language Models on Adversarial Prompts. Version Number: 5.",
+    "zh": "PromptRobust：评估大语言模型对抗性提示鲁棒性的探索"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "figure": 1,
+    "file": "figure-01.png",
+    "source_page": 1,
+    "source_url": "https://arxiv.org/html/2606.13317v2/fig_motivation.png",
+    "width": 811,
+    "height": 854,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "e3f29fb099b90e87a5eaad7ef87d0016e46cf7b43c1133d1f401119347145721"
+  },
+  {
+    "figure": 2,
+    "file": "figure-02.png",
+    "source_page": 3,
+    "source_url": "https://arxiv.org/html/2606.13317v2/fig_framework.png",
+    "width": 1476,
+    "height": 817,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "322cd9322359c86f05cbfc9513f85b752779640ece75ab161671c8bbf3dd166a"
+  },
+  {
+    "figure": 3,
+    "file": "figure-03.svg",
+    "source_page": 6,
+    "source_url": "https://arxiv.org/html/2606.13317v2/fig_docvqa_transfer.svg",
+    "width": 496,
+    "height": 240,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "8a76e53ef03240fec9eee34abbe62aafd2b9df552545eea0f15bed445768f7b6"
+  },
+  {
+    "figure": 4,
+    "file": "figure-04.svg",
+    "source_page": 7,
+    "source_url": "https://arxiv.org/html/2606.13317v2/fig_more_analysis.svg",
+    "width": 857,
+    "height": 211,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "c392db4543b882fe509c0ed264dc915b48eeac2a8d16af97392f2a1bde0a9083"
+  }
+]

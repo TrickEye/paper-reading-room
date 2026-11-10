@@ -1,0 +1,26 @@
+[
+  {
+    "number": 1,
+    "source_id": "Sx4.F1",
+    "en": "Figure 1: Hardening moves the Pareto frontier down and to the right (lower success, higher cost), by amounts that differ across model–harness bundles. Each point is one of the 12 bundles under one policy on Terminal-Bench 2.1, three trials per task: marker shape encodes the policy, color the model. Axes: success rate (%) against total cost (USD, logarithmic scale). Dashed lines trace each policy’s Pareto frontier.",
+    "zh": "图 1：加固会使帕累托前沿向下并向右移动（成功率降低、成本增加），不同模型—运行框架组合的变化幅度各不相同。每个点代表一个组合在 Terminal-Bench 2.1 上的一种策略；每项任务进行三次试验。标记形状表示策略，颜色表示模型。横轴和纵轴分别为成功率（%）与总成本（美元，对数刻度）。虚线表示各策略下的帕累托前沿。"
+  },
+  {
+    "number": 2,
+    "source_id": "Sx5.F2",
+    "en": "Figure 2: Every bundle loses success and gains cost non-uniformly under NIST-derived high. The smallest success loss (Grok 4.5) is bought with the largest cost inflation. Each point is one bundle’s shift from its own control values on the 89-task pool, three trials per task (Eq. (1)): the horizontal axis is the change in mean cost per task, Δ​Cm\\Delta C_{m}, in percent of the bundle’s control cost; the vertical axis the success-rate change, Δ​SRm\\Delta\\mathrm{SR}_{m}, in percentage points; color encodes the model. The dotted line traces a robustness Pareto frontier: the bundles offering the best trade-off between success loss and cost inflation under restriction.",
+    "zh": "图 2：在 NIST-derived high 下，每个组合的成功率都下降、成本都上升，但幅度并不一致。Grok 4.5 的成功率损失最小，却付出了最大的成本膨胀。每个点表示一个组合在 89 项任务池、每项任务三次试验下，相对于自身 Control 数值的变化（公式（1））：横轴为每项任务平均成本变化量 ΔCₘ，占该组合 Control 成本的百分比；纵轴为成功率变化量 ΔSRₘ，单位为百分点；颜色表示模型。点线表示鲁棒性帕累托前沿，即受限条件下在成功率损失与成本膨胀之间权衡最佳的组合。"
+  },
+  {
+    "number": 3,
+    "source_id": "Sx5.F3",
+    "en": "Figure 3: Policy enforcement raises cost even where success holds: median per-run cost roughly triples under NIST-derived high on both tasks. Empirical cumulative distributions of per-run cost (USD, logarithmic scale) for Codex (GPT-5.6 Luna) on two selected Terminal-Bench tasks, 100 runs per condition. Success holds on compile-compcert (a, 84%) and degrades on caffe-cifar-10 (b, 90% to 29%); the median per-run cost rises 2.9×2.9\\times (a) and 3.0×3.0\\times (b). The median cost of failing runs is close to that of passing runs (0.96×0.96\\times (a), 1.11×1.11\\times (b)), suggesting policy-induced failures consume roughly the full inflated budget.",
+    "zh": "图 3：即使成功率保持不变，策略强制执行也会增加成本：在 NIST-derived high 下，两项任务的单次运行成本中位数都约增至三倍。图中为 Codex（GPT-5.6 Luna）在两项选定 Terminal-Bench 任务、每种条件各运行 100 次的单次成本经验累积分布（美元，对数刻度）。在 compile-compcert 上成功率保持为 84%（a）；在 caffe-cifar-10 上则从 90% 降至 29%（b）。单次运行成本中位数分别上升 2.9 倍（a）和 3.0 倍（b）。失败运行的成本中位数接近通过运行（a 为 0.96 倍，b 为 1.11 倍），说明策略导致的失败大致消耗了全部增加后的预算。"
+  },
+  {
+    "number": 4,
+    "source_id": "Sx5.F4",
+    "en": "Figure 4: Policy-induced cost inflation concentrates on tasks whose canonical reference solutions break under policy. Mean cost multipliers relative to control, equal-weighted over the bundle–task pairs of all 12 bundles: the affected subset (32 tasks verified only by a non-canonical reference solution) rises to 1.75×1.75\\times under non-root and 2.59×2.59\\times under NIST-derived high, while the unaffected subset (50 tasks whose canonical reference solution passes unchanged) stays near parity (1.18×1.18\\times, 1.14×1.14\\times). Whiskers: 95% intervals from 10,000 hierarchical-bootstrap replicates.",
+    "zh": "图 4：策略导致的成本膨胀集中在规范参考解会因策略而失效的任务上。对全部十二个组合的组合—任务对等权计算、相对于 Control 的平均成本倍数：受影响子集（32 项只能通过非规范参考解验证的任务）在 non-root 下升至 1.75 倍，在 NIST-derived high 下升至 2.59 倍；未受影响子集（50 项规范参考解不作修改即可通过的任务）则接近持平，分别为 1.18 倍和 1.14 倍。误差线表示 10,000 次分层自助法重复所得的 95% 区间。"
+  }
+]

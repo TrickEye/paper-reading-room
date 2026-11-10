@@ -1,0 +1,362 @@
+[
+  {
+    "zh": "摘要",
+    "kind": "h2",
+    "id": "abstract1",
+    "en": "Abstract"
+  },
+  {
+    "zh": "长程 LLM 智能体常因程序性错误而失败，例如忘记约束、弄错工具调用顺序，或过早停止。由于这些失误无法预测，同一个智能体可能在某次运行中成功，却在之后一次完全相同的任务中失败。由此产生的执行轨迹包含丰富信号，能够揭示哪些程序性选择会导向成功或失败；然而，现有从智能体轨迹中提取可复用指南的方法，要么因提炼不精确而引入噪声，要么在部署时依赖外部检索器。我们提出 SkillForge，这是一种无需训练的框架，重新思考程序性指南的构建和部署：它将同一任务的成功与失败尝试配对，以识别关键程序性选择；整合并过滤候选指南，去除低质量条目；而且只有当智能体的当前上下文表明指南与之相关时，才在推理时按需加载相关指南。在包括 τ²-Bench 和 Terminal-Bench 在内的智能体基准上，SkillForge 提高了重复运行的一致性；与基线相比，一致性差距最多缩小 37%，总 token 用量最多降低 23.6%，同时不降低单次试验表现。这些结果表明，从过往轨迹中提炼高质量程序性指南，是使长程智能体更加一致、高效的一条实用途径。",
+    "kind": "p",
+    "id": null,
+    "en": "Long-horizon LLM agents often fail from procedural errors such as forgetting constraints, misordering tool calls, or stopping prematurely. Because these slips are unpredictable, the same agent can succeed on one run and fail on an identical task later. The resulting execution trajectories contain rich signals about which procedural choices lead to success or failure, yet existing approaches that extract reusable guidance from agent trajectories either introduce noise through imprecise distillation or depend on external retrievers for deployment. We propose SkillForge, a training-free framework that rethinks both the construction and deployment of procedural guidance: it pairs successful and failed attempts on the same task to identify critical procedural choices, consolidates and filters candidate guidance to remove low-quality entries, and loads relevant guidance on demand at inference time only when the agent’s current context signals its relevance. Across agent benchmarks including τ²-Bench and TerminalBench, SkillForge improves repeated-run consistency, reducing the consistency gap by up to 37% and lowering total token usage by up to 23.6% compared to baselines without degrading single-trial performance. These results suggest a practical path toward distilling high-quality procedural guidance from past trajectories for more consistent and efficient long-horizon agents."
+  },
+  {
+    "zh": "1 引言",
+    "kind": "h2",
+    "id": "S1",
+    "en": "1 Introduction"
+  },
+  {
+    "zh": "大语言模型（LLM）智能体在需要规划、使用工具以及与外部环境持续交互的任务中，展现出了令人瞩目的能力（Yu et al., 2026；Yang et al., 2025；Shinn et al., 2023；Wang et al., 2023；Yao et al., 2023；Wei et al., 2022）。许多实际任务是长程任务：解决一项客户服务请求，可能需要核实账户状态、检查政策资格，并在多个步骤中协调多个工具（Ye et al., 2026b）。在这些任务上，模型行为仍不可靠。对同一个或几乎相同的实例重复运行，经常会产生不同结果（Gan et al., 2025）；原因是忘记约束、弄错工具调用顺序或过早终止等微小的程序性偏差，会在较长的动作序列中累积（Wan et al., 2025a），使一致性成为实际应用中首要的关注点（Wang et al., 2024；Zhou et al., 2025；Wan et al., 2025c）。",
+    "kind": "p",
+    "id": null,
+    "en": "Large language model (LLM) agents have demonstrated impressive capabilities on tasks requiring planning, tool usage, and extended interaction with external environments (Yu et al., 2026; Yang et al., 2025; Shinn et al., 2023; Wang et al., 2023; Yao et al., 2023; Wei et al., 2022). Many practical tasks are long-horizon: resolving a customer-service request may require verifying account status, checking policy eligibility, and coordinating across multiple tools over multiple steps (Ye et al., 2026b). On such tasks, model behavior remains unreliable. Repeated runs on the same or a nearly identical instance regularly produce different outcomes (Gan et al., 2025), as small procedural deviations such as forgetting a constraint, misordering tool calls, or terminating prematurely compound over the extended action sequence (Wan et al., 2025a), making consistency the dominant practical concern (Wang et al., 2024; Zhou et al., 2025; Wan et al., 2025c)."
+  },
+  {
+    "zh": "一种自然的应对方式，是改善推理时提供给智能体的上下文（Snell et al., 2025），并从过往错误中学习（Hu et al., 2026）。既有工作探索了情景记忆与语言形式的自我反馈（Shinn et al., 2023；Park et al., 2023；Packer et al., 2023）、持久化技能库（Zheng et al., 2025；Yang et al., 2026），以及自动归纳的指南（Fu et al., 2024；Chen et al., 2024；Li et al., 2026）。但关键局限仍然存在：检索出的指南往往噪声较多或过于详细，以无关上下文冲淡智能体的推理并浪费 token（Zhao et al., 2024；Xiong et al., 2025）；高质量指南通常需要昂贵的人工整理；自动生成的技能则往往过于泛化，难以在任务间可靠迁移（Li et al., 2026）。这提出了一个关键问题：如何在无需人工整理或外部检索器的情况下，自动从过往轨迹中提炼高质量指南，并在推理时高效部署它们？",
+    "kind": "p",
+    "id": null,
+    "en": "A natural response is to improve the context supplied to the agent at inference time (Snell et al., 2025) and learn from past mistakes (Hu et al., 2026). Prior work has explored episodic memory and verbal self-feedback (Shinn et al., 2023; Park et al., 2023; Packer et al., 2023), persistent skill libraries (Zheng et al., 2025; Yang et al., 2026), and automatically induced guidelines (Fu et al., 2024; Chen et al., 2024; Li et al., 2026). But key limitations remain: retrieved guidance is often noisy or overly detailed, diluting the agent’s reasoning with irrelevant context and wasting tokens (Zhao et al., 2024; Xiong et al., 2025); high-quality guidance typically requires costly human curation; and automatically generated skills tend to be too generic to transfer reliably across tasks (Li et al., 2026). This raises a key question: how can we automatically distill high-quality guidance from past trajectories and deploy it efficiently at inference time, without human curation or external retrievers?"
+  },
+  {
+    "zh": "回答这个问题的一项关键洞见来自近期有关难度感知学习的工作（Gao et al., 2026；Wang et al., 2025）：程序性指南最丰富的信号，位于成功与失败之间的决策边界。过于简单的任务（所有运行都通过）或过于困难的任务（所有运行都失败），几乎不能揭示哪些程序性选择起作用。信息量最大的，是智能体有时成功、有时失败的中等难度任务，因为这些结果混合的案例暴露了程序性选择发生分歧的位置。通过配对这些任务上的成功与失败尝试，我们获得对比性轨迹证据：这种证据不是分别总结哪里做对了、哪里做错了，而是分离出“在情境 X 中，做 Y，而不是 Z”形式的决定性程序差异，如图 1 所示。",
+    "kind": "p",
+    "id": null,
+    "en": "A key insight to answer this question comes from recent work on difficulty-aware learning (Gao et al., 2026; Wang et al., 2025): the richest signal for procedural guidance lies at the decision boundary between success and failure. Tasks that are too easy (all runs pass) or too hard (all runs fail) provide little signal about which procedural choices matter. The most informative cases are tasks of intermediate difficulty where the agent sometimes succeeds and sometimes fails, as these mixed-outcome cases expose where procedural choices diverge. By pairing successful and failed attempts on such tasks, we obtain contrastive trajectory evidence: rather than separately summarizing what went right or wrong, this evidence isolates decisive procedural differences of the form “in situation X, do Y rather than Z.”, as illustrated in Fig. 1."
+  },
+  {
+    "zh": "因此，我们提出 SkillForge，这是一种从过往轨迹中提炼可复用程序性指南的免训练框架。SkillForge 通过四个阶段将这一思想付诸实践：（1）收集对比轨迹——即同一任务上智能体有时成功、有时失败的执行——为哪些程序性选择具有决定作用提供直接证据；（2）通过提示生成器 LLM 对比成功与失败运行之间的程序差异，提取候选指南；（3）在留出任务上验证每个候选，丢弃不能提高通过率或产生净负面影响的候选；（4）在测试时按需检索，默认只展示轻量元数据，并通过显式工具调用加载完整技能内容。这种设计使默认输入保持精简，保留智能体自主性，并且只有当轨迹明确显示其相关性时，才提供详细的程序性支持。",
+    "kind": "p",
+    "id": null,
+    "en": "We thus propose SkillForge, a training-free framework that distills reusable procedural guidance from past trajectories. SkillForge operationalizes this idea in four stages: (1) Collect contrastive trajectories—executions of the same task where the agent sometimes succeeds and sometimes fails— providing direct evidence about which procedural choices are decisive; (2) Extract candidate guidance by prompting a generator LLM to contrast procedural differences between successful and failed runs; (3) Validate each candidate on held-out tasks, discarding those that fail to improve pass rate or cause net-negative effects; and (4) Retrieve on demand at test time, exposing only lightweight metadata by default and loading full skill content through an explicit tool call. This design keeps the default input small, preserves agent autonomy, and surfaces detailed procedural support only when the trajectory makes its relevance clear."
+  },
+  {
+    "zh": "我们在 τ²-Bench（Barres et al., 2025）和 Terminal-Bench（Merrill et al., 2026）上评估 SkillForge。SkillForge 改善了平均任务表现，并随着尝试次数 k 增加而保持更高的一致性。分析进一步表明，对比依据和验证过滤都是获得可靠技能质量的必要条件；按需加载也优于将完整内容注入提示词，因为过早展示指南会分散智能体的注意力，而不是帮助它。总之，我们的贡献是：（1）一种对比式提取原则，将混合结果任务上的成功与失败轨迹配对，以分离决定性的程序性选择，显著优于仅从单一结果极性或任务描述中导出的指南；（2）SkillForge，一种通过经验证的技能构建和分层按需检索将这一原则付诸实践的免训练框架，相较现有程序构建基线，一致性差距最多缩小 37%，token 用量最多降低 23.6%；（3）深入分析成功与失败轨迹的互补作用、轨迹预算对技能质量的扩展效应以及效率优势，同时提供实用部署指南和详细案例研究。",
+    "kind": "p",
+    "id": null,
+    "en": "We evaluate SkillForge on τ²-Bench (Barres et al., 2025) and Terminal-Bench (Merrill et al., 2026). SkillForge improves average task performance and remains more consistent as the number of attempts k grows. Our analyses further reveal that contrastive grounding and validation filtering are both essential for reliable skill quality, and that on-demand loading outperforms full-prompt injection, as prematurely exposing guidance distracts the agent rather than helping it. In sum, our contributions are: (1) a contrastive extraction princi- ple that pairs successful and failed trajectories on mixed-outcome tasks to isolate decisive procedural choices, substantially outperforming guidance derived from a single outcome polarity or from task descriptions alone; (2) SkillForge, a training-free framework that operationalizes this principle through validated skill construction and hierarchical on-demand retrieval, reducing the consistency gap by up to 37% and token usage by up to 23.6% over existing procedure-building baselines; and (3) an in-depth analysis establishing the complementary roles of success and failure trajectories, the scaling effect of trajectory budget on skill quality, and the efficiency advantages, along with practical deployment guidelines and detailed case studies."
+  },
+  {
+    "zh": "2 方法：SkillForge",
+    "kind": "h2",
+    "id": "S2",
+    "en": "2 Method: SkillForge"
+  },
+  {
+    "zh": "本节介绍 SkillForge 的核心设计。如图 2 所示，我们首先收集同一批任务上结果有成有败的执行（§2.1），然后通过对比成功与失败轨迹提取并精炼候选技能（§2.2）。随后整合并过滤候选，只保留能可靠改善表现的技能（§2.2）。保留的技能在推理时按需提供给智能体（§2.3）。",
+    "kind": "p",
+    "id": null,
+    "en": "This section presents the core design of SkillForge. As illustrated in Fig. 2, we first collect mixed-outcome executions on the same tasks (§2.1), then extract and refine candidate skills by contrasting successful and failed trajectories (§2.2). Candidates are subsequently consolidated and filtered to retain only skills that reliably improve performance (§2.2). The retained skills are then exposed to the agent on demand at inference time (§2.3)."
+  },
+  {
+    "zh": "术语。一致性是指智能体在同一任务的独立运行中产生相同正确结果的程度，以 Passᵏ 衡量（见 §3.1）。程序性指南指从过往轨迹中提取的、可复用且可操作的知识，例如决策规则、优选工具调用顺序及错误恢复模式，用于引导智能体采取正确行为；我们仅用“经验”指代原始轨迹，不指代由其派生的产物。技能是程序性指南用于存储和检索的具体封装格式（Anthropic, 2025；Li et al., 2026）：每个技能包含名称、用于轻量元数据匹配的简短描述，以及指定触发条件、关键程序、常见失败变体和协调规则的正文。",
+    "kind": "p",
+    "id": null,
+    "en": "Terminology. Consistency is the degree to which an agent produces the same correct outcome across independent runs on the same task, measured via Passk (see §3.1). Procedural guidance refers to reusable, actionable knowledge extracted from past trajectories, such as decision rules, preferred tool-call orderings, and error-recovery patterns, which steers the agent toward correct behavior; we use experience exclusively to refer to raw trajectories, not to derived artifacts. A skill is the concrete format in which procedural guidance is packaged for storage and retrieval (Anthropic, 2025; Li et al., 2026): each skill contains a name, a short description for lightweight metadata matching, and a body specifying trigger conditions, a key procedure, common failure variants, and reconciliation rules."
+  },
+  {
+    "zh": "2.1 轨迹收集",
+    "kind": "h3",
+    "id": "S2.SS1",
+    "en": "2.1 Trajectory Collection"
+  },
+  {
+    "zh": "我们使用互不重叠的技能归纳集、验证集和测试集，以防止数据泄漏。对每个基准，保留官方测试划分作为 T_test，并将官方训练划分随机分成相等的两半：T_train 用于技能归纳，T_val 用于经验验证。技能只从 T_train 归纳，只在 T_val 上过滤，只在 T_test 上评估；测试集从不用于技能构建或验证。对每个任务 t ∈ T_train，我们在 K 种不同配置 {c₁, c₂, …, c_K} 下执行智能体，产生一组轨迹 {τ_t^{c₁}, τ_t^{c₂}, …, τ_t^{c_K}}。每条轨迹记录观察与动作的序列，以及二元结果 r_t^c ∈ {0, 1}，表示配置 c 在任务 t 上失败还是成功。这里，配置指对智能体超参数的特定选择，例如采样温度和推理强度（思考预算），同时保持骨干模型和环境不变。¹",
+    "kind": "p",
+    "id": null,
+    "en": "We use disjoint skill-induction, validation, and test sets to prevent data leakage. For each benchmark, we preserve the official test split as T_test and randomly partition the official training split into two equal halves: T_train for skill induction and T_val for empirical validation. Skills are induced only from T_train, filtered only on T_val, and evaluated only on T_test; the test set is never used during skill construction or validation. For each task t ∈ T_train, we execute an agent under K different configurations {c1,c2,...,cK }, producing a set of trajectories {τ_t^{c₁}, τ_t^{c₂}, …, τ_t^{c_K}}. Each trajectory records the sequence of observations, actions, and a binary outcome r_t^c ∈ {0, 1} indicating whether configuration c failed or succeeded on task t. Here, a configuration refers to a specific choice of agent hyperparameters, such as sampling temperature and reasoning effort (thinking budget), while holding the backbone model and environment fixed.¹"
+  },
+  {
+    "zh": "关键要求是在具有实际意义的一部分任务上产生混合结果，同时提供用于技能提取的成功与失败轨迹。这些成对集合不必平衡，因此多次失败中只有一次成功（或反之）就足够。我们将对比任务集定义为：",
+    "kind": "p",
+    "id": null,
+    "en": "The key requirement is to produce mixed outcomes on a meaningful subset of tasks, providing both successful and failed trajectories for skill extraction. These paired sets need not be balanced, so a single success among many failures (or vice versa) is sufficient. We define the set of contrastive tasks as"
+  },
+  {
+    "zh": "T_contrast = {t ∈ T_train | ∃ c_i, c_j : r_t^{c_i} = 1 ∧ r_t^{c_j} = 0}。 （1）",
+    "kind": "equation",
+    "id": null,
+    "en": "T_contrast = {t ∈ T_train | ∃ c_i, c_j : r_t^{c_i} = 1 ∧ r_t^{c_j} = 0}. (1)"
+  },
+  {
+    "zh": "对于每个对比任务 t，我们将轨迹分为成功集与失败集：",
+    "kind": "p",
+    "id": null,
+    "en": "For each contrastive task t, we group trajectories into successful and failed sets:"
+  },
+  {
+    "zh": "S_t = {τ_t^c | r_t^c = 1}，F_t = {τ_t^c | r_t^c = 0}。",
+    "kind": "equation",
+    "id": null,
+    "en": "S_t = {τ_t^c | r_t^c = 1}, F_t = {τ_t^c | r_t^c = 0}."
+  },
+  {
+    "zh": "2.2 对比式技能提取与验证",
+    "kind": "h3",
+    "id": "S2.SS2",
+    "en": "2.2 Contrastive Skill Extraction and Validation"
+  },
+  {
+    "zh": "给定每个任务 t ∈ T_contrast 的成功与失败轨迹集合，我们提示生成器 LLM G，识别成功尝试与失败尝试之间的行为差异，以提取候选技能。对每个任务 t，我们分别从 S_t 和 F_t 中最多采样 m 条成功轨迹与 m 条失败轨迹，向 G 提供任务描述 d_t、包含关键决策点和观察到的失败模式的采样轨迹，以及结构化提取指令（完整提示词模板见附录 C）：",
+    "kind": "p",
+    "id": null,
+    "en": "Given the successful and failed trajectory sets for each task t ∈ T_contrast, we prompt a generator LLM G to extract candidate skills by identifying the behavioural differences that distinguish successful attempts from failed ones. For each task t, we sample up to m successful and m failed trajectories from S_t and F_t respectively, and provide G with the task description d_t, the sampled trajectories with key decision points and observed failure modes, and structured extraction instructions (full prompt templates in Appendix C):"
+  },
+  {
+    "zh": "g_t = G(d_t, {τ₁⁺, …, τ_m⁺}, {τ₁⁻, …, τ_m⁻})。 （2）",
+    "kind": "equation",
+    "id": null,
+    "en": "g_t = G(d_t, {τ₁⁺, …, τ_m⁺}, {τ₁⁻, …, τ_m⁻}). (2)"
+  },
+  {
+    "zh": "阶段 1：基于 LLM 的精炼。生成不佳的技能可能适得其反，因为它们会占用上下文、产生冲突指令或误导智能体（Ye et al., 2026a；Zhang et al., 2026b）。基于既有工作所确定的高质量技能标准（Li et al., 2026），我们提示 G 按四项标准评估并修改每个候选：可操作性（具体、可执行的步骤，而非含糊建议）、范围（针对特定失败模式，而非充当宽泛手册）、通用性（能从源实例迁移到相似任务）和简洁性（保持在目标 token 预算内）。每个候选在每项标准上获得通过／不通过的二元判断；任何一项不通过的候选都会被修改，修改后仍不具通用性的候选则被丢弃。",
+    "kind": "p",
+    "id": null,
+    "en": "Stage 1: LLM-based refinement. Poorly generated skills can be counterproductive by consuming context, creating conflicting instructions, or misleading the agent (Ye et al., 2026a; Zhang et al., 2026b). Based on prior work identifying criteria for high-quality skills (Li et al., 2026), we prompt G to evaluate and revise each candidate against four criteria: actionability (concrete, executable steps rather than vague advice), scope (targets a specific failure pattern rather than serving as a broad manual), generality (transfers beyond the source instance to similar tasks), and conciseness (remains within a target token budget). Each candidate receives a binary pass/fail judgment per criterion; those failing any criterion are revised, and those that remain non-general after revision are discarded."
+  },
+  {
+    "zh": "阶段 2：技能整合与更新。从对比配对中归纳出候选技能 {c_i}_{i=1}^N 后，我们通过增量式技能库更新过程整合它们。首先，将每个候选规范化为标准技能格式，包含名称、描述、使用条件、可选的不使用条件、程序性指南和失败特征。然后，根据任务触发条件、工具使用模式、约束及失败模式的重叠情况，从当前技能库 L 中检索相似的已有技能。如果某个已有技能已经覆盖候选的触发条件、失败特征和纠正程序，则将候选视为冗余，仅合并有用示例或更精确的表述。如果它贡献了独特要素，例如新的任务子类型、适用边界、工具使用序列或反复出现的失败模式，则将其加入为新技能。在插入前，通过缩小候选范围、增加不使用条件，或重写程序使不同技能适用于不同情境，解决它与已有技能的冲突。这个过程优先选择具体、可操作的技能，而不是宽泛提醒；由于智能体最初仅根据技能元数据决定加载什么，因此也保留了运行时的选择性。附录 D.1 给出了具体工作流示例：",
+    "kind": "p",
+    "id": null,
+    "en": "Stage 2: Skill consolidation and update. After candidate skills {c_i}_{i=1}^N are induced from contrastive pairs, we consolidate them through an incremental library update process. Each candidate is first normalized into a standard skill format with a name, description, use condition, optional do-not-use condition, procedural guidance, and failure signature. We then retrieve similar existing skills from the current library L based on overlap in task triggers, tool-use patterns, constraints, and failure modes. If an existing skill already covers the candidate’s trigger, failure signature, and corrective procedure, the candidate is treated as redundant and only useful examples or sharper wording are merged. If it contributes a distinct element, such as a new task subtype, applicability boundary, tool-use sequence, or recurring failure mode, it is added as a new skill. Conflicts with existing skills are resolved before insertion by narrowing the candidate’s scope, adding a do-not-use condition, or rewriting the procedure so that the skills apply to different situations. This process favors specific, actionable skills over broad reminders, preserving runtime selectivity because the agent initially decides what to load from skill metadata alone. A specific example of workflow is presented in Appendix D.1:"
+  },
+  {
+    "zh": "阶段 3：经验验证。为进一步降低方差，我们在留出验证集 T_val 上评估每个 s ∈ C（§2.1），比较无技能基线与允许按需加载 s 的技能增强条件（§2.3）。用 r_t^∅ 和 r_t^s 分别表示任务 t 上不使用和使用 s 的结果，并将逐任务影响定义为：",
+    "kind": "p",
+    "id": null,
+    "en": "Stage 3: Empirical validation. To further reduce the variance, we evaluate each s ∈ C on the held-out validation split T_val (§2.1), comparing a baseline with no skill against a skill-augmented condition in which s is available for on-demand loading (§2.3). Let r_t^∅ and r_t^s denote outcomes on task t without and with s, and define the per-task impact as:"
+  },
+  {
+    "zh": "δ_t^[s] = r_t^s − r_t^∅，δ_t^[s] ∈ {−1, 0, +1}。 （3）",
+    "kind": "equation",
+    "id": null,
+    "en": "δ_t^[s] = r_t^s − r_t^∅, δ_t^[s] ∈ {−1, 0, +1}. (3)"
+  },
+  {
+    "zh": "只有当候选 s 在验证集上被足够频繁地调用，且调用时产生严格为正的平均影响，才保留它。用 u_s 表示智能体加载技能 s 的验证回合数，用 T_val^[s] 表示相应的任务集合。我们要求 u_s ≥ 5，并计算：",
+    "kind": "p",
+    "id": null,
+    "en": "A candidate s is retained only if it is invoked sufficiently often on the validation split and yields a strictly positive average impact when invoked. Let u_s denote the number of validation episodes in which the agent loads skill s, and let T_val^[s] denote the corresponding set of tasks. We require u_s ≥ 5 and compute"
+  },
+  {
+    "zh": "δ̄^[s] = (1 / |T_val^[s]|) ∑_{t ∈ T_val^[s]} δ_t^[s]。 （4）",
+    "kind": "equation",
+    "id": null,
+    "en": "δ̄^[s] = (1 / |T_val^[s]|) ∑_{t ∈ T_val^[s]} δ_t^[s]. (4)"
+  },
+  {
+    "zh": "最终保留的集合为：",
+    "kind": "p",
+    "id": null,
+    "en": "The final retained set is"
+  },
+  {
+    "zh": "C* = {s ∈ C | u_s ≥ 5 ∧ δ̄^[s] > 0}。 （5）",
+    "kind": "equation",
+    "id": null,
+    "en": "C* = {s ∈ C | u_s ≥ 5 ∧ δ̄^[s] > 0}. (5)"
+  },
+  {
+    "zh": "加载次数少于五次的候选，包括在验证集上从未加载的候选，均被丢弃，因为没有足够证据可靠地估计它们的下游效用。",
+    "kind": "p",
+    "id": null,
+    "en": "Candidates loaded fewer than five times, including candidates never loaded on the validation split, are discarded because there is insufficient evidence to estimate their downstream utility reliably."
+  },
+  {
+    "zh": "2.3 分层按需检索",
+    "kind": "h3",
+    "id": "S2.SS3",
+    "en": "2.3 Hierarchical On-Demand Retrieval"
+  },
+  {
+    "zh": "将完整技能库预加载到提示词中会浪费上下文，并可能损害奖励和一致性（Fu et al., 2024）。失败模式不仅是 token 膨胀：当许多技能同时展示时，用户请求与无关技能之间的表面关键词重叠，可能使智能体加载并遵循错误指南，以无技能基线本可避免的方式违反政策（图 16）。SkillForge 将每个技能组织为深度递增的层次，只让智能体按当前任务需要向下深入。最浅层仅包含元数据（简短名称和描述），中间层展示决策规则或诊断模式，终端层包含代码模板或逐步修复程序等最重的资源。每个非终端层都指定一个下钻条件，用自然语言描述何时加载下一层（例如，“确认根本原因后，检索修复模板”）。层数因领域而异：对延迟敏感的任务通常只需一至两个轻量层，而对精度敏感的任务则受益于更深的层次（见 §B.6）。",
+    "kind": "p",
+    "id": null,
+    "en": "Preloading the full skill repository into the prompt wastes context and can hurt both reward and consistency (Fu et al., 2024). The failure mode is not merely token bloat: when many skills are exposed at once, surface keyword overlap between the user’s request and unrelated skills can cause the agent to load and follow the wrong guidance, violating policy in ways that the no-skill baseline would have avoided (Fig. 16). SkillForge instead organises each skill into layers of increasing depth and lets the agent descend only as far as the current task requires. The shallowest layer holds only metadata (a short name and description), intermediate layers expose decision rules or diagnostic patterns, and terminal layers contain the heaviest resources such as code templates or step-by-step repair procedures. Each non-terminal layer specifies a descent condition, a natural-language description of when to load the next layer (e.g., “retrieve the repair template once the root cause is confirmed”). The number of layers varies by domain: latency-sensitive tasks typically need only one or two lightweight layers, while precision-sensitive tasks benefit from deeper hierarchies (see §B.6)."
+  },
+  {
+    "zh": "在回合开始时，只把每个保留技能的元数据层附加到系统提示词；更深层以文件形式保存在专用技能目录中。我们提供单个工具 load_skill(skill_name)，将下一层尚未观察到的内容注入工作上下文。每一轮，智能体都会根据上下文（包括最近观察到的层）决定是否调用该工具。这里不涉及嵌入索引、向量数据库或学习型检索器：LLM 对当前上下文是否匹配下钻条件的判断，是唯一的门控机制。",
+    "kind": "p",
+    "id": null,
+    "en": "At episode start, only the metadata layer of each retained skill is appended to the system prompt; deeper layers reside as files in a dedicated skill directory. We expose a single tool, load_skill(skill_name), which injects the next unobserved layer into the working context. At any turn, the agent decides whether to invoke this tool based on the context, including the most recently observed layer. No embedding index, vector database, or learned retriever is involved: the LLM’s own judgment of whether the current context matches a descent condition is the sole gating mechanism."
+  },
+  {
+    "zh": "3 实验",
+    "kind": "h2",
+    "id": "S3",
+    "en": "3 Experiments"
+  },
+  {
+    "zh": "本节首先介绍实验设置，包括基准、模型、基线和评估指标（§3.1）。随后呈现主要结果，围绕三个问题展开：SkillForge 是否改善任务有效性、是否提高重复运行的一致性，以及这些提升是否具有有利的效率权衡（§3.2）；最后给出案例分析及实际使用场景的讨论（§3.3）。",
+    "kind": "p",
+    "id": null,
+    "en": "This section first describes our experimental setup, including benchmarks, models, baselines, and evaluation metrics (§3.1). We then present the main results, focusing on three questions: whether SkillForge improves task effectiveness, whether it improves repeated-run consistency, and whether these gains come with favorable efficiency trade-offs (§3.2), and finally present case analyses and discussions on practical usage scenarios (§3.3)."
+  },
+  {
+    "zh": "3.1 实验设置",
+    "kind": "h3",
+    "id": "S3.SS1",
+    "en": "3.1 Experimental Setup"
+  },
+  {
+    "zh": "基准。我们在三个主要基准上评估 SkillForge：τ²-Bench Airline 和 τ²-Bench Retail，通过多步工具调用对话评估受政策约束的客服智能体；Terminal-Bench 则在需要长动作序列的故障诊断与修复任务上评估软件工程智能体。对于 τ²-Bench 领域，我们使用 τ² 中经修正的任务集（Barres et al., 2025），它解决了原始发布版本中存在的标注错误和不可能满足的约束（Yao et al., 2025）。我们省略了新引入的 Telecom 领域，因为 Gemini 3.0 Flash 等新模型已使其接近饱和（准确率超过 90%），且其 2,285 个任务使评估成本高昂。此外，我们在代理监督的补充分析中报告 SkillsBench 的结果（§3.3）。",
+    "kind": "p",
+    "id": null,
+    "en": "Benchmarks. We evaluate SKILLFORGE on three primary benchmarks: τ²-Bench Airline and τ² - Bench Retail, which evaluate policy-constrained customer-service agents over multi-step tool-call dialogues; and Terminal-Bench, which evaluates software-engineering agents on fault-diagnosis and repair tasks requiring long action sequences. For the τ²-Bench domains, we use the corrected task set from τ² (Barres et al., 2025), which resolves annotation errors and impossible constraints present in the original release (Yao et al., 2025). We omit the newly introduced Telecom domain, as new models like Gemini 3.0 Flash already saturate it (above 90% accuracy) and its 2,285 tasks make evaluation expensive. We additionally report results on SkillsBench in a supplementary analysis of proxy supervision (§3.3)."
+  },
+  {
+    "zh": "模型。主要实验使用 Gemini 2.5 Flash（gemini-2.5-flash）、Gemini 3 Flash Preview（gemini-3-flash-preview），部分实验使用 GPT-5 Nano（gpt-5-nano-2025-08-07）。我们优先采用这些轻量模型，以支持对智能体重复执行开展广泛且成本高效的评估。所有消融和诊断分析均使用 Gemini 3 Flash Preview。",
+    "kind": "p",
+    "id": null,
+    "en": "Models. Our main experiments use Gemini 2.5 Flash (gemini-2.5-flash), Gemini 3 Flash Preview (gemini-3-flash-preview), and, in selected experiments, GPT-5 Nano (gpt-5-nano-2025-08-07). We prioritize these lightweight models to support broad and cost-efficient evaluation across repeated agent executions. All ablations and diagnostic analyses use Gemini 3 Flash Preview."
+  },
+  {
+    "zh": "基线。我们比较三种方法：No Skill（无技能）、Self-Generated Skill（仅从任务描述生成、不使用轨迹证据的技能，采用 SkillsBench 的实现（Li et al., 2026））和 SkillForge（我们通过对比提取、经验证过滤的技能）。在消融研究中还纳入 Reasoning Bank（Ouyang et al., 2026）（图 4），以检验框架的整体设计。虽然两种方法都从过往轨迹中学习以改善未来智能体行为，Reasoning Bank 在推理时检索指南的方式有所不同：它依赖基于外部嵌入的检索器选择相关记忆，而 SkillForge 通过元数据匹配及显式的基于 bash grep 的工具调用，在预先精炼的路径检索目录，从而提供技能。由于检索机制不能直接比较，我们分离出它们的记忆生成和整合阶段（这些阶段按单条轨迹顺序更新记忆库），并对两种方法都保留我们的检索机制，以进行受控比较。",
+    "kind": "p",
+    "id": null,
+    "en": "Baselines. We compare three methods: No Skill, Self-Generated Skill (skills generated from task descriptions without trajectory evidence, using the SKILLSBENCH implementation (Li et al., 2026)), and SkillForge (our contrastively extracted, validation-filtered skills). We additionally include Reasoning Bank (Ouyang et al., 2026) in the ablation study (Fig. 4) to test the overall design of our framework. While both our and their methods learn from past trajectories to improve future agent behavior, Reasoning Bank differs in how guidance is retrieved at inference time: it relies on external embedding-based retrievers to select relevant memories, whereas SkillForge exposes skills via metadata matching and an explicit bash grep-based tool call to retrieve the folders at pre-refined paths. Because the retrieval mechanisms are not directly comparable, we isolate their memory-generation and consolidation stages (which update their memory banks sequentially from individual trajectories) and keep our retrieval mechanism for both for a controlled comparison."
+  },
+  {
+    "zh": "指标。我们通过 Pass@1 报告单次试验表现，通过 Passᵏ 报告重复运行一致性。对每个任务 t，设 n 次独立执行中有 c_t 次成功，我们遵循 τ-bench（Yao et al., 2025），计算 Passᵏ(t) = C(c_t, k) / C(n, k)，并在任务间取平均。主要实验中 n = 5，因此 Pass⁵ 要求任务的全部五次执行均成功。我们进一步报告相对一致性 RC = Pass⁵ / Pass@1 ∈ [0, 1]，其中 Pass@1 = Pass¹，RC = 1 表示完全一致。我们将一致性差距定义为 1 − RC；所报告的一致性差距缩小百分比，均为这个量的相对缩减。更多设置细节见附录 B.1。",
+    "kind": "p",
+    "id": null,
+    "en": "Metrics. We report single-trial performance via Pass@1 and repeated-run consistency via Passk . For each task t, with c_t successes over n independent executions, we follow τ-bench (Yao et al., 2025) and compute Pass^k(t) = binom(c_t, k) / binom(n, k) , averaged over tasks. In our main experiments, n = 5, so Pass5 requires all five executions of a task to succeed. We further report relative consistency, RC = Pass5/Pass@1 ∈[0,1], where Pass@1 = Pass1 and RC = 1 indicates perfect consistency. We define the consistency gap as 1−RC; reported percentage reductions in the consistency gap are relative reductions in this quantity. More setup details are in Appendix B.1."
+  },
+  {
+    "zh": "3.2 主要结果",
+    "kind": "h3",
+    "id": "S3.SS2",
+    "en": "3.2 Main Results"
+  },
+  {
+    "zh": "整体表现与一致性。表 1 报告了三个模型系列的结果。在单次试验表现（Pass@1）上，SkillForge 总体上优于基线，在不同基准与基础模型的全部设置中均持续取得提升。主要收益在于一致性：每一个模型—基准配对的 RC 都得到改善，绝对增幅介于 2.7 至 13.1 个百分点。最大提升出现在使用 Gemini 3.0 Flash 的 τ²-Bench Airline 上（+13.1 个百分点，0.552 → 0.683，相对提高 24%）。",
+    "kind": "p",
+    "id": null,
+    "en": "Overall performance and consistency. Table 1 reports results across three model families. On single-trial performance (Pass@1), SkillForge is broadly superior to the baselines, with consistent gains in all settings on different benchmarks and base models. The primary benefit lies in consistency: RC improves in every model–benchmark pair, with absolute gains ranging from 2.7 to 13.1 percentage points. The largest improvement is on τ²-Bench Airline with Gemini 3.0 Flash (+13.1pp, 0.552→0.683, a 24% relative improvement)."
+  },
+  {
+    "zh": "技能构建的轨迹预算扩展。记忆构建阶段呈现出一条有用的扩展规律，与既有关于在信息采集中平衡探索和利用的动态采样研究相一致（Wan et al., 2025b）。如图 3 所示，将采样预算从 4 条轨迹增至 12 条，会持续提高相对无技能基线的重复运行一致性，因为额外轨迹有助于找到更多中等难度任务，从而增强可供提取的对比信号。",
+    "kind": "p",
+    "id": null,
+    "en": "Trajectory-budget scaling for skill construction. The memory-construction stage exposes a useful scaling rule that is consistent with prior work on dynamic sampling that balances exploration and exploitation in information gathering (Wan et al., 2025b). As shown in Fig. 3, increasing sampling budget from 4 to 12 trajectories consistently improves repeated-run consistency over the no-skill baseline, because additional trajectories help find more intermediate-difficulty tasks, strengthening the contrastive signal available for extraction."
+  },
+  {
+    "zh": "超过这个范围后，在所有 k 值上，采样 16 条轨迹与 12 条轨迹的表现相当。图 3 的中图和右图解释了原因：首先，12 条和 16 条轨迹产生的混合结果配对比例相同，说明额外采样不再发现智能体行为不一致的新的中等难度任务。其次，技能加载百分比，即智能体至少调用一个技能的任务比例，也在同一点饱和（12 条与 16 条轨迹均为 75%），证实额外轨迹预算没有产生智能体更常认为相关的技能。综合来看，超过适度轨迹预算后，额外采样产生的对比信号递减，新增技能效用也很少。实践中，适中的预算（此处为 12 条轨迹）能以合理的采样成本捕获大部分有用信号。",
+    "kind": "p",
+    "id": null,
+    "en": "Beyond this, sampling with 16 trajectories per-forms comparably to 12 across all values of k. The middle and right panels of Fig. 3 explain why: First, 12 and 16 trajectories yield the same proportion of mixed-outcome pairs, indicating that the additional samples no longer surface new intermediate difficulty tasks on which the agent behaves inconsistently. Second, the skill load percentage, the fraction of tasks in which the agent invokes at least one skill, also saturates at the same point (75% for both 12 and 16 trajectories), confirming that the extra trajectory budget does not produce skills that the agent finds relevant more often. Together, these results suggest that beyond a modest trajectory budget, additional samples yield diminishing contrastive signal and little additional skill utility. In practice, a moderate budget (here, 12 trajectories) captures most of the useful signal at reasonable sampling cost."
+  },
+  {
+    "zh": "消融研究。图 4 沿两个轴分解了 SkillForge 各组成部分的贡献：不同 Passᵏ 下的一致性（左）和总 token 成本（右）。在以轨迹为依据的变体中，Grounding (Success) Only（仅成功轨迹依据）的一致性曲线最稳定，说明成功轨迹为可在多次运行间迁移的可复用行为提供了最强信号；不过，它在 k = 1 时未优于无技能基线，且 token 成本显著更高。Grounding (Failed) Only（仅失败轨迹依据）在较小 k 时优于基线，但随着 k 增大下降更快，说明失败轨迹包含有用的错误规避线索，却不足以单独归纳出稳定指南。这种对照支持了我们的设计理由：成功轨迹展示应保留什么，失败轨迹展示应避免什么，两者结合才能分离最重要的程序差异。移除验证阶段（No-validation/filter）在 k = 1 时与 SkillForge 相当，但随着 k 增大，其 Passᵏ 急剧下降，token 成本同时上升，证实未经筛选的技能无法维持一致性，并以低效用指南使上下文膨胀。最后，在 §3.1 所述的受控比较中，两种方法使用相同的 SkillForge 检索机制，Reasoning Bank（Ouyang et al., 2026）的顺序记忆生成与整合程序不及 SkillForge 的对比式、经验证过滤的构建程序，而且差距随 k 增大而扩大。综合这些结果可知，对比依据与验证过滤互为补充：依据决定生成什么指南，过滤决定保留什么指南。提示词细节见附录 C。",
+    "kind": "p",
+    "id": null,
+    "en": "Ablation Studies. Fig. 4 breaks down the contributions of each SkillForge component along two axes: consistency across Passk (left) and total token cost (right). Among the trajectory-grounding variants, Grounding (Success) Only yields the most stable consistency curve, suggesting that successful trajectories provide the strongest signal for reusable behavior that transfers across runs; however, it does not improve over the no-skill baseline at k = 1 and incurs substantially higher token cost. Grounding (Failed) Only improves over the baseline at smaller k but degrades more quickly as k grows, indicating that failed trajectories contain useful erroravoidance cues yet are insufficient on their own to induce stable guidance. The contrast supports our design rationale: successful trajectories show what to preserve, failed trajectories show what to avoid, and their combination isolates the procedural differences that matter most. Removing the validation stage (No-validation/filter) matches SkillForge at k = 1 but its Passk drops sharply as k grows while token cost rises, confirming that unfiltered skills fail to sustain consistency and bloat context with low-utility guidance. Finally, under the controlled comparison described in §3.1, where both methods use the same SkillForge retrieval mechanism, Reasoning Bank (Ouyang et al., 2026)’s sequential memory-generation and consolidation procedure is outperformed by SkillForge’s contrastive, validation-filtered construction procedure, with the gap widening at larger k. Together, these results indicate that contrastive grounding and validation filtering are complementary: grounding determines what guidance to generate, while filtering determines what guidance to keep. The prompt details are provided in Appendix C."
+  },
+  {
+    "zh": "效率权衡。SkillForge 通过指南质量与提供方式两方面提高效率。图 4（右）表明，低质量或较差的指南可能在削弱表现的同时增加 token 用量。仅从成功轨迹或仅从失败轨迹中提取、未经适当验证的技能，缺少对比精度，可能误导智能体并导致无效探索或回溯，如附录图 14 和图 16 的零售失败案例所示。Reasoning Bank 等方法呈现出另一种互补的局限：由于它们的指南没有为渐进式加载而组织，可能不论相关性如何都提前展示全部指南，增加上下文长度，却未必有助于当前决策；SkillForge 通过对比依据和验证过滤改善技能内容，同时通过分层按需加载改善技能提供方式，从而避免这两类问题。与此解释一致，附录表 3 中的提供方式消融显示，按需加载取得最佳奖励、最强的 Passᵏ 保持能力以及最低 token 用量，较无技能减少 16.7% token，较完整提示词指南减少 23.6%。",
+    "kind": "p",
+    "id": null,
+    "en": "Efficiency trade-offs. SkillForge improves efficiency through both guidance quality and delivery. Fig. 4 (right) shows that lower-quality or poorly guidance can increase token usage while weakening performance. Skills extracted from successful or failed only trajectories without proper validation lack contrastive precision, which can mislead the agent and induce unproductive exploration or backtracking, as illustrated by the retail failure case in Appendix Fig. 14 and 16. Methods such as Reasoning Bank present a complementary limitation: because their guidance is not structured for progressive loading, they may expose all guidance upfront regardless of relevance, increasing context length without necessarily helping the current decision; SkillForge avoids both issues by using contrastive grounding and validation filtering to improve skill content, together with hierarchical on-demand loading to improve skill delivery. Consistent with this explanation, the delivery ablation in Appendix Table 3 shows that on-demand loading achieves the best reward, strongest Passk retention, and lowest token usage, reducing tokens by 16.7% over no-skill and 23.6% over full-prompt guidance."
+  },
+  {
+    "zh": "3.3 实践分析",
+    "kind": "h3",
+    "id": "S3.SS3",
+    "en": "3.3 Practical Analysis"
+  },
+  {
+    "zh": "案例研究：用户施压下的工作流控制。τ²-Bench 中反复出现的一种失败模式，不是误判正确政策，而是在用户持续施压下放弃政策。智能体经常已经识别出符合政策的操作，却在用户反驳、援引先前建议或重新表述请求时偏离政策，提出不受支持的变通方案，将原本各自有效的工具拼接成政策未允许的序列。SkillForge 通过稳定识别后的决策来缓解这类失败：智能体一旦识别出适用约束，加载相关技能模块就会将它锚定在获准的解决路径上（例如升级处理、拒绝或推迟），而不是即兴编造替代方案。其作用与其说是改善智能体知道什么，不如说是改善它在受到质疑时是否坚持边界。图 5 用一个有代表性的取消场景说明这一模式：无技能智能体和 SkillForge 智能体都正确判断预订 EHGLP3 不符合退款资格，但只有 SkillForge 智能体通过加载 skill-impasse-escalation，继续调用 transfer_to_human_agents，而不是在用户施压下编造“先升舱再取消”的变通方案。更多案例研究见附录图 13。",
+    "kind": "p",
+    "id": null,
+    "en": "Case Study: Workflow Control Under User Pressure. A recurring failure mode in τ²-Bench is not misidentifying the correct policy, but abandoning it under sustained user pressure. Agents frequently recognize the policy-compliant action, then drift away from it when the user pushes back, citing prior advice, or reframes the request, producing unsupported workarounds that stitch together otherwise-valid tools into a sequence the policy does not sanction. SkillForge mitigates this class of failure by stabilizing post-recognition decisionmaking: once the agent has identified the applicable constraint, loading a relevant skill module anchors it to the sanctioned resolution path (e.g., escalation, refusal, or deferral) rather than improvising an alternative. The effect is less about improving what the agent knows and more about improving whether it holds the line when challenged. Fig. 5 illustrates this pattern in a representative cancellation scenario: both the no-skill and SkillForge agents correctly determine that reservation EHGLP3 is refund-ineligible, but only the SkillForge agent, by loading the skill-impasse-escalation, proceeds to transfer_to_human_agents instead of fabricating an upgrade-then-cancel workaround under user pressure. Additional case studies are provided in Appendix Figure 13."
+  },
+  {
+    "zh": "对近似监督的稳健性。主要流程使用真实任务结果区分成功与失败轨迹，但实践中往往无法获得这种监督。为检验近似反馈是否足够，我们用 LLM 评判器替换真实标签，并在 SkillsBench（Li et al., 2026）上评估；这是一个近期提出、旨在测试智能体技能使用的长程基准。如图 6 所示，真实标签如预期产生最强一致性，但代理监督仍是一种实用替代。它持续优于自生成技能，并保留了相对无技能基线的大部分一致性提升。代理评判器与真实轨迹标签的一致率为 77%，与既有 LLM 轨迹评估工作报告的一致率相当（Zheng et al., 2023）。这表明，适度的标签噪声不会显著削弱对比式提取阶段。",
+    "kind": "p",
+    "id": null,
+    "en": "Robustness to Approximate Supervision. Our main pipeline uses golden task outcomes to separate successful and failed trajectories, but such supervision is often unavailable in practice. To test whether approximate feedback is sufficient, we replace gold labels with an LLM judge and evaluate on SKILLSBENCH (Li et al., 2026), a recent long-horizon benchmark designed to test skill usage in agents. As shown in Fig. 6, golden labels yield the strongest consistency, as expected, but proxy supervision remains a practical alternative. It consistently outperforms self-generated skills and preserves most of the consistency gain over the no-skill baseline. The proxy judge achieves 77% agreement with gold trajectory labels, comparable to agreement rates reported in prior work on LLM-based trajectory evaluation (Zheng et al., 2023). This suggests that moderate label noise does not substantially weaken the contrastive extraction stage."
+  },
+  {
+    "zh": "4 相关工作",
+    "kind": "h2",
+    "id": "S4",
+    "en": "4 Related Work"
+  },
+  {
+    "zh": "用于智能体自我改进的经验记忆。LLM 智能体的一项核心挑战，是保留并复用过往经验。奠基性方法探索了自我反思和情景记忆检索（Shinn et al., 2023；Park et al., 2023；Packer et al., 2023；Wang et al., 2023）。更新的工作将轨迹提炼为经验教训、工作流和推理轨迹等结构化产物（Zhao et al., 2024；Wang et al., 2024；Ouyang et al., 2026；Suzgun et al., 2025；Wang and Li, 2026），并明确管理规划与执行之间的抽象边界（Ye et al., 2025；Zhou et al., 2025）。然而，这些系统假定存储的经验正确；近期研究显示，错误或低质量产物可能降低表现（Zhu et al., 2025；Li et al., 2026）。课程感知学习表明，与其仅按正确性过滤，不如以信息量丰富、难度适当的示例为目标，这会产生更稳健的泛化（Wang et al., 2025；Qi et al., 2025）。SkillForge 基于这两项观察：有选择地针对多次运行结果有成有败的任务，将由此得到的对比证据提炼为结构化技能产物；这些产物无需基于外部嵌入的检索器或学习型检索器，即可按需加载。",
+    "kind": "p",
+    "id": null,
+    "en": "Experience Memory for Agent Self-Improvement. A central challenge for LLM agents is retaining and reusing past experience. Foundational approaches explore self-reflection and episodic memory retrieval (Shinn et al., 2023; Park et al., 2023; Packer et al., 2023; Wang et al., 2023). More recent work distills trajectories into structured artifacts such as lessons, workflows, and reasoning traces (Zhao et al., 2024; Wang et al., 2024; Ouyang et al., 2026; Suzgun et al., 2025; Wang and Li, 2026), and explicitly manages abstraction boundaries across planning and execution (Ye et al., 2025; Zhou et al., 2025). However, these systems assume the stored experience is correct; recent studies show that incorrect or low-quality artifacts can degrade performance (Zhu et al., 2025; Li et al., 2026). Rather than filtering for correctness alone, curriculum-aware learning suggests that targeting informative, appropriately difficult examples yields more robust generalization (Wang et al., 2025; Qi et al., 2025). SkillForge builds on both observations: it selectively targets tasks where outcomes are mixed across runs and distills the resulting contrastive evidence into structured skill artifacts that can be loaded on demand without an external embedding-based or learned retriever."
+  },
+  {
+    "zh": "从基于检索的记忆到智能体技能。基于经验改善智能体的一个关键问题，是如何在推理时提供存储的知识。检索增强方法通过基于嵌入的相似性搜索查询情景记忆库（Lewis et al., 2020；Fan et al., 2024；Fang et al., 2025；Hu et al., 2025）。一种正在兴起的替代方式，将可复用程序封装为面向渐进式披露的声明式技能，在相关时作为有针对性的上下文按需加载（Zhou et al., 2026a；Zheng et al., 2025；Ye et al., 2026a；Ni et al., 2026；Zhang et al., 2026b,a；Lu et al., 2026），使产物与架构无关、可共享且高效（Anthropic, 2025）。然而，高质量技能仍主要由人工编写（Anthropic, 2026；Zhou et al., 2026b）；自生成的低质量技能甚至可能损害表现（Li et al., 2026）。SkillForge 通过将过往轨迹中的对比证据提炼为声明式技能，弥合这一差距；它无需逐技能人工整理，也无需在推理时使用基于外部嵌入的检索器或学习型检索器，就能提高程序性一致性。",
+    "kind": "p",
+    "id": null,
+    "en": "From Retrieval-Based Memory to Agent Skills. A key question in experience-based agent improve- ment is how stored knowledge is surfaced at inference time. Retrieval-augmented approaches query episodic memory banks via embedding-based similarity search (Lewis et al., 2020; Fan et al., 2024; Fang et al., 2025; Hu et al., 2025). An emerging alternative packages reusable procedures as declarative skills designed for progressive disclosure, loaded on-demand as targeted context when relevant (Zhou et al., 2026a; Zheng et al., 2025; Ye et al., 2026a; Ni et al., 2026; Zhang et al., 2026b,a; Lu et al., 2026), making artifacts architectureagnostic, shareable, and efficient (Anthropic, 2025). However, high-quality skills remain mostly human-authored (Anthropic, 2026; Zhou et al., 2026b); self-generated, low quality skill can even hurt per-formance (Li et al., 2026). SkillForge bridges this gap by distilling contrastive evidence from past trajectories into declarative skills, improving procedural consistency without manual per-skill curation or an external embedding-based or learned retriever at inference time."
+  },
+  {
+    "zh": "5 结论",
+    "kind": "h2",
+    "id": "S5",
+    "en": "5 Conclusion"
+  },
+  {
+    "zh": "我们介绍了 SkillForge，一种从具有对比性的过往轨迹中提炼可复用程序性指南的框架。通过配对智能体的成功与失败尝试、验证候选技能，以及按需加载保留的指南，SkillForge 识别并部署可操作的程序性知识，以实现可靠的长程智能体。在多种智能体基准上，SkillForge 提高了重复运行一致性，同时不降低单次试验表现。这些结果表明，对比依据和选择性部署是实现长程智能体可靠性的有效要素；从结构化的成功—失败差异中学习，是自动生成高质量技能的一个有前景的方向。",
+    "kind": "p",
+    "id": null,
+    "en": "We introduced SkillForge, a framework that distills reusable procedural guidance from contrastive past trajectories. By pairing successful and failed agent attempts, validating candidate skills, and loading retained guidance on demand, SkillForge identifies and deploys actionable procedural knowledge for reliable long-horizon agents. Across diverse agentic benchmarks, SkillForge improves repeated-run consistency without degrading performance in single-trial performance. These results show that contrastive grounding and selective deployment are effective ingredients for long-horizon agent reliability and learning from structured success–failure differences is a promising direction for automated, high-quality skill generation."
+  },
+  {
+    "zh": "局限性",
+    "kind": "h2",
+    "id": "limitations",
+    "en": "Limitations"
+  },
+  {
+    "zh": "SkillForge 存在若干局限，这些局限共同界定了当前范围与自然延伸方向。",
+    "kind": "p",
+    "id": null,
+    "en": "SkillForge has several limitations that shape both its current scope and natural extensions."
+  },
+  {
+    "zh": "评估范围。我们的实验涵盖受政策约束的客户服务对话（τ²-Bench Airline、Retail）和命令行软件工程（Terminal-Bench）。这些领域共享一种对分析至关重要的属性，但并未覆盖长程智能体设置的全部范围。我们没有评估 Web 智能体、GUI 智能体或开放式生成任务；在这些任务中，成功更难验证，程序性模式也可能更加分散。将对比式提取原则扩展到这些设置，是自然的下一步，尤其是 DeepResearch 与 GUI 智能体：它们常出现混合结果轨迹，但奖励信号噪声更大。",
+    "kind": "p",
+    "id": null,
+    "en": "Evaluation scope. Our experiments cover policy-constrained customer-service dialogue (τ²-Bench Airline, Retail) and command-line software engineering (Terminal-Bench). These domains share a property critical to our analysis, but they do not exercise the full range of long-horizon agent settings. We do not evaluate on web agents, GUI agents, or open-ended generation tasks where success is harder to verify and where procedural patterns may be more diffuse. Extending the contrastive extraction principle to these settings, particularly to DeepResearch and GUI agents where mixed-outcome trajectories are common but reward signals are noisier, is a natural next step."
+  },
+  {
+    "zh": "所针对的失败模式。SkillForge 针对反复发生的程序性错误导致的失败：工具调用顺序错误、遗漏约束、过早终止，或未能协调冲突状态。主要受限于事实知识缺失、根本性的困难推理缺口或高度开放式生成的任务，较不可能从中受益，因为可复用程序性指南无法提供基础模型所不具备的能力。框架改进的是智能体如何在长程中运用自身能力，而不是扩展这些能力。",
+    "kind": "p",
+    "id": null,
+    "en": "Failure modes addressed. SkillForge targets failures from recurring procedural errors: misordered tool calls, missed constraints, premature termination, or failure to reconcile conflicting state. Tasks dominated instead by missing factual knowledge, fundamentally hard reasoning gaps, or highly open-ended generation are less likely to benefit, since reusable procedural guidance cannot supply capabilities the base model lacks. The framework improves how agents apply their capabilities over long horizons rather than expanding those capabilities."
+  },
+  {
+    "zh": "检索受模型判断限制。按需加载依赖基础模型仅凭元数据识别存储指南何时相关。逐技能诊断（附录 B.5）表明，一旦触发调用，通常是恰当的；但若某个模型系统性地过少或过多加载技能，收益就会被稀释。轻量级检索辅助机制，例如与元数据一起显示触发匹配提示，可以在不重新引入完整嵌入式检索成本的情况下提高召回率。",
+    "kind": "p",
+    "id": null,
+    "en": "Retrieval bounded by model judgment. Ondemand loading relies on the base model to recognize when stored guidance is relevant from metadata alone. Our per-skill diagnostics (Appendix B.5) show that invocations are usually appropriate when they fire, but a model that systematically under-loads or over-loads skills would dilute the benefit. Lightweight retrieval-assist mechanisms, e.g., trigger-match hints surfaced alongside metadata, could improve recall without reintroducing the cost of full embedding-based retrieval."
+  },
+  {
+    "zh": "致谢",
+    "kind": "h2",
+    "id": "Sx1",
+    "en": "Acknowledgments"
+  },
+  {
+    "zh": "G. Wan 和 S. Li 的工作获得以下部分资助：美国海军研究办公室（ONR）资助编号 N00014-24-1-2668；美国国家科学基金会（NSF）资助编号 IIS-2316306 和 CNS-2330215；美国国立卫生研究院（NIH）资助编号 R01EB293388。",
+    "kind": "p",
+    "id": null,
+    "en": "G. Wan and S. Li are supported in part by the U.S. Office of Naval Research (ONR) Award under Grant Number N00014-24-1-2668, the National Science Foundation (NSF) under Grants IIS2316306 and CNS-2330215, and the National Institutes of Health (NIH) under Grant R01EB293388."
+  }
+]
