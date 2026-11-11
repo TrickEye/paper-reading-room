@@ -7,12 +7,12 @@
 ### Agentic Context Engineering
 
 - `public/papers/ace.html`：正文、图注、表格、附录文字与参考文献题名的中文译文，并附英文对照；14 幅独立原图按需加载。
-- `public/pdfs/2510.04618.pdf`：原始英文论文，arXiv:2510.04618v3，ICLR 2026。
+- `public/pdfs/Agentic-Context-Engineering-2510.04618.pdf`：原始英文论文，arXiv:2510.04618v3，ICLR 2026。
 
 ### SkillForge
 
 - `public/papers/skillforge.html`：中文全文与逐段英文对照，含完整正文、附录 A–D、49 条参考文献及题名翻译、16 幅独立原图、4 张完整数据表，以及 5 份提示词的文字对照。中英对照模式按“中文一段、英文原文一段”排列。
-- `public/pdfs/2026.emnlp-main.1954.pdf`：从 ACL Anthology 下载的原始英文论文，25 页。
+- `public/pdfs/Skill-Forge-2026.emnlp-main.1954.pdf`：从 ACL Anthology 下载的原始英文论文，25 页。
 - 来源：[ACL Anthology 论文页面](https://aclanthology.org/2026.emnlp-main.1954/)，DOI: 10.18653/2026.emnlp-main.1954。
 
 SkillForge 页面中的中文译文由 AI 生成，供阅读参考；原始 PDF 是引用、公式和排版的权威来源，作者未对译文背书。

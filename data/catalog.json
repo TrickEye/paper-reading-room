@@ -1,14 +1,14 @@
 [
   {
     "id": "ace",
-    "pdf": "2510.04618.pdf",
+    "pdf": "Agentic-Context-Engineering-2510.04618.pdf",
     "figures": 14,
     "tables": 22,
     "builder": null
   },
   {
     "id": "skillforge",
-    "pdf": "2026.emnlp-main.1954.pdf",
+    "pdf": "Skill-Forge-2026.emnlp-main.1954.pdf",
     "figures": 16,
     "tables": 4,
     "builder": "skillforge.py"

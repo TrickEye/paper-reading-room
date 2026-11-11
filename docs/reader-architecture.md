@@ -20,7 +20,7 @@ reader/reader.<sha256前16位>.js
 content/manifest.json
 content/ace/paper.<sha256前16位>.json
 content/ace/assets/figure-01.<sha256前16位>.svg
-pdfs/2510.04618.pdf
+pdfs/Agentic-Context-Engineering-2510.04618.pdf
 ```
 
 摘要取文件的实际 UTF-8 字节或原始图片字节计算，无构建时间戳。构建会清除自己管理的过期版本，保证产物确定。资源清单请求采用 HTTP 重验证，其余资源沿用浏览器缓存。外壳引用固定的 `reader/loader.js`。该小入口重验证资源清单，修正缓存外壳中的样式地址，再导入当前的摘要脚本；因此旧外壳不依赖已被清理的旧摘要脚本。加载清单、样式或主模块失败均提供重试；不自动刷新整页或静默展示不完整正文。
@@ -39,7 +39,7 @@ pdfs/2510.04618.pdf
     "authors": ["Author"],
     "version": "v3",
     "source": {},
-    "pdf": "../../pdfs/2510.04618.pdf",
+    "pdf": "../../pdfs/Agentic-Context-Engineering-2510.04618.pdf",
     "defaultMode": "zh",
     "storageKey": "ace-reader-"
   },
