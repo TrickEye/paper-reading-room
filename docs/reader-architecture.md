@@ -94,3 +94,15 @@ python3 skills/paper-reading-room/scripts/audit_reading_page.py public/papers/ac
 `tests/migration-baseline.json` 记录迁移前浏览器 DOM 的内容指纹，覆盖所有锚点、逐单元文本、完整表格、MathML、代码与全文文本。`browser_check.cjs` 对实际渲染结果做逐类比对，另覆盖交互、请求隔离、错误恢复、打印和项目子路径，并输出桌面／手机／图表／打印截图及 PDF。后续有意修改文稿时，先审校源内容，再同步受影响的指纹；不要把更新基线当作跳过差异调查的方式。
 
 本次迁移不提供全文静态 SEO、段落编辑／批注、章节分批加载、Service Worker 或单文件离线导出。
+
+## 阅读笔记
+
+`reader/notes.js` 是独立笔记控制器，布局样式合入共用 CSS。资源清单增加可选的 `notes: {js, vendor}`：`js` 为带内容摘要的模块，`vendor` 为带校验清单摘要的相对目录 URL，二者均相对清单解析。阅读器载入控制器后创建默认隐藏的面板；仅第一次打开时请求 Vditor 4.0.1、Lute、中文语言包、图标和 KaTeX。关闭面板保留实例。编辑器资源失败时降级为纯 Markdown 文本框，可继续保存并重试加载。
+
+固定版本发布资源保存在 `reader/vendor/vditor-4.0.1/`，`checksums.json` 记录官方 npm tarball 的 SHA-512、各文件 SHA-256 与许可证来源。构建校验并原样复制所需文件，不运行 npm，不联网下载。发布审计验证目录摘要、全部文件及意外资源；不发布上游示例 HTML 或源码。代码块预览关闭，数学预览启用；编辑器使用本地资源地址。Lute 内置安全过滤之外，编辑器 DOM 转换边界进一步移除活动 HTML、图片和危险链接属性，笔记 HTML 不进入论文正文。
+
+笔记键为 `paper-reader:<站点路径>:notes:v1:<paperId>`。站点路径从资源清单上一级目录解析，正式页与预览页一致，项目子路径与根站点隔离。记录为 `{schemaVersion:1,paperId,markdown,updatedAt}`，只保存 Markdown；宽度使用独立的 `paper-reader:<站点路径>:notes-width`。输入防抖 500ms，关闭、模式切换、页面隐藏与 `pagehide` 补存；组合输入完成前不触发保存或外部替换。存储不可用、容量不足或未知版本记录会明确显示失败，并保留当前内容与原记录。
+
+跨标签页使用 `storage` 事件和保存前基线检查：无本地修改时载入外部版本，有修改时暂停保存，供用户选择版本。localStorage 不提供跨进程事务；这是一种冲突检测机制，不是实时协同编辑。首版无服务器同步、导入导出或自动历史备份。
+
+摘录保存实际选中文字，追加 Markdown 引用和论文外壳相对链接；优先引用已有正文锚点，跳过临时搜索 ID，不改写论文数据。跨段选择定位起点。移动端回跳收起抽屉；桌面面板开关尽量保持当前可见内容单元位置。笔记不参与全文搜索、阅读进度或打印。新增浏览器用例在 `scripts/browser_notes.cjs`，由共用验收入口执行；真实软键盘体验仍需 iOS Safari 和 Android Chrome 实机核验。

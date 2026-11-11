@@ -39,9 +39,10 @@ setTheme(get('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? '
 $('theme-button').onclick = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
 mode.onchange = () => { root.dataset.lang = mode.value; save('mode', mode.value); search(); update(); };
 
-const mobile = () => matchMedia('(max-width:940px)').matches;
+const mobile = () => matchMedia('(max-width:940px)').matches || (root.classList.contains('notes-open') && matchMedia('(max-width:1439px)').matches);
 let lastFocus = null;
 function menu(open) {
+  if (open) document.dispatchEvent(new Event('reader:open-directory'));
   $('sidebar').classList.toggle('open', open);
   $('menu-button').setAttribute('aria-expanded', String(open));
   $('menu-button').setAttribute('aria-label', open ? '关闭目录' : '打开目录');
@@ -307,3 +308,13 @@ async function load(refresh = false) {
 }
 $('retry-button').onclick = () => load(true);
 load();
+
+// Keep the notes controller small; the editor itself is loaded on first use.
+getPublication().then(async ({url, manifest}) => {
+  if (!manifest.notes || !$('notes-button')) return;
+  const {initNotes} = await import(localURL(manifest.notes.js, url).href);
+  initNotes({paperId, manifestURL: url, resources: manifest.notes,
+    title: manifest.papers[paperId].brand, closeDirectory: () => menu(false)});
+}).catch(() => {
+  if ($('notes-button')) { $('notes-button').disabled = true; $('notes-button').title = '笔记模块加载失败，请刷新重试'; }
+});

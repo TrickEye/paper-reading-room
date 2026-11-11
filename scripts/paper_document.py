@@ -10,6 +10,7 @@ import html
 import json
 import posixpath
 import re
+import shutil
 from urllib.parse import unquote, urlsplit
 
 from builders.html_tree import Node, TreeParser, serialize, clean_text, VOID
@@ -263,6 +264,7 @@ def publish(preview=False):
     reader = ROOT / 'reader'
     css = (reader / 'base.css').read_text() + '\n' + (reader / 'states.css').read_text()
     css += '\n'.join(scope_css((reader / f'{p["id"]}.css').read_text(), p['id']) for p in catalog if p['id'] != 'ace')
+    css += '\n' + (reader / 'notes.css').read_text()
     resources = PUBLIC / 'reader'
     resources.mkdir(exist_ok=True)
     (resources / 'loader.js').write_bytes((reader / 'loader.js').read_bytes())
@@ -272,6 +274,18 @@ def publish(preview=False):
         path.write_bytes(raw)
         names[ext] = path.relative_to(PUBLIC).as_posix()
     manifest = {'schemaVersion': 1, 'reader': {**{k: '../' + v for k, v in names.items()}, 'loader': '../reader/loader.js'}, 'papers': {}}
+    notes = (reader / 'notes.js').read_bytes()
+    notes_name = f'notes.{digest(notes)[:16]}.js'
+    (resources / notes_name).write_bytes(notes)
+    vendor = reader / 'vendor/vditor-4.0.1'
+    checksums = json.loads((vendor / 'checksums.json').read_text())
+    for name, sha in checksums['files'].items():
+        assert digest((vendor / name).read_bytes()) == sha, f'Vendor checksum mismatch: {name}'
+    vendor_name = 'vditor-4.0.1.' + digest((vendor / 'checksums.json').read_bytes())[:16]
+    vendor_output = resources / 'vendor' / vendor_name
+    shutil.copytree(vendor, vendor_output, dirs_exist_ok=True)
+    manifest['notes'] = {'js': '../reader/' + notes_name,
+                         'vendor': '../reader/vendor/' + vendor_name + '/'}
     for paper in catalog:
         path, = (CONTENT / paper['id']).glob('paper.*.json')
         doc = json.loads(path.read_text())
@@ -302,4 +316,10 @@ def publish(preview=False):
     for path in resources.glob('reader.*.*'):
         if path.relative_to(PUBLIC).as_posix() not in names.values():
             path.unlink()
+    for path in resources.glob('notes.*.js'):
+        if path.name != notes_name:
+            path.unlink()
+    for path in (resources / 'vendor').iterdir():
+        if path.is_dir() and path.name.startswith('vditor-') and path.name != vendor_name:
+            shutil.rmtree(path)
     return manifest

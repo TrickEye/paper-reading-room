@@ -2,6 +2,8 @@
 
 智能体相关论文的阅读网站，保留逐段中英对照、独立原图和原始 PDF。支持目录跳转、全文搜索、字号调整、深色模式、原图放大与打印。
 
+阅读页顶部的「笔记」可打开当前论文的 Markdown 长笔记。默认采用类似 Typora 的即时渲染，支持源码切换、表格、任务列表和数学公式；选中正文后可摘录文字并附上回跳链接。桌面采用可调宽右侧分栏，手机采用底部半屏抽屉。笔记自动保存在当前浏览器的 localStorage，按站点路径和论文隔离；不上传服务器，清除站点数据会删除笔记。首版不提供附件、导入导出或跨设备同步。
+
 [在线阅读](https://trickeye.github.io/paper-reading-room/) · [GitHub 仓库](https://github.com/TrickEye/paper-reading-room)
 
 已收录 ACE、SkillForge、Permission Denied、SkillCAT 和 SkillGen 五篇论文的双语全文。版本与内容范围见[阅读说明](docs/reading-guide.md)。

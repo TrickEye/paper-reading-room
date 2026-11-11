@@ -69,6 +69,16 @@ def check():
             assert target.read_bytes() == (ROOT / 'reader/loader.js').read_bytes(), 'Loader output differs from source'
         else:
             assert hashlib.sha256(target.read_bytes()).hexdigest()[:16] in target.name, 'Reader hash mismatch'
+    notes = resolve(manifest['notes']['js'], manifest_file.parent)
+    assert hashlib.sha256(notes.read_bytes()).hexdigest()[:16] in notes.name, 'Notes hash mismatch'
+    assert notes.read_bytes() == (ROOT / 'reader/notes.js').read_bytes()
+    vendor = resolve(manifest['notes']['vendor'] + 'checksums.json', manifest_file.parent)
+    assert hashlib.sha256(vendor.read_bytes()).hexdigest()[:16] in vendor.parent.name, 'Vendor directory hash mismatch'
+    checksums = json.loads(vendor.read_text())
+    for name, sha in checksums['files'].items():
+        target = resolve(name, vendor.parent)
+        assert hashlib.sha256(target.read_bytes()).hexdigest() == sha, f'Vendor checksum mismatch: {name}'
+    assert {p.relative_to(vendor.parent).as_posix() for p in vendor.parent.rglob('*') if p.is_file()} == set(checksums['files']) | {'checksums.json'}, 'Unexpected vendor resources'
     content_pages = {}
     for paper in catalog:
         slug = paper['id']

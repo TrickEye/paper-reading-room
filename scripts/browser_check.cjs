@@ -214,6 +214,7 @@ async function main() {
   await page.screenshot({path:path.join(output,'skillcat-print.png')});
   await page.pdf({path:path.join(output,'skillcat-print.pdf'),format:'A4',printBackground:true});
   await page.close();console.log('PASS image retry and print failure recovery');
+  await require('./browser_notes.cjs')({browser,route,output});
   await fs.writeFile(path.join(output,'metrics.json'),JSON.stringify(metrics,null,2));
   console.log('Browser artifacts:',output);
 }
