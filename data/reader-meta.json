@@ -65,5 +65,23 @@
     "defaultMode": "dual",
     "storageKey": "ace-reader-",
     "summary": "原图保留 · 按需加载"
+  },
+  "skillgen": {
+    "title": "SkillGen · 中文全文与逐段对照",
+    "description": "SkillGen 完整中文译文与逐段英文对照，包含附录 A–D、8 幅独立原图、4 张完整表格与算法。",
+    "brand": "SkillGen",
+    "authors": [
+      "Yuchen Ma",
+      "Yue Huang",
+      "Han Bao",
+      "Haomin Zhuang",
+      "Swadheen Shukla",
+      "Michel Galley",
+      "Xiangliang Zhang",
+      "Stefan Feuerriegel"
+    ],
+    "defaultMode": "dual",
+    "storageKey": "ace-reader-",
+    "summary": "原图保留 · 按需加载"
   }
 }

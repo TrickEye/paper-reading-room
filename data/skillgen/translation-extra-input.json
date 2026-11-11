@@ -1,0 +1,872 @@
+[
+  {
+    "id": "alg1.l1",
+    "kind": "algorithm-line",
+    "en": "1: induction subset \\mathcal{D}_{\\mathrm{ind}}, construction-time verification subset \\mathcal{D}_{\\mathrm{ver}}, base agent \\mathcal{A}, evaluator \\mathcal{E}, round budget K\\geq 1, gate parameters g_{\\mathrm{abs}}\\in\\mathbb{Z}_{\\geq 0} and g_{\\mathrm{rel}}\\in[0,1]"
+  },
+  {
+    "id": "alg1.l2",
+    "kind": "algorithm-line",
+    "en": "2: skill s^{\\star} marked \\mathrm{active} or \\mathrm{deprecated}"
+  },
+  {
+    "id": "alg1.l3",
+    "kind": "algorithm-line",
+    "en": "3: Stage 1 Baseline elicitation"
+  },
+  {
+    "id": "alg1.l4",
+    "kind": "algorithm-line",
+    "en": "4: Collect induction trajectories \\mathcal{B}=\\{(x_{i},\\tau_{i}^{0},y_{i}^{0})\\}_{i=1}^{n} by rolling out \\mathcal{A} on \\mathcal{D}_{\\mathrm{ind}}"
+  },
+  {
+    "id": "alg1.l5",
+    "kind": "algorithm-line",
+    "en": "5: Cache verification baselines \\mathcal{B}_{\\mathrm{ver}}=\\{(\\tilde{x}_{j},\\tilde{\\tau}^{0}_{j},b_{j})\\}_{j=1}^{m} by rolling out \\mathcal{A} on \\mathcal{D}_{\\mathrm{ver}}"
+  },
+  {
+    "id": "alg1.l6",
+    "kind": "algorithm-line",
+    "en": "6: Stage 2 Contrastive behavioral induction"
+  },
+  {
+    "id": "alg1.l7",
+    "kind": "algorithm-line",
+    "en": "7: Induction agent analyzes trajectories into \\mathcal{Z}=(a_{0},\\mathcal{F},\\mathcal{S},\\mathcal{C})"
+  },
+  {
+    "id": "alg1.l8",
+    "kind": "algorithm-line",
+    "en": "8: Stage 3 Generation–verification–refinement"
+  },
+  {
+    "id": "alg1.l9",
+    "kind": "algorithm-line",
+    "en": "9: Initialize \\Phi^{(0)}\\leftarrow\\varnothing, g^{\\star}\\leftarrow-\\infty, s^{\\star}\\leftarrow\\varnothing"
+  },
+  {
+    "id": "alg1.l10",
+    "kind": "algorithm-line",
+    "en": "10: Set gate threshold \\gamma_{m}\\leftarrow\\max\\{g_{\\mathrm{abs}},\\lceil g_{\\mathrm{rel}}m\\rceil,1\\}"
+  },
+  {
+    "id": "alg1.l11",
+    "kind": "algorithm-line",
+    "en": "11: for r=1,\\ldots,K do"
+  },
+  {
+    "id": "alg1.l12",
+    "kind": "algorithm-line",
+    "en": "12: Generation agent computes s^{(r)}\\leftarrow\\begin{cases}\\operatorname{Gen}(\\mathcal{Z}),&\\text{for }r=1,\\\\ \\operatorname{Refine}(s^{(r-1)},\\mathcal{Z},\\Phi^{(r-1)}),&\\text{for }r>1\\end{cases}"
+  },
+  {
+    "id": "alg1.l13",
+    "kind": "algorithm-line",
+    "en": "13: Verification agent evaluates s^{(r)} on all \\tilde{x}_{j}\\in\\mathcal{D}_{\\mathrm{ver}} and computes G_{m}(s^{(r)})"
+  },
+  {
+    "id": "alg1.l14",
+    "kind": "algorithm-line",
+    "en": "14: Verification agent builds feedback \\Phi^{(r)} from repairs, regressions, and unresolved failures"
+  },
+  {
+    "id": "alg1.l15",
+    "kind": "algorithm-line",
+    "en": "15: if G_{m}(s^{(r)})>g^{\\star} then"
+  },
+  {
+    "id": "alg1.l16",
+    "kind": "algorithm-line",
+    "en": "16: g^{\\star}\\leftarrow G_{m}(s^{(r)}), s^{\\star}\\leftarrow s^{(r)}"
+  },
+  {
+    "id": "alg1.l17",
+    "kind": "algorithm-line",
+    "en": "17: end if"
+  },
+  {
+    "id": "alg1.l18",
+    "kind": "algorithm-line",
+    "en": "18: end for"
+  },
+  {
+    "id": "alg1.l19",
+    "kind": "algorithm-line",
+    "en": "19: Mark s^{\\star} as \\mathrm{active} if g^{\\star}\\geq\\gamma_{m}, else mark it as \\mathrm{deprecated}"
+  },
+  {
+    "id": "alg1.l20",
+    "kind": "algorithm-line",
+    "en": "20: return s^{\\star}"
+  },
+  {
+    "id": "cell-21",
+    "kind": "cell",
+    "en": "Open-weight models"
+  },
+  {
+    "id": "cell-22",
+    "kind": "cell",
+    "en": "Dataset"
+  },
+  {
+    "id": "cell-23",
+    "kind": "cell",
+    "en": "Split"
+  },
+  {
+    "id": "cell-24",
+    "kind": "cell",
+    "en": "Gemma-4-26B"
+  },
+  {
+    "id": "cell-25",
+    "kind": "cell",
+    "en": "Llama-3.1-8B"
+  },
+  {
+    "id": "cell-26",
+    "kind": "cell",
+    "en": "Mistral-Nemo"
+  },
+  {
+    "id": "cell-27",
+    "kind": "cell",
+    "en": "Qwen-2.5-7B"
+  },
+  {
+    "id": "cell-28",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-29",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-30",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-31",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-32",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-33",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-34",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-35",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-36",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-37",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-38",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-39",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-40",
+    "kind": "cell",
+    "en": "IOD"
+  },
+  {
+    "id": "cell-41",
+    "kind": "cell",
+    "en": "ALFWorld"
+  },
+  {
+    "id": "cell-42",
+    "kind": "cell",
+    "en": "OOD"
+  },
+  {
+    "id": "cell-43",
+    "kind": "cell",
+    "en": "LiveCodeBench"
+  },
+  {
+    "id": "cell-44",
+    "kind": "cell",
+    "en": "All"
+  },
+  {
+    "id": "cell-45",
+    "kind": "cell",
+    "en": "MCPBench"
+  },
+  {
+    "id": "cell-46",
+    "kind": "cell",
+    "en": "Single"
+  },
+  {
+    "id": "cell-47",
+    "kind": "cell",
+    "en": "Mind2Web"
+  },
+  {
+    "id": "cell-48",
+    "kind": "cell",
+    "en": "PubMedQA"
+  },
+  {
+    "id": "cell-49",
+    "kind": "cell",
+    "en": "ScienceWorld"
+  },
+  {
+    "id": "cell-50",
+    "kind": "cell",
+    "en": "FTS"
+  },
+  {
+    "id": "cell-51",
+    "kind": "cell",
+    "en": "SocialMaze"
+  },
+  {
+    "id": "cell-52",
+    "kind": "cell",
+    "en": "UPI"
+  },
+  {
+    "id": "cell-53",
+    "kind": "cell",
+    "en": "Avg."
+  },
+  {
+    "id": "cell-54",
+    "kind": "cell",
+    "en": "Proprietary models"
+  },
+  {
+    "id": "cell-55",
+    "kind": "cell",
+    "en": "Dataset"
+  },
+  {
+    "id": "cell-56",
+    "kind": "cell",
+    "en": "Split"
+  },
+  {
+    "id": "cell-57",
+    "kind": "cell",
+    "en": "Claude-Haiku-4.5"
+  },
+  {
+    "id": "cell-58",
+    "kind": "cell",
+    "en": "GPT-5.4-Nano"
+  },
+  {
+    "id": "cell-59",
+    "kind": "cell",
+    "en": "GPT-5.4-Mini"
+  },
+  {
+    "id": "cell-60",
+    "kind": "cell",
+    "en": "Grok-4-Fast"
+  },
+  {
+    "id": "cell-61",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-62",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-63",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-64",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-65",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-66",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-67",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-68",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-69",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-70",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-71",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-72",
+    "kind": "cell",
+    "en": "\\Delta"
+  },
+  {
+    "id": "cell-73",
+    "kind": "cell",
+    "en": "IOD"
+  },
+  {
+    "id": "cell-74",
+    "kind": "cell",
+    "en": "ALFWorld"
+  },
+  {
+    "id": "cell-75",
+    "kind": "cell",
+    "en": "OOD"
+  },
+  {
+    "id": "cell-76",
+    "kind": "cell",
+    "en": "LiveCodeBench"
+  },
+  {
+    "id": "cell-77",
+    "kind": "cell",
+    "en": "All"
+  },
+  {
+    "id": "cell-78",
+    "kind": "cell",
+    "en": "MCPBench"
+  },
+  {
+    "id": "cell-79",
+    "kind": "cell",
+    "en": "Single"
+  },
+  {
+    "id": "cell-80",
+    "kind": "cell",
+    "en": "Mind2Web"
+  },
+  {
+    "id": "cell-81",
+    "kind": "cell",
+    "en": "PubMedQA"
+  },
+  {
+    "id": "cell-82",
+    "kind": "cell",
+    "en": "ScienceWorld"
+  },
+  {
+    "id": "cell-83",
+    "kind": "cell",
+    "en": "FTS"
+  },
+  {
+    "id": "cell-84",
+    "kind": "cell",
+    "en": "SocialMaze"
+  },
+  {
+    "id": "cell-85",
+    "kind": "cell",
+    "en": "UPI"
+  },
+  {
+    "id": "cell-86",
+    "kind": "cell",
+    "en": "Avg."
+  },
+  {
+    "id": "cell-87",
+    "kind": "cell",
+    "en": "Model"
+  },
+  {
+    "id": "cell-88",
+    "kind": "cell",
+    "en": "Provider"
+  },
+  {
+    "id": "cell-89",
+    "kind": "cell",
+    "en": "Open-weight"
+  },
+  {
+    "id": "cell-90",
+    "kind": "cell",
+    "en": "Gemma-4-26B"
+  },
+  {
+    "id": "cell-91",
+    "kind": "cell",
+    "en": "Google"
+  },
+  {
+    "id": "cell-92",
+    "kind": "cell",
+    "en": "\\checkmark"
+  },
+  {
+    "id": "cell-93",
+    "kind": "cell",
+    "en": "Llama-3.1-8B"
+  },
+  {
+    "id": "cell-94",
+    "kind": "cell",
+    "en": "Meta"
+  },
+  {
+    "id": "cell-95",
+    "kind": "cell",
+    "en": "\\checkmark"
+  },
+  {
+    "id": "cell-96",
+    "kind": "cell",
+    "en": "Mistral-Nemo"
+  },
+  {
+    "id": "cell-97",
+    "kind": "cell",
+    "en": "Mistral AI"
+  },
+  {
+    "id": "cell-98",
+    "kind": "cell",
+    "en": "\\checkmark"
+  },
+  {
+    "id": "cell-99",
+    "kind": "cell",
+    "en": "Qwen-2.5-7B"
+  },
+  {
+    "id": "cell-100",
+    "kind": "cell",
+    "en": "Alibaba Cloud"
+  },
+  {
+    "id": "cell-101",
+    "kind": "cell",
+    "en": "\\checkmark"
+  },
+  {
+    "id": "cell-102",
+    "kind": "cell",
+    "en": "GPT-OSS-20B"
+  },
+  {
+    "id": "cell-103",
+    "kind": "cell",
+    "en": "OpenAI"
+  },
+  {
+    "id": "cell-104",
+    "kind": "cell",
+    "en": "\\checkmark"
+  },
+  {
+    "id": "cell-105",
+    "kind": "cell",
+    "en": "Qwen3.5-Flash"
+  },
+  {
+    "id": "cell-106",
+    "kind": "cell",
+    "en": "Alibaba Cloud"
+  },
+  {
+    "id": "cell-107",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-108",
+    "kind": "cell",
+    "en": "Claude-Haiku-4.5"
+  },
+  {
+    "id": "cell-109",
+    "kind": "cell",
+    "en": "Anthropic"
+  },
+  {
+    "id": "cell-110",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-111",
+    "kind": "cell",
+    "en": "GPT-5.4-Nano"
+  },
+  {
+    "id": "cell-112",
+    "kind": "cell",
+    "en": "OpenAI"
+  },
+  {
+    "id": "cell-113",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-114",
+    "kind": "cell",
+    "en": "GPT-5.4-Mini"
+  },
+  {
+    "id": "cell-115",
+    "kind": "cell",
+    "en": "OpenAI"
+  },
+  {
+    "id": "cell-116",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-117",
+    "kind": "cell",
+    "en": "Grok-4-Fast"
+  },
+  {
+    "id": "cell-118",
+    "kind": "cell",
+    "en": "xAI"
+  },
+  {
+    "id": "cell-119",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-120",
+    "kind": "cell",
+    "en": "Nemotron-120B"
+  },
+  {
+    "id": "cell-121",
+    "kind": "cell",
+    "en": "NVIDIA"
+  },
+  {
+    "id": "cell-122",
+    "kind": "cell",
+    "en": "\\times"
+  },
+  {
+    "id": "cell-123",
+    "kind": "cell",
+    "en": "Benchmark"
+  },
+  {
+    "id": "cell-124",
+    "kind": "cell",
+    "en": "Held-out test split"
+  },
+  {
+    "id": "cell-125",
+    "kind": "cell",
+    "en": "Constr."
+  },
+  {
+    "id": "cell-126",
+    "kind": "cell",
+    "en": "Test"
+  },
+  {
+    "id": "cell-127",
+    "kind": "cell",
+    "en": "Notes"
+  },
+  {
+    "id": "cell-128",
+    "kind": "cell",
+    "en": "\\tau-Bench"
+  },
+  {
+    "id": "cell-129",
+    "kind": "cell",
+    "en": "Retail, task-disjoint"
+  },
+  {
+    "id": "cell-130",
+    "kind": "cell",
+    "en": "User simulator: GPT-5.4-Nano"
+  },
+  {
+    "id": "cell-131",
+    "kind": "cell",
+    "en": "ALFWorld"
+  },
+  {
+    "id": "cell-132",
+    "kind": "cell",
+    "en": "IOD (valid_seen)"
+  },
+  {
+    "id": "cell-133",
+    "kind": "cell",
+    "en": "In-distribution; task types overlap with train"
+  },
+  {
+    "id": "cell-134",
+    "kind": "cell",
+    "en": "ALFWorld"
+  },
+  {
+    "id": "cell-135",
+    "kind": "cell",
+    "en": "OOD (valid_unseen)"
+  },
+  {
+    "id": "cell-136",
+    "kind": "cell",
+    "en": "Out-of-distribution; novel task types"
+  },
+  {
+    "id": "cell-137",
+    "kind": "cell",
+    "en": "ChemLLMBench"
+  },
+  {
+    "id": "cell-138",
+    "kind": "cell",
+    "en": "Property / yield prediction"
+  },
+  {
+    "id": "cell-139",
+    "kind": "cell",
+    "en": "Subtasks scored independently"
+  },
+  {
+    "id": "cell-140",
+    "kind": "cell",
+    "en": "LiveCodeBench"
+  },
+  {
+    "id": "cell-141",
+    "kind": "cell",
+    "en": "test_release_v6"
+  },
+  {
+    "id": "cell-142",
+    "kind": "cell",
+    "en": "Sampled from release v6; seed 42"
+  },
+  {
+    "id": "cell-143",
+    "kind": "cell",
+    "en": "MCPBench"
+  },
+  {
+    "id": "cell-144",
+    "kind": "cell",
+    "en": "All tools"
+  },
+  {
+    "id": "cell-145",
+    "kind": "cell",
+    "en": "Multi-tool coverage"
+  },
+  {
+    "id": "cell-146",
+    "kind": "cell",
+    "en": "MCPBench"
+  },
+  {
+    "id": "cell-147",
+    "kind": "cell",
+    "en": "Single tool"
+  },
+  {
+    "id": "cell-148",
+    "kind": "cell",
+    "en": "Single-tool coverage"
+  },
+  {
+    "id": "cell-149",
+    "kind": "cell",
+    "en": "Mind2Web"
+  },
+  {
+    "id": "cell-150",
+    "kind": "cell",
+    "en": "Task-level disjoint"
+  },
+  {
+    "id": "cell-151",
+    "kind": "cell",
+    "en": "Web navigation; task-level split"
+  },
+  {
+    "id": "cell-152",
+    "kind": "cell",
+    "en": "PubMedQA"
+  },
+  {
+    "id": "cell-153",
+    "kind": "cell",
+    "en": "Sampled"
+  },
+  {
+    "id": "cell-154",
+    "kind": "cell",
+    "en": "Biomedical QA; seed 42"
+  },
+  {
+    "id": "cell-155",
+    "kind": "cell",
+    "en": "ScienceWorld"
+  },
+  {
+    "id": "cell-156",
+    "kind": "cell",
+    "en": "dev"
+  },
+  {
+    "id": "cell-157",
+    "kind": "cell",
+    "en": "Long-horizon multi-step tasks"
+  },
+  {
+    "id": "cell-158",
+    "kind": "cell",
+    "en": "SocialMaze"
+  },
+  {
+    "id": "cell-159",
+    "kind": "cell",
+    "en": "FTS"
+  },
+  {
+    "id": "cell-160",
+    "kind": "cell",
+    "en": "Fixed-target social navigation"
+  },
+  {
+    "id": "cell-161",
+    "kind": "cell",
+    "en": "SocialMaze"
+  },
+  {
+    "id": "cell-162",
+    "kind": "cell",
+    "en": "UPI"
+  },
+  {
+    "id": "cell-163",
+    "kind": "cell",
+    "en": "Unpredictable persona interaction"
+  },
+  {
+    "id": "cell-164",
+    "kind": "cell",
+    "en": "Benchmark"
+  },
+  {
+    "id": "cell-165",
+    "kind": "cell",
+    "en": "Train"
+  },
+  {
+    "id": "cell-166",
+    "kind": "cell",
+    "en": "Base"
+  },
+  {
+    "id": "cell-167",
+    "kind": "cell",
+    "en": "Skill"
+  },
+  {
+    "id": "cell-171",
+    "kind": "cell",
+    "en": "ScienceWorld"
+  },
+  {
+    "id": "cell-172",
+    "kind": "cell",
+    "en": "PubMedQA"
+  },
+  {
+    "id": "cell-173",
+    "kind": "cell",
+    "en": "Mind2Web"
+  },
+  {
+    "id": "cell-174",
+    "kind": "cell",
+    "en": "MCPBench"
+  },
+  {
+    "id": "cell-175",
+    "kind": "cell",
+    "en": "\\tau-Bench"
+  },
+  {
+    "id": "cell-176",
+    "kind": "cell",
+    "en": "Mean"
+  },
+  {
+    "id": "cell-177",
+    "kind": "cell",
+    "en": "Median"
+  }
+]

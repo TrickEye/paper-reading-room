@@ -1,0 +1,182 @@
+[
+  {
+    "id": "abstract1",
+    "label": "摘要",
+    "level": 2
+  },
+  {
+    "id": "S1",
+    "label": "1 引言",
+    "level": 2
+  },
+  {
+    "id": "S2",
+    "label": "2 预备知识",
+    "level": 2
+  },
+  {
+    "id": "S3",
+    "label": "3 SkillGen",
+    "level": 2
+  },
+  {
+    "id": "S3.SS1",
+    "label": "3.1 阶段 1：基线采集",
+    "level": 3
+  },
+  {
+    "id": "S3.SS2",
+    "label": "3.2 阶段 2：对比行为归纳",
+    "level": 3
+  },
+  {
+    "id": "S3.SS3",
+    "label": "3.3 阶段 3：生成—验证—改进循环",
+    "level": 3
+  },
+  {
+    "id": "S4",
+    "label": "4 实验",
+    "level": 2
+  },
+  {
+    "id": "Sx1",
+    "label": "致谢与经费披露",
+    "level": 2
+  },
+  {
+    "id": "bib",
+    "label": "参考文献",
+    "level": 2
+  },
+  {
+    "id": "A1",
+    "label": "附录 A 算法",
+    "level": 2
+  },
+  {
+    "id": "A2",
+    "label": "附录 B 相关工作",
+    "level": 2
+  },
+  {
+    "id": "A3",
+    "label": "附录 C 实验细节",
+    "level": 2
+  },
+  {
+    "id": "A3.SS1",
+    "label": "C.1 模型细节",
+    "level": 3
+  },
+  {
+    "id": "A3.SS2",
+    "label": "C.2 数据集与划分",
+    "level": 3
+  },
+  {
+    "id": "A3.SS3",
+    "label": "C.3 模型路由与辅助角色",
+    "level": 3
+  },
+  {
+    "id": "A3.SS4",
+    "label": "C.4 SkillGen 超参数",
+    "level": 3
+  },
+  {
+    "id": "A3.SS5",
+    "label": "C.5 Token 成本分析",
+    "level": 3
+  },
+  {
+    "id": "A3.SS5.SSS0.Px1",
+    "label": "计算资源。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6",
+    "label": "C.6 技能生成基线",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px1",
+    "label": "Trace2Skill。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px2",
+    "label": "SkillX。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px3",
+    "label": "EvoSkill。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px4",
+    "label": "CoEvoSkills。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px5",
+    "label": "基线比较的范围。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS6.SSS0.Px6",
+    "label": "无工具比较协议。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS7",
+    "label": "C.7 评估指标与门控关闭处理",
+    "level": 3
+  },
+  {
+    "id": "A3.SS8",
+    "label": "C.8 t-SNE 可视化",
+    "level": 3
+  },
+  {
+    "id": "A3.SS9",
+    "label": "C.9 失败分析",
+    "level": 3
+  },
+  {
+    "id": "A3.SS9.SSS0.Px1",
+    "label": "验证门控显著减少危害，但被接受的技能仍可能在留出实例上退化。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS9.SSS0.Px2",
+    "label": "在交互环境中，主要残余错误是流程执行不完整，而非局部动作选择。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS9.SSS0.Px3",
+    "label": "在化学任务中，失败更多源于对反应角色和决策标准的错误落实，而非事实缺失。",
+    "level": 3
+  },
+  {
+    "id": "A3.SS9.SSS0.Px4",
+    "label": "在代码生成任务中，技能增强无法完全弥补全局问题结构的缺失。",
+    "level": 3
+  },
+  {
+    "id": "A4",
+    "label": "附录 D 更广泛的影响",
+    "level": 2
+  },
+  {
+    "id": "alg1",
+    "label": "算法 1 · SkillGen",
+    "level": 2
+  },
+  {
+    "id": "source",
+    "label": "来源与翻译说明",
+    "level": 2
+  }
+]

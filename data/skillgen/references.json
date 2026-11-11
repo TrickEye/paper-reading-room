@@ -1,0 +1,372 @@
+[
+  {
+    "id": "bib.bib6",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "EvoSkill: automated skill discovery for multi-agent systems",
+    "zh": "EvoSkill：多智能体系统的自动技能发现"
+  },
+  {
+    "id": "bib.bib2",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Agent skills overview",
+    "zh": "智能体技能概览"
+  },
+  {
+    "id": "bib.bib37",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Autobench-v: can large vision-language models benchmark themselves?",
+    "zh": "Autobench-v：大型视觉语言模型能否对自身进行基准评测？"
+  },
+  {
+    "id": "bib.bib29",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "FireAct: toward language agent fine-tuning",
+    "zh": "FireAct：迈向语言智能体微调"
+  },
+  {
+    "id": "bib.bib30",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Agent-FLAN: designing data and methods of effective agent tuning for large language models",
+    "zh": "Agent-FLAN：设计有效智能体调优的数据与方法"
+  },
+  {
+    "id": "bib.bib24",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Textbooks are all you need",
+    "zh": "你所需要的只是教科书"
+  },
+  {
+    "id": "bib.bib33",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Building a foundational guardrail for general agentic systems via synthetic data",
+    "zh": "通过合成数据为通用智能体系统构建基础防护机制"
+  },
+  {
+    "id": "bib.bib32",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "ChemOrch: empowering LLMs with chemical intelligence via synthetic instructions",
+    "zh": "ChemOrch：通过合成指令赋予 LLM 化学智能"
+  },
+  {
+    "id": "bib.bib31",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "DataGen: unified synthetic dataset generation via large language models",
+    "zh": "DataGen：通过大语言模型统一生成合成数据集"
+  },
+  {
+    "id": "bib.bib4",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "SoK: agentic skills – beyond tool use in LLM agents",
+    "zh": "知识系统化：智能体技能——超越 LLM 智能体的工具使用"
+  },
+  {
+    "id": "bib.bib11",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Instruct-SkillMix: a powerful pipeline for LLM instruction tuning",
+    "zh": "Instruct-SkillMix：强大的 LLM 指令调优流水线"
+  },
+  {
+    "id": "bib.bib25",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Synthetic data (almost) from scratch: generalized instruction tuning for language models",
+    "zh": "几乎从零开始的合成数据：语言模型的泛化指令调优"
+  },
+  {
+    "id": "bib.bib26",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "AgentInstruct: toward generative teaching with agentic flows",
+    "zh": "AgentInstruct：通过智能体流程迈向生成式教学"
+  },
+  {
+    "id": "bib.bib22",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Orca: progressive learning from complex explanation traces of GPT-4",
+    "zh": "Orca：从 GPT-4 的复杂解释轨迹中渐进学习"
+  },
+  {
+    "id": "bib.bib5",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Trace2skill: distill trajectory-local lessons into transferable agent skills",
+    "zh": "Trace2Skill：将轨迹局部教训蒸馏为可迁移的智能体技能"
+  },
+  {
+    "id": "bib.bib16",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "CREATOR: tool creation for disentangling abstract and concrete reasoning of large language models",
+    "zh": "CREATOR：通过创建工具解耦大语言模型的抽象与具体推理"
+  },
+  {
+    "id": "bib.bib18",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "ToolLLM: facilitating large language models to master 16000+ real-world APIs",
+    "zh": "ToolLLM：帮助大语言模型掌握超过 16,000 个真实世界 API"
+  },
+  {
+    "id": "bib.bib36",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Causal inference using potential outcomes: design, modeling, decisions",
+    "zh": "使用潜在结果进行因果推断：设计、建模与决策"
+  },
+  {
+    "id": "bib.bib17",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Toolformer: language models can teach themselves to use tools",
+    "zh": "Toolformer：语言模型可以自学使用工具"
+  },
+  {
+    "id": "bib.bib14",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Reflexion: language agents with verbal reinforcement learning",
+    "zh": "Reflexion：通过语言强化学习的语言智能体"
+  },
+  {
+    "id": "bib.bib20",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Alpaca: a strong, replicable instruction-following model",
+    "zh": "Alpaca：强大且可复现的指令遵循模型"
+  },
+  {
+    "id": "bib.bib7",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "SkillX: automatically constructing skill knowledge bases for agents",
+    "zh": "SkillX：为智能体自动构建技能知识库"
+  },
+  {
+    "id": "bib.bib12",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Voyager: an open-ended embodied agent with large language models",
+    "zh": "Voyager：基于大语言模型的开放式具身智能体"
+  },
+  {
+    "id": "bib.bib19",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Self-instruct: aligning language models with self-generated instructions",
+    "zh": "Self-Instruct：通过自生成指令对齐语言模型"
+  },
+  {
+    "id": "bib.bib8",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "WebXSkill: skill learning for autonomous web agents",
+    "zh": "WebXSkill：自主网页智能体的技能学习"
+  },
+  {
+    "id": "bib.bib35",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "SkillRL: evolving agents via recursive skill-augmented reinforcement learning",
+    "zh": "SkillRL：通过递归技能增强强化学习演化智能体"
+  },
+  {
+    "id": "bib.bib21",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "WizardLM: empowering large pre-trained language models to follow complex instructions",
+    "zh": "WizardLM：使大型预训练语言模型能够遵循复杂指令"
+  },
+  {
+    "id": "bib.bib3",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Agent skills for large language models: architecture, acquisition, security, and the path forward",
+    "zh": "大语言模型的智能体技能：架构、获取、安全与未来方向"
+  },
+  {
+    "id": "bib.bib27",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Magpie: alignment data synthesis from scratch by prompting aligned LLMs with nothing",
+    "zh": "Magpie：用空提示调用已对齐 LLM，从零合成对齐数据"
+  },
+  {
+    "id": "bib.bib9",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "AutoSkill: experience-driven lifelong learning via skill self-evolution",
+    "zh": "AutoSkill：通过技能自演化实现经验驱动的终身学习"
+  },
+  {
+    "id": "bib.bib15",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "ReAct: synergizing reasoning and acting in language models",
+    "zh": "ReAct：在语言模型中协同推理与行动"
+  },
+  {
+    "id": "bib.bib28",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "AgentTuning: enabling generalized agent abilities for LLMs",
+    "zh": "AgentTuning：赋予 LLM 通用智能体能力"
+  },
+  {
+    "id": "bib.bib1",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "Equipping agents for the real world with agent skills",
+    "zh": "通过智能体技能使智能体适应真实世界"
+  },
+  {
+    "id": "bib.bib34",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "EvoSkills: self-evolving agent skills via co-evolutionary verification",
+    "zh": "EvoSkills：通过协同演化验证实现智能体技能自演化"
+  },
+  {
+    "id": "bib.bib13",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "ExpeL: LLM agents are experiential learners",
+    "zh": "ExpeL：LLM 智能体是经验学习者"
+  },
+  {
+    "id": "bib.bib10",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "SkillWeaver: web agents can self-improve by discovering and honing skills",
+    "zh": "SkillWeaver：网页智能体可通过发现与磨炼技能实现自我改进"
+  },
+  {
+    "id": "bib.bib23",
+    "kind": "li",
+    "source": {
+      "section": "bib",
+      "version": "2605.10999v1"
+    },
+    "en": "LIMA: less is more for alignment",
+    "zh": "LIMA：对齐中的少即是多"
+  }
+]

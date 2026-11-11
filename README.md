@@ -1,10 +1,10 @@
 # 论文阅读室
 
-四篇智能体相关论文的双语阅读网站，保留逐段中英对照、独立原图和原始 PDF。支持目录跳转、全文搜索、字号调整、深色模式、原图放大与打印。
+智能体相关论文的阅读网站，保留逐段中英对照、独立原图和原始 PDF。支持目录跳转、全文搜索、字号调整、深色模式、原图放大与打印。
 
 [在线阅读](https://trickeye.github.io/paper-reading-room/) · [GitHub 仓库](https://github.com/TrickEye/paper-reading-room)
 
-已收录 ACE、SkillForge、Permission Denied 和 SkillCAT。版本与内容范围见[阅读说明](docs/reading-guide.md)。
+已收录 ACE、SkillForge、Permission Denied、SkillCAT 和 SkillGen 五篇论文的双语全文。版本与内容范围见[阅读说明](docs/reading-guide.md)。
 
 ## 阅读器与内容分离
 
@@ -28,6 +28,7 @@ data/                      文稿、翻译、原图及来源记录
   skillforge/               双语数据、完整表格、提示词和原图
   permission-denied/        同版官方原文、译文与原图
   skillcat/                 同版原文、译文、公式、算法与原图
+  skillgen/                 同版全文、译文、原图、表格与附录
   reader-meta.json          阅读器标题、作者、默认模式与兼容偏好设置
 scripts/                    Python 构建、内容审计及浏览器验收
 skills/paper-reading-room/  可复用论文制作 skill
@@ -60,7 +61,7 @@ python3 -B -m unittest discover -s tests -v
 
 重建与静态检查只使用 Python 标准库，无需下载论文源码。修改源文件与生成结果应一并提交。SkillCAT 需要重新提取原文单元时，可先运行 `python3 -B scripts/builders/skillcat_prepare.py`，审校翻译覆盖情况后再重建。图片提取的可选依赖见 skill 的[提取说明](skills/paper-reading-room/references/extraction-and-verification.md)。
 
-并行验证新阅读器时可运行 `python3 -B scripts/build.py --preview`，访问 `reader-preview.html?paper=ace` 并切换四篇；它不改写正式论文外壳。正常构建会移除临时预览入口。
+并行验证新阅读器时可运行 `python3 -B scripts/build.py --preview`，访问 `reader-preview.html?paper=ace` 并切换各篇；它不改写正式论文外壳。正常构建会移除临时预览入口。
 
 浏览器验收需要 Node.js 22 与 Playwright，仅用于开发及 CI：
 
@@ -70,7 +71,7 @@ npx playwright install chromium
 node scripts/browser_check.cjs
 ```
 
-测试覆盖四篇 DOM 内容基线、三种语言、搜索、移动目录、锚点及前进后退、图片放大、打印、资源失败重试与仓库子路径。可通过 `CHROME_EXECUTABLE` 指定已有 Chrome，通过 `PLAYWRIGHT_MODULE` 指定已有 Playwright 包，`BROWSER_OUTPUT_DIR` 指定截图／PDF 输出目录。默认产物写入系统临时目录。迁移内容指纹在 `tests/migration-baseline.json`；后续有意修订正文时需审阅并同步对应指纹。
+测试覆盖五篇全文的 DOM 内容基线、三种语言、搜索、移动目录、锚点及前进后退、图片放大、打印、资源失败重试与仓库子路径。可通过 `CHROME_EXECUTABLE` 指定已有 Chrome，通过 `PLAYWRIGHT_MODULE` 指定已有 Playwright 包，`BROWSER_OUTPUT_DIR` 指定截图／PDF 输出目录。默认产物写入系统临时目录。迁移内容指纹在 `tests/migration-baseline.json`；后续有意修订正文时需审阅并同步对应指纹。
 
 ## GitHub Pages
 

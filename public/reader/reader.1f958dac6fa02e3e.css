@@ -142,3 +142,66 @@ html[data-paper="skillcat"] #p1 p{margin:4px 0}
 html[data-paper="skillcat"] #p1 [data-unit]>.en{margin:2px 0 8px;padding:0;border:0;font-size:11px}
 html[data-paper="skillcat"] #p1 .ltx_align_center{text-align:left}
 
+
+html[data-paper="skillgen"] /* SkillGen full text: original MathML,html[data-paper="skillgen"] tables,html[data-paper="skillgen"] algorithm and bilingual units. */
+[data-unit]>.zh,html[data-paper="skillgen"] [data-unit]>.en{display:block}
+html[data-paper="skillgen"][data-lang=zh] [data-unit]>.en{display:none!important}
+html[data-paper="skillgen"][data-lang=en] [data-unit]>.zh{display:none!important}
+html[data-paper="skillgen"][data-lang=en] [data-unit]>.en{display:block}
+html[data-paper="skillgen"][data-lang=dual] [data-unit]>.en{margin:8px 0 0;padding:8px 0 0}
+html[data-paper="skillgen"][data-lang=dual] td[data-unit]>.en,html[data-paper="skillgen"][data-lang=dual] th[data-unit]>.en{margin:4px 0 0;padding:0;border:0}
+html[data-paper="skillgen"] article{min-width:0}
+html[data-paper="skillgen"] article h1{font-size:34px}
+html[data-paper="skillgen"] .ltx_authors{font:13px/1.8 -apple-system,BlinkMacSystemFont,sans-serif;color:var(--muted);margin:18px 0}
+html[data-paper="skillgen"] .ltx_authors .ltx_personname{display:block}
+html[data-paper="skillgen"] .ltx_figure img{background:white}
+html[data-paper="skillgen"] .source-anchor{display:block;height:0;width:0;overflow:hidden;scroll-margin-top:145px}
+html[data-paper="skillgen"] .ltx_table table{min-width:720px}
+html[data-paper="skillgen"] .ltx_table .table-scroll{border:1px solid var(--line)}
+html[data-paper="skillgen"] .ltx_table td,html[data-paper="skillgen"] .ltx_table th{padding:8px 9px}
+html[data-paper="skillgen"] .ltx_table .ltx_font_bold{font-weight:750}
+html[data-paper="skillgen"] .ltx_bibitem .en{font-size:13px}
+html[data-paper="skillgen"] .ltx_bibitem .zh{font-size:13px;font-weight:400}
+html[data-paper="skillgen"] .ltx_bibitem>.zh:empty{display:none}
+html[data-paper="skillgen"] .equation{overflow-x:auto;display:block;margin:24px 0;max-width:100%;font-size:.95em}
+html[data-paper="skillgen"] .equation-tbody{display:table;width:100%}
+html[data-paper="skillgen"] .equation-tr{display:table-row}
+html[data-paper="skillgen"] .equation-td{display:table-cell;vertical-align:middle;padding:6px}
+html[data-paper="skillgen"] .equation-td:first-child{text-align:right}
+html[data-paper="skillgen"] .equation-td:last-child{width:38px}
+html[data-paper="skillgen"] .equation annotation{display:none}
+html[data-paper="skillgen"] math{max-width:100%}
+html[data-paper="skillgen"] .ltx_float_algorithm{border-block:2px solid var(--primary);padding:16px 0}
+html[data-paper="skillgen"] .ltx_float_algorithm figcaption{margin:0 0 18px;font-weight:700}
+html[data-paper="skillgen"] .ltx_listingline{padding:7px 10px;border-bottom:1px solid var(--line);font:13px/1.85 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+html[data-paper="skillgen"] .ltx_listingline .ltx_parbox{width:auto!important;max-width:100%;background:var(--soft);display:block}
+html[data-paper="skillgen"] .ltx_listingline [style*="float"]{float:none!important;display:inline}
+html[data-paper="skillgen"] .ltx_listingline .en{border:0!important;padding-top:3px!important;margin-top:3px!important}
+html[data-paper="skillgen"] .table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+html[data-paper="skillgen"] .source-footer code{overflow-wrap:anywhere;font-size:11px}
+@media(max-width:580px){html[data-paper="skillgen"] article h1{font-size:28px}
+html[data-paper="skillgen"] .ltx_listingline{font-size:12px;padding:8px 4px}
+html[data-paper="skillgen"] .equation{font-size:.85em}
+html[data-paper="skillgen"] .ltx_table table{min-width:700px}}
+@media print{html[data-paper="skillgen"] article h1{font-size:23pt}
+html[data-paper="skillgen"] .ltx_float_algorithm{break-inside:auto}
+html[data-paper="skillgen"] .ltx_listingline{break-inside:avoid;font-size:8pt}
+html[data-paper="skillgen"] .ltx_table table{min-width:0;width:100%;font-size:6pt}
+html[data-paper="skillgen"] .ltx_table td,html[data-paper="skillgen"] .ltx_table th{padding:3px}
+html[data-paper="skillgen"] .ltx_table math{font-size:6pt}
+html[data-paper="skillgen"] .table-scroll{overflow:visible}
+html[data-paper="skillgen"] .ltx_bibitem{break-inside:avoid}
+html[data-paper="skillgen"] .source-footer{break-inside:avoid}}
+html[data-paper="skillgen"] .ltx_text{color:var(--ltx-fg-color,inherit)}
+html[data-paper="skillgen"] .ltx_authors .ltx_td{display:inline-block;margin-right:12px}
+html[data-paper="skillgen"] .ltx_authors .ltx_note_frontmatter{display:block}
+html[data-paper="skillgen"] .ltx_authors .ltx_note_content{background:transparent;padding:0}
+html[data-paper="skillgen"] .affiliations{display:block}
+html[data-paper="skillgen"] .ltx_float_algorithm{overflow-x:auto}
+html[data-paper="skillgen"] .ltx_table table{min-width:900px}
+html[data-paper="skillgen"] .ltx_table .ltx_font_bold{font-weight:750}
+html[data-paper="skillgen"] .ltx_bib_title [data-unit]>.en{font-style:italic}
+html[data-paper="skillgen"] .ltx_transformed_outer{width:100%!important;max-width:100%;height:auto!important}
+html[data-paper="skillgen"] .ltx_transformed_inner{display:block;transform:none!important}
+html[data-paper="skillgen"] .ltx_note_frontmatter .ltx_note_type{display:none}
+

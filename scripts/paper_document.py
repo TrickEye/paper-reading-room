@@ -287,6 +287,7 @@ def publish(preview=False):
         values = {'PAPER': slug, 'MANIFEST': prefix + 'content/manifest.json',
             'BRAND': meta['brand'], 'INDEX': prefix + 'index.html', 'PDF': prefix + 'pdfs/' + paper['pdf'],
             'MODE': meta['defaultMode'], 'DESCRIPTION': meta['description'], 'TITLE': meta['title'],
+            'SUMMARY': meta['summary'],
             'CSS': prefix + names['css'], 'JS': prefix + 'reader/loader.js'}
         text = template
         for key, value in values.items():

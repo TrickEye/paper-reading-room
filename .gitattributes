@@ -1,0 +1,8 @@
+# PDFs are binary artifacts even when their internal streams contain no NUL bytes.
+*.pdf binary
+
+# Preserve upstream source and graphic bytes, including their original whitespace.
+data/skillgen/arxiv.html -whitespace
+data/skillgen/article.html -whitespace
+data/skillgen/assets/*.svg -whitespace
+public/content/skillgen/assets/*.svg -whitespace

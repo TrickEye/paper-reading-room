@@ -26,5 +26,12 @@
     "figures": 4,
     "tables": 2,
     "builder": "skillcat.py"
+  },
+  {
+    "id": "skillgen",
+    "pdf": "SkillGen-2605.10999v1.pdf",
+    "figures": 8,
+    "tables": 4,
+    "builder": "skillgen.py"
   }
 ]

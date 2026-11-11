@@ -10,7 +10,7 @@ const http = require('node:http');
 const {createHash} = require('node:crypto');
 const root = path.resolve(__dirname, '../public');
 const output = process.env.BROWSER_OUTPUT_DIR || path.join(require('node:os').tmpdir(), 'paper-reader-browser-check');
-const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2]};
+const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4]};
 const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {

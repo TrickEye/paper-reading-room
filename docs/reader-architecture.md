@@ -4,7 +4,7 @@
 
 ## 源文件、构建与发布
 
-`reader/` 保存外壳模板、交互与样式。`base.css` 为四篇共用样式，论文特有样式由构建器加上 `html[data-paper="<id>"]` 范围，避免互相覆盖。`states.css` 提供加载、错误和图片重试反馈。
+`reader/` 保存外壳模板、交互与样式。`base.css` 为各篇共用样式，论文特有样式由构建器加上 `html[data-paper="<id>"]` 范围，避免互相覆盖。`states.css` 提供加载、错误和图片重试反馈。
 
 现有三篇保留各自的文稿格式；适配器整理完正文树后调用 `emit_paper(id, article_html, toc)`。该接口只接收正文与目录，不接收完整网页；中间的 HTML 在内存中转换成结构化单元，不作为完整正文片段发布。ACE 的独立源保存在 `data/ace/article.html`、`toc.json` 和 `assets/`。任何生成器均不读取发布的 ACE 外壳。
 

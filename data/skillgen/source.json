@@ -1,0 +1,27 @@
+{
+  "title": "SkillGen: Verified Inference-Time Agent Skill Synthesis",
+  "arxiv_id": "2605.10999",
+  "version": "2605.10999v1",
+  "version_date": "2026-05-09",
+  "download_date": "2026-11-11",
+  "abstract_url": "https://arxiv.org/abs/2605.10999v1",
+  "html_url": "https://arxiv.org/html/2605.10999v1",
+  "pdf_url": "https://arxiv.org/pdf/2605.10999v1",
+  "pdf_file": "SkillGen-2605.10999v1.pdf",
+  "pdf_pages": 20,
+  "pdf_sha256": "1a27f3a2e1120854f658e57fac75bb0c30ef3ace7dad6426904cb0a93620a9ee",
+  "license": "arXiv.org perpetual non-exclusive license",
+  "license_url": "https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html",
+  "content_scope": "Full bilingual text including appendices A–D, algorithm and bibliography titles.",
+  "translation_status": "complete",
+  "html_sha256": "11d8e41ed204badec5b4fc6807c42e2a43f73a97692771316f35bcfda56388fc",
+  "inventory": {
+    "figures": 8,
+    "tables": 4,
+    "equations": 18,
+    "algorithms": 1,
+    "references": 37,
+    "appendices": 4
+  },
+  "translation_basis": "User-provided local PDF and matching official HTML, arXiv:2605.10999v1"
+}

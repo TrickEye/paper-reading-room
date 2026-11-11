@@ -1,0 +1,13 @@
+{
+  "skill": "技能",
+  "baseline elicitation": "基线采集",
+  "contrastive induction": "对比归纳",
+  "verification gate": "验证门控",
+  "repair": "修复",
+  "regression": "退化",
+  "net effect": "净效果",
+  "held-out": "留出",
+  "refinement": "改进",
+  "active": "启用",
+  "deprecated": "弃用"
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "figure": 1,
+    "file": "figure-01.png",
+    "source_page": 3,
+    "source_url": "https://arxiv.org/html/2605.10999v1/skillgen.png",
+    "width": 1316,
+    "height": 499,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "ac7617fdab527d3cf592feab12346a691137f8706c1046d613e0cc93461cc51c"
+  },
+  {
+    "figure": 2,
+    "file": "figure-02.svg",
+    "source_page": 7,
+    "source_url": "https://arxiv.org/html/2605.10999v1/baselines_comparison.svg",
+    "width": 1562,
+    "height": 327,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "565d22f718d68b93be6142cf756088eaacc0c29009b166573ad3bd54db49f667"
+  },
+  {
+    "figure": 3,
+    "file": "figure-03.svg",
+    "source_page": 8,
+    "source_url": "https://arxiv.org/html/2605.10999v1/ablations_bars.svg",
+    "width": 1553,
+    "height": 348,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "67bc28e2590b73834c1ab90fbd51cd64381752d53788b0b46c80263eaa88d30a"
+  },
+  {
+    "figure": 4,
+    "file": "figure-04.png",
+    "source_page": 8,
+    "source_url": "https://arxiv.org/html/2605.10999v1/transfer_heatmap_all.png",
+    "width": 2048,
+    "height": 493,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "f2a874d35bae0f23882cdf196849847f310a5c6e2253ff13525722d3781b459d"
+  },
+  {
+    "figure": 5,
+    "file": "figure-05.svg",
+    "source_page": 8,
+    "source_url": "https://arxiv.org/html/2605.10999v1/tau_bench_before_after.svg",
+    "width": 763,
+    "height": 360,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "07090e8ec90694bab575c43706b2c12751a05244b685a5e1b06ce4cd82d4f6a3"
+  },
+  {
+    "figure": 6,
+    "file": "figure-06.svg",
+    "source_page": 9,
+    "source_url": "https://arxiv.org/html/2605.10999v1/chemllmbench_before_after.svg",
+    "width": 1267,
+    "height": 351,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "821b2f67216c7eec80d59430d8140e3103dd6d4dc8983e2fd3a49a937f8e9109"
+  },
+  {
+    "figure": 7,
+    "file": "figure-07.svg",
+    "source_page": 9,
+    "source_url": "https://arxiv.org/html/2605.10999v1/rounds_curve.svg",
+    "width": 1563,
+    "height": 457,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "4b8b78f96d5d60dd72566091d251e7f150892c499c936b92369e342ee83866ce"
+  },
+  {
+    "figure": 8,
+    "file": "figure-08.svg",
+    "source_page": 19,
+    "source_url": "https://arxiv.org/html/2605.10999v1/tsne_alfworld_nano.svg",
+    "width": 1166,
+    "height": 630,
+    "method": "matching official arXiv HTML standalone original graphic",
+    "sha256": "319698e9e810bda74bc8cfbdff833f8b2b0f15abe23b29a845f8129d2f6fcae5"
+  }
+]
