@@ -1,6 +1,6 @@
 ---
 name: paper-reading-room
-description: 将论文链接或本地 PDF 制作、修订为项目中的基于共用阅读器的双语全文阅读页，保留独立原图和完整表格，并接入已有论文索引。适用于全文翻译与逐段中英对照维护；仅要求论文摘要或观点解读时不使用。
+description: 将论文链接或本地 PDF 制作、修订为共用阅读器使用的双语 PaperDocument JSON 与独立原图，并接入项目索引。适用于全文翻译、逐段对照及论文内容数据维护；仅要求论文摘要或观点解读时不使用。
 ---
 
 # 论文双语阅读室
@@ -39,11 +39,13 @@ description: 将论文链接或本地 PDF 制作、修订为项目中的基于�
 - 批量提取时可使用 `scripts/extract_figures.py`；先人工确定图与资源／边界的对应关系。调用和提取方案见 [references/extraction-and-verification.md](references/extraction-and-verification.md)。
 - 沿用共用阅读器视觉与交互结构；在 `data/reader-meta.json` 与适配器中配置标题、作者、元数据、目录和 PDF 路径。禁止从 ACE 发布外壳截取 CSS、脚本或模板，也不复制 ACE 正文。SkillForge 现有 `data/skillforge/` 是实现示例，**其中的 16 图、4 表、49 条参考文献不是新论文的默认数量**。
 - 以双语源文稿和原图通过适配器输出统一 PaperDocument JSON，使用 `scripts/paper_document.py` 的 `emit_paper` 接口。正文按结构化单元组织，复杂富文本可保留局部 HTML／MathML；图片引用独立资源，禁止把整篇塞入单个 HTML 字段或重新嵌入 Base64。后续修改制作源并完整重建，不手改发布 JSON／外壳。
+- 新增论文或修订输出格式前，读 [references/publication-contract.md](references/publication-contract.md)：它给出当前适配器接口、源图片路径、配置字段、完整构建及从资源清单定位审计输入的可执行示例。下文仓库路径均相对仓库根目录；skill 内参考链接相对本 skill。
 
 ### 4. 接入已有索引
 
 - 在现有 `public/index.html` 中新增或更新该论文卡片，不另建替代索引；保留其他论文卡片与布局。更新数量、名称、作者、出处、阅读页和 PDF 相对链接；不要重复收录同一版本。
 - 同步 `data/catalog.json` 的论文 ID、PDF、图表数量和生成器，并维护 `docs/reading-guide.md`。只有实际完成时才标“全文”“全部原图”“完整附录”，不能根据预期宣称完成。用户没有要求发布时，交付本地文件即可。
+- 同步 `data/reader-meta.json` 和 `reader/<paper-id>.css`（无额外样式时也保留空文件）。新增论文须加入浏览器测试清单；四篇迁移基线只保护已有内容，不能替代新论文的原文核验及浏览器验收。
 
 ### 5. 验收后交付
 

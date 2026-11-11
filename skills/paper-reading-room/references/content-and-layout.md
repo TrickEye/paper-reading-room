@@ -38,7 +38,7 @@
 
 ## 配对结构
 
-普通段落以一个容器承载一对语言；这里的类名与 ACE 阅读器一致：
+适配器输入的普通段落以一个容器承载一对语言；这里的类名与共用阅读器一致。以下 HTML 是制作源／内存正文树示例，由 `emit_paper` 转换为统一 JSON，并非完整网页发布产物：
 
 ```html
 <p id="S2.p3" data-unit="S2.p3" data-searchable="true">
@@ -60,7 +60,7 @@
 ```html
 <figure id="F2" class="ltx_figure" data-source-page="3" data-original-image="figure-02.png">
   <button class="figure-zoom" type="button" aria-label="放大图 2">
-    <img src="assets/figure-02.CONTENT_HASH.png" alt="图 2 的描述" width="1200" height="600" loading="lazy" decoding="async">
+    <img src="assets/figure-02.png" alt="图 2 的描述" width="1200" height="600" loading="lazy" decoding="async">
   </button>
   <figcaption data-unit="F2.caption">
     <span class="zh" lang="zh-CN">完整中文图注。</span>
@@ -68,6 +68,8 @@
   </figcaption>
 </figure>
 ```
+
+这里的 `src` 相对 `data/<paper-id>/`，例如实际源文件为 `data/<paper-id>/assets/figure-02.png`。摘要文件名和发布资源地址由构建器生成，不能手写回制作源。适配器与资源清单约定见 [publication-contract.md](publication-contract.md)。
 
 - 同一图的所有子图、图内标题、轴标签和图例均应保留。若矢量图散落在多个 PDF 对象里，不把其中一个对象当成完整图。
 - 放大查看真实资源；不能只放大低分辨率预览。设置原始尺寸与按比例缩放；深色模式下保留图本身的原始背景和色彩。

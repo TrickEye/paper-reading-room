@@ -45,16 +45,17 @@ python3 skills/paper-reading-room/scripts/extract_figures.py 'paper.pdf' \
 ## 自动审计
 
 ```bash
-python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/skillforge.html' \
-  --source-dir data/skillforge --index public/index.html
+python3 -B scripts/check.py
 ```
+
+这是仓库入口，会从资源清单定位每篇的实际 JSON，再对完整正文执行下列审计。单篇审计不要猜摘要文件名，使用 [publication-contract.md](publication-contract.md) 中从清单解析的命令。
 
 该脚本只读取输入，使用 Python 标准库。检查：
 
 - ID、单元 ID 唯一；非共享公式单元都有一个非空中文及英文直接子元素；
 - 不再使用旧 `.original-page` 整页图容器或 `.source-page` 按页折叠原文；
 - 内部锚点、阅读页及索引本地链接存在；
-- 图像资源非空、base64 可解析、alt 和尺寸存在，无依赖远程资源的图片／脚本／样式；
+- 图片文件非空、alt 和尺寸存在，资源地址可解析；新版数据引用独立原图，不嵌入 Base64；
 - 有源清单时，图号数量、发布图片与源文件字节及摘要一致；
 - 有表格 JSON 时，将 HTML 表格的合并单元格展开，与全部源数据行比较；
 - 参考文献数量及双语源字段基本完整。
@@ -63,6 +64,7 @@ python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/s
 
 ```bash
 python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/new-paper.html' \
+  --document 'public/content/new-paper/paper.<从资源清单读取的实际摘要>.json' \
   --expected-figures 6 --expected-tables 3 --index public/index.html
 ```
 
