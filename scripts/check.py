@@ -72,6 +72,9 @@ def check():
     notes = resolve(manifest['notes']['js'], manifest_file.parent)
     assert hashlib.sha256(notes.read_bytes()).hexdigest()[:16] in notes.name, 'Notes hash mismatch'
     assert notes.read_bytes() == (ROOT / 'reader/notes.js').read_bytes()
+    assert manifest['notes']['documents'] == '../notes/'
+    assert manifest['notes']['github'] == {'owner': 'TrickEye', 'repo': 'paper-reading-room',
+                                         'branch': 'main', 'directory': 'public/notes/'}
     vendor = resolve(manifest['notes']['vendor'] + 'checksums.json', manifest_file.parent)
     assert hashlib.sha256(vendor.read_bytes()).hexdigest()[:16] in vendor.parent.name, 'Vendor directory hash mismatch'
     checksums = json.loads(vendor.read_text())

@@ -285,7 +285,12 @@ def publish(preview=False):
     vendor_output = resources / 'vendor' / vendor_name
     shutil.copytree(vendor, vendor_output, dirs_exist_ok=True)
     manifest['notes'] = {'js': '../reader/' + notes_name,
-                         'vendor': '../reader/vendor/' + vendor_name + '/'}
+                         'vendor': '../reader/vendor/' + vendor_name + '/',
+                         'documents': '../notes/',
+                         'github': {'owner': 'TrickEye', 'repo': 'paper-reading-room',
+                                    'branch': 'main', 'directory': 'public/notes/'}}
+    # public/notes/ is user-maintained publication source. Do not generate an
+    # inventory or fingerprint it: a notes-only GitHub web commit must build cleanly.
     for paper in catalog:
         path, = (CONTENT / paper['id']).glob('paper.*.json')
         doc = json.loads(path.read_text())

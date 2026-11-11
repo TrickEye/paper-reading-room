@@ -1,112 +1,166 @@
 import {localURL} from './loader.js';
 
-// One Markdown document per publication path and paper. Never use reader preference keys.
+// One in-memory Markdown draft per paper. Only panel width is persisted.
 export function initNotes({paperId, manifestURL, resources, title, closeDirectory}) {
   const root = document.documentElement;
   const $ = id => document.getElementById(id);
   const narrow = () => matchMedia('(max-width:940px)').matches;
   const base = new URL('../', manifestURL);
   const prefix = `paper-reader:${base.pathname}:`;
-  const key = `${prefix}notes:v1:${paperId}`;
   const widthKey = `${prefix}notes-width`;
   const panel = document.createElement('aside');
   panel.id = 'notes-panel'; panel.className = 'notes-panel'; panel.hidden = true;
   panel.setAttribute('aria-labelledby', 'notes-heading');
   panel.innerHTML = `<div id="notes-resize" class="notes-resize" role="separator" tabindex="0" aria-label="调整笔记宽度" aria-orientation="vertical" aria-controls="notes-panel"></div>
     <header class="notes-head"><div><span class="eyebrow">READING NOTES</span><h2 id="notes-heading">阅读笔记</h2><p id="notes-paper"></p></div><button id="notes-close" aria-label="关闭笔记">关闭</button></header>
+    <div id="notes-remote" class="notes-remote" hidden><div class="notes-actions"><button id="notes-refresh" aria-describedby="notes-refresh-help">刷新远端</button><button id="notes-github" hidden>保存到 GitHub</button></div><p id="notes-remote-status" role="status" aria-live="polite"></p><p id="notes-refresh-help">刷新成功会用部署版覆盖当前草稿。</p></div>
     <div class="notes-mode" role="group" aria-label="笔记编辑模式"><button id="notes-edit" aria-pressed="true">编辑</button><button id="notes-source" aria-pressed="false">源码</button><span id="notes-engine" role="status"></span></div>
-    <div id="notes-notice" class="notes-notice" hidden><p id="notes-notice-text" role="status"></p><button id="notes-retry">重试加载编辑器</button><button id="notes-load-other" hidden>载入其他页版本</button><button id="notes-keep-local" hidden>使用本页版本</button></div>
+    <div id="notes-notice" class="notes-notice" hidden><p id="notes-notice-text" role="status"></p><button id="notes-retry">重试加载编辑器</button></div>
     <div id="notes-editor" class="notes-editor" hidden></div><textarea id="notes-fallback" class="notes-fallback" aria-label="Markdown 笔记" placeholder="写下阅读心得，或选中原文后摘录到这里…" spellcheck="false"></textarea>
-    <footer class="notes-footer"><span id="notes-save-status" role="status" aria-live="polite">尚无笔记</span><button id="notes-save-retry" hidden>重试保存</button><span>仅保存在此浏览器，清除站点数据将删除笔记。</span></footer>`;
+    <footer class="notes-footer"><span id="notes-save-status" role="status" aria-live="polite">草稿：尚无修改</span><span>草稿仅在当前页面内，离开前请在 GitHub 提交。</span></footer>`;
   document.body.append(panel);
   $('notes-paper').textContent = title;
   const excerptButton = document.createElement('button');
   excerptButton.id = 'notes-excerpt'; excerptButton.className = 'notes-excerpt'; excerptButton.hidden = true;
   excerptButton.textContent = '摘录到笔记'; document.body.append(excerptButton);
   const fallback = $('notes-fallback'), host = $('notes-editor');
-  let markdown = '', baseline = null, dirty = false, composing = false, conflict = false;
-  let editor = null, loading = null, timer, selected = null, opened = false, mode = 'ir';
-  let invalid = false, external = null, initializing = false;
-  const status = text => { $('notes-save-status').textContent = text; };
-  const parse = raw => {
-    if (raw === null) return '';
-    const record = JSON.parse(raw);
-    if (record.schemaVersion !== 1 || record.paperId !== paperId || typeof record.markdown !== 'string' || typeof record.updatedAt !== 'string') throw new Error('笔记记录格式不受支持');
-    return record.markdown;
-  };
-  try { baseline = localStorage.getItem(key); markdown = parse(baseline); status(baseline ? '已保存' : '尚无笔记'); }
-  catch { invalid = true; status('保存失败：无法读取本地记录，原记录将保留'); }
-  fallback.value = markdown;
+  let markdown = '', deployedMarkdown = '', dirty = false, composing = false;
+  let editor = null, loading = null, selected = null, opened = false, mode = 'ir';
+  let initializing = false, remoteLoading = false, remoteState = 'unknown';
+  const status = text => { $('notes-save-status').textContent = '草稿：' + text; };
   function notice(text, retry = false) {
     $('notes-notice').hidden = false; $('notes-notice-text').textContent = text;
     $('notes-retry').hidden = !retry;
   }
-  if (invalid) notice('本地存储不可用，或已有笔记格式无法读取。可暂时编辑，原记录不会被覆盖。');
   const normalize = value => value.trim() ? value : '';
+  // Vditor appends a terminal newline; do not treat that alone as an edit.
+  const comparable = value => normalize(value).replace(/\r\n/g, '\n').replace(/\n+$/, '');
   function read() { return composing ? markdown : normalize(editor ? editor.getValue() : fallback.value); }
   function changed(value = read()) {
-    if (initializing || composing) return;
-    value = normalize(value);
-    if (value !== markdown) { markdown = value; dirty = true; status(conflict ? '待保存：请先处理版本冲突' : '待保存'); }
-    clearTimeout(timer);
-    if (dirty && !conflict) timer = setTimeout(flush, 500);
+    if (initializing || composing || remoteLoading) return;
+    markdown = normalize(value);
+    dirty = comparable(markdown) !== comparable(deployedMarkdown);
+    status(dirty ? '有未提交修改，刷新或关闭页面可能丢失。' : '尚无修改');
   }
-  function showConflict(raw) {
-    external = raw; conflict = true; clearTimeout(timer);
-    notice('另一标签页更新了这篇笔记。请选择要保留的版本；当前修改暂未覆盖其他页。');
-    $('notes-load-other').hidden = false; $('notes-keep-local').hidden = false;
-    status('待保存：版本冲突');
-  }
-  function flush() {
-    clearTimeout(timer);
-    if (composing) return;
-    const value = read();
-    if (value !== markdown) { markdown = value; dirty = true; }
-    if (!dirty || conflict) return;
-    try {
-      if (invalid) throw new Error('无法覆盖未知记录');
-      const current = localStorage.getItem(key);
-      if (current !== baseline) { showConflict(current); return; }
-      const raw = JSON.stringify({schemaVersion: 1, paperId, markdown, updatedAt: new Date().toISOString()});
-      localStorage.setItem(key, raw); baseline = raw; dirty = false;
-      status('已保存'); $('notes-save-retry').hidden = true;
-    } catch { status('保存失败：内容仍在本页'); $('notes-save-retry').hidden = false; }
-  }
+  function syncDraft() { changed(); }
   function replace(value) {
     markdown = value; fallback.value = value;
     if (editor) { initializing = true; editor.setValue(value, true); initializing = false; }
   }
-  $('notes-save-retry').onclick = () => {
-    if (invalid) {
-      try { const raw = localStorage.getItem(key); parse(raw); baseline = raw; invalid = false; }
-      catch { status('保存失败：原记录仍保留'); return; }
+  function access() {
+    // Inert covers both Vditor contenteditables and its asynchronously created toolbar.
+    host.inert = remoteLoading;
+    fallback.readOnly = remoteLoading;
+    host.setAttribute('aria-busy', String(remoteLoading));
+    $('notes-edit').disabled = $('notes-source').disabled = remoteLoading || composing;
+    $('notes-refresh').disabled = remoteLoading || composing;
+    $('notes-github').disabled = remoteLoading || composing;
+    excerptButton.disabled = remoteLoading;
+  }
+  async function loadRemote() {
+    if (!resources.documents || remoteLoading || composing) return;
+    syncDraft();
+    remoteLoading = true; remoteState = 'unknown'; access();
+    $('notes-remote-status').textContent = '部署版：正在加载…';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      const directory = localURL(resources.documents, manifestURL);
+      const url = localURL(`${encodeURIComponent(paperId)}/notes.md`, directory);
+      const response = await fetch(url, {cache: 'no-cache', signal: controller.signal});
+      if (response.status === 404) {
+        remoteState = 'missing';
+        $('notes-remote-status').textContent = '部署版：尚未发布，已保留当前草稿。';
+        return;
+      }
+      if (!response.ok) throw new Error(`请求失败（${response.status}）`);
+      const value = await response.text();
+      remoteState = 'exists';
+      deployedMarkdown = value; replace(value); dirty = false; status('已载入部署版，尚无修改');
+      $('notes-remote-status').textContent = '部署版：已载入，后续编辑仍需在 GitHub 提交。';
+    } catch (error) {
+      $('notes-remote-status').textContent = '部署版：加载失败，已保留当前草稿，可继续编辑并刷新重试。' + (error.name === 'AbortError' ? '请求超时。' : '');
+    } finally {
+      clearTimeout(timeout); remoteLoading = false; access();
     }
-    flush();
-  };
-  $('notes-load-other').onclick = () => {
-    try {
-      const raw = localStorage.getItem(key), value = parse(raw);
-      conflict = false; dirty = false; baseline = raw; replace(value); status('已载入其他页版本');
-      $('notes-notice').hidden = true; $('notes-load-other').hidden = $('notes-keep-local').hidden = true;
-    } catch { notice('其他页的记录格式无法读取，当前修改仍保留。'); }
-  };
-  $('notes-keep-local').onclick = () => {
-    try {
-      const raw = localStorage.getItem(key);
-      parse(raw); // Never overwrite a corrupted or unknown version.
-      if (raw !== external) { showConflict(raw); return; }
-      baseline = raw; conflict = false; dirty = true; flush();
-      $('notes-notice').hidden = true; $('notes-load-other').hidden = $('notes-keep-local').hidden = true;
-    } catch { status('保存失败：原记录仍保留'); }
-  };
-  addEventListener('storage', event => {
-    if (event.storageArea !== localStorage || (event.key !== key && event.key !== null)) return;
-    let raw;
-    try { raw = localStorage.getItem(key); } catch { status('保存失败：无法读取其他页更新'); return; }
-    if (raw === baseline) return;
-    if (composing || dirty || read() !== markdown) { changed(); showConflict(raw); return; }
-    try { const value = parse(raw); baseline = raw; replace(value); status(raw ? '已保存（其他页更新）' : '本地笔记已清除'); }
-    catch { invalid = true; notice('其他页写入了无法读取的记录，当前内容仍保留。'); status('保存失败：记录格式无效'); }
+  }
+  $('notes-remote').hidden = !resources.documents;
+  $('notes-refresh').onclick = loadRemote;
+
+  // Only public repository coordinates belong in the manifest; no credentials are used.
+  const github = resources.github;
+  if (github && [github.owner, github.repo, github.branch, github.directory].every(value => typeof value === 'string' && value)) {
+    $('notes-remote').hidden = false; $('notes-refresh').hidden = !resources.documents;
+    $('notes-refresh-help').hidden = !resources.documents;
+    $('notes-github').hidden = false;
+    const dialog = document.createElement('dialog');
+    dialog.id = 'notes-handoff'; dialog.className = 'notes-handoff';
+    dialog.setAttribute('aria-labelledby', 'notes-handoff-title');
+    dialog.innerHTML = `<header><h2 id="notes-handoff-title">保存到 GitHub</h2><button id="notes-handoff-close" aria-label="关闭 GitHub 提交面板">关闭</button></header>
+      <p id="notes-handoff-path"></p><p>这是打开面板时的笔记快照。请在 GitHub 检查内容并手动提交；完成 Pages 部署后再刷新远端。</p>
+      <fieldset id="notes-handoff-choice" hidden><legend>部署版状态未知，请选择操作</legend><label><input type="radio" name="notes-target" value="new">创建新文件</label><label><input type="radio" name="notes-target" value="edit">编辑现有文件</label></fieldset>
+      <p id="notes-handoff-help"></p><div class="notes-actions"><button id="notes-copy">复制全文</button><a id="notes-github-open" target="_blank" rel="noopener noreferrer" hidden>打开 GitHub</a></div>
+      <p id="notes-copy-status" role="status" aria-live="polite"></p><label for="notes-handoff-source">笔记全文（可全选复制）</label><textarea id="notes-handoff-source" readonly spellcheck="false"></textarea>
+      <p id="notes-handoff-alternative" hidden>如果新建页提示文件已存在：<a id="notes-github-edit" target="_blank" rel="noopener noreferrer">打开现有文件编辑页</a>，粘贴上方全文后提交。</p>
+      <p id="notes-handoff-status" role="status" aria-live="polite"></p>`;
+    document.body.append(dialog);
+    const path = github.directory.replace(/\/$/, '') + `/${paperId}/notes.md`;
+    $('notes-handoff-path').textContent = path;
+    const repository = `https://github.com/${encodeURIComponent(github.owner)}/${encodeURIComponent(github.repo)}`;
+    const editURL = `${repository}/edit/${encodeURIComponent(github.branch)}/${path.split('/').map(encodeURIComponent).join('/')}`;
+    let snapshot = '', copyAttempt = 0;
+    function choose(target) {
+      const url = new URL(`${repository}/new/${encodeURIComponent(github.branch)}`);
+      url.searchParams.set('filename', path);
+      url.searchParams.set('value', snapshot);
+      const prefill = target === 'new' && new TextEncoder().encode(url.href).length <= 6000;
+      if (!prefill) url.searchParams.delete('value');
+      $('notes-github-open').href = target === 'edit' ? editURL : url.href;
+      $('notes-github-open').textContent = target === 'edit' ? '打开 GitHub 编辑页' : '打开 GitHub 新建页';
+      $('notes-github-open').hidden = false;
+      $('notes-handoff-alternative').hidden = target !== 'new';
+      $('notes-github-edit').href = editURL;
+      $('notes-handoff-help').textContent = target === 'edit'
+        ? snapshot ? '先复制全文，再到 GitHub 编辑框中全选替换并提交。' : '当前笔记为空。请清空 GitHub 编辑框后提交空文件。'
+        : prefill ? '链接将预填文件名和正文。如果 GitHub 未填入正文，请复制下方快照后粘贴。笔记正文会包含在链接中。'
+        : '笔记超过链接预填长度，请先复制全文，再打开 GitHub 新建页粘贴并提交。';
+    }
+    $('notes-github').onclick = () => {
+      if (remoteLoading || composing) return;
+      syncDraft(); snapshot = read(); copyAttempt++;
+      $('notes-handoff-source').value = snapshot;
+      $('notes-copy-status').textContent = $('notes-handoff-status').textContent = '';
+      $('notes-handoff-choice').hidden = remoteState !== 'unknown';
+      dialog.querySelectorAll('input[name="notes-target"]').forEach(input => { input.checked = false; });
+      if (remoteState === 'unknown') {
+        $('notes-github-open').hidden = $('notes-handoff-alternative').hidden = true;
+        $('notes-github-open').removeAttribute('href');
+        $('notes-handoff-help').textContent = '尚未确认文件是否存在。请选择新建或编辑；也可以先复制笔记。';
+      } else choose(remoteState === 'exists' ? 'edit' : 'new');
+      dialog.showModal();
+    };
+    $('notes-handoff-choice').onchange = event => choose(event.target.value);
+    $('notes-copy').onclick = async () => {
+      const attempt = ++copyAttempt, value = snapshot;
+      try {
+        await navigator.clipboard.writeText(value);
+        if (attempt === copyAttempt) $('notes-copy-status').textContent = value ? '已复制全文，请在 GitHub 粘贴并提交。' : '当前快照为空，请清空 GitHub 编辑框后提交。';
+      } catch {
+        if (attempt !== copyAttempt || !dialog.open) return;
+        $('notes-copy-status').textContent = '自动复制失败，请在下方全选复制；空笔记请直接清空 GitHub 编辑框。';
+        $('notes-handoff-source').focus(); $('notes-handoff-source').select();
+      }
+    };
+    for (const id of ['notes-github-open', 'notes-github-edit']) $(id).onclick = () => {
+      $('notes-handoff-status').textContent = '待在 GitHub 提交。提交并完成 Pages 部署后，再刷新远端；刷新会覆盖当前草稿。';
+      $('notes-remote-status').textContent = '已打开 GitHub，待手动提交；部署完成后再刷新远端。';
+    };
+    $('notes-handoff-close').onclick = () => dialog.close();
+    dialog.addEventListener('close', () => { copyAttempt++; $('notes-github').focus(); });
+  }
+  addEventListener('beforeunload', event => {
+    syncDraft();
+    if (dirty || composing) { event.preventDefault(); event.returnValue = ''; }
   });
   function theme() {
     if (editor) editor.setTheme(root.dataset.theme === 'dark' ? 'dark' : 'classic');
@@ -135,9 +189,6 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     loading = (async () => {
       $('notes-engine').textContent = '加载编辑器…';
       try {
-        // Vditor reads localStorage during init even with its own cache disabled.
-        // Detect a blocked storage API first and retain the usable text editor.
-        localStorage.getItem(key);
         await Promise.all([
           asset('dist/index.min.js', 'js'), asset('dist/index.css', 'css'),
           asset('dist/js/lute/lute.min.js', 'js', 'vditorLuteScript'),
@@ -148,7 +199,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
         ]);
         await asset('dist/js/katex/mhchem.min.js', 'js', 'vditorKatexChemScript');
         // Start empty, then install the DOM filter before rendering user content.
-        changed(); flush(); host.hidden = false;
+        syncDraft(); host.hidden = false;
         initializing = true;
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => reject(new Error('编辑器初始化超时')), 15000);
@@ -201,13 +252,13 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
         fallback.hidden = true; initializing = false;
         if (focusEditor && opened) editor.focus();
         $('notes-engine').textContent = 'Markdown';
-        if (!conflict && !invalid) $('notes-notice').hidden = true;
+        $('notes-notice').hidden = true;
         host.dataset.editorReady = 'true';
       } catch {
         if (editor) { try { editor.destroy(); } catch {} editor = null; }
         initializing = false; host.hidden = true; fallback.hidden = false; fallback.value = markdown;
         $('notes-engine').textContent = '纯文本模式';
-        if (!conflict) notice('编辑器加载失败，可继续编辑 Markdown；内容仍会自动保存。', true);
+        notice('编辑器加载失败，可继续编辑 Markdown；草稿仅保留在当前页面。', true);
       } finally { loading = null; }
     })();
     return loading;
@@ -217,11 +268,11 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   panel.addEventListener('input', event => {
     if (event.target !== fallback) changed();
   });
-  panel.addEventListener('compositionstart', () => { composing = true; clearTimeout(timer); });
-  panel.addEventListener('compositionend', () => { composing = false; queueMicrotask(() => changed()); });
+  panel.addEventListener('compositionstart', () => { composing = true; access(); });
+  panel.addEventListener('compositionend', () => { composing = false; access(); queueMicrotask(() => changed()); });
   function setMode(next) {
     if (composing) return;
-    changed(); flush(); mode = next;
+    syncDraft(); mode = next;
     if (editor) {
       const control = host.querySelector(`[data-mode="${next}"]`);
       control.dispatchEvent(new Event(navigator.userAgent.includes('iPhone') ? 'touchstart' : 'click', {bubbles: true, cancelable: true}));
@@ -263,7 +314,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     }
     excerptButton.hidden = true;
     if (value) { layout(); ensureEditor(); if (focus) (editor ? editor : fallback).focus(); }
-    else { flush(); if (panel.contains(document.activeElement)) document.activeElement.blur(); if (focus) $('notes-button').focus(); }
+    else { syncDraft(); if (panel.contains(document.activeElement)) document.activeElement.blur(); if (focus) $('notes-button').focus(); }
   }
   $('notes-button').onclick = () => open(!opened);
   $('notes-close').onclick = () => open(false);
@@ -292,7 +343,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   addEventListener('resize', layout); window.visualViewport?.addEventListener('resize', layout); window.visualViewport?.addEventListener('scroll', layout);
   panel.addEventListener('focusin', layout);
   panel.addEventListener('focusout', () => requestAnimationFrame(layout));
-  addEventListener('pagehide', flush); document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+  addEventListener('pagehide', syncDraft); document.addEventListener('visibilitychange', () => { if (document.hidden) syncDraft(); });
   layout();
   const escapeMD = text => text.replace(/([\\`*_{}\[\]()#+\-.!|<>~$])/g, '\\$1');
   function captureSelection() {
@@ -318,9 +369,10 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   document.addEventListener('selectionchange', () => requestAnimationFrame(captureSelection));
   excerptButton.addEventListener('pointerdown', event => event.preventDefault());
   excerptButton.onclick = async () => {
-    if (!selected) return;
+    if (!selected || remoteLoading) return;
     const snapshot = selected; selected = null; open(true, false);
     await ensureEditor();
+    if (remoteLoading) return;
     const link = `${paperId}.html#${encodeURIComponent(snapshot.id)}`;
     const md = '\n\n' + snapshot.text.split(/\r?\n/).map(line => '> ' + escapeMD(line)).join('\n') + `\n\n[${escapeMD(snapshot.label)} · 返回原文](${link})\n\n`;
     if (editor) {
@@ -331,7 +383,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
       editor.insertMD(md);
       area.scrollTop = area.scrollHeight;
     } else { fallback.focus(); fallback.setSelectionRange(fallback.value.length, fallback.value.length); document.execCommand('insertText', false, md); fallback.scrollTop = fallback.scrollHeight; }
-    changed(); flush(); excerptButton.hidden = true;
+    syncDraft(); excerptButton.hidden = true;
   };
   panel.addEventListener('click', event => {
     const link = event.target.closest('a[href]');
@@ -355,4 +407,5 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
       target.classList.add('notes-target'); setTimeout(() => target.classList.remove('notes-target'), 1800);
     } else window.open(url.href, '_blank', 'noopener,noreferrer');
   }, true);
+  loadRemote();
 }

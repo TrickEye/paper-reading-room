@@ -2,7 +2,11 @@
 
 智能体相关论文的阅读网站，保留逐段中英对照、独立原图和原始 PDF。支持目录跳转、全文搜索、字号调整、深色模式、原图放大与打印。
 
-阅读页顶部的「笔记」可打开当前论文的 Markdown 长笔记。默认采用类似 Typora 的即时渲染，支持源码切换、表格、任务列表和数学公式；选中正文后可摘录文字并附上回跳链接。桌面采用可调宽右侧分栏，手机采用底部半屏抽屉。笔记自动保存在当前浏览器的 localStorage，按站点路径和论文隔离；不上传服务器，清除站点数据会删除笔记。首版不提供附件、导入导出或跨设备同步。
+阅读页顶部的「笔记」可打开当前论文的 Markdown 长笔记。默认采用类似 Typora 的即时渲染，支持源码切换、表格、任务列表和数学公式；选中正文后可摘录文字并附上回跳链接。桌面采用可调宽右侧分栏，手机采用底部半屏抽屉。笔记草稿仅保存在当前页面内存，不读写 localStorage；主题、字号和面板宽度仍保留浏览器偏好。存在未提交修改时会请求浏览器显示离页提醒，刷新或关闭页面仍可能丢失草稿。
+
+每篇论文的部署版笔记维护在 `public/notes/<paper-id>/notes.md`。进入论文页时会主动请求当前站点的对应文件：成功时用部署版覆盖当前草稿（包括空文件），404 时保留当前页面草稿，请求失败时可继续编辑并重试。「刷新远端」也会覆盖当前草稿；尚未提交的修改不会优先于已有部署版。浏览器中的旧版笔记记录不再读取或修改。
+
+「保存到 GitHub」打开提交交接面板：短的新笔记通过链接预填文件名和正文；已有文件或长笔记通过复制全文、打开 GitHub 页面后手动粘贴提交。6000 字节是完整编码 URL 的保守阈值，正文预填不是 GitHub 正式承诺的接口，且内容会包含在 URL 中；始终可手动复制。空笔记更新时需清空 GitHub 编辑框。提交到 `main` 并完成 Pages 部署后再刷新远端，否则仍会读到旧部署版；打开 GitHub 不代表已经提交。笔记没有自动上传、附件或历史备份。
 
 [在线阅读](https://trickeye.github.io/paper-reading-room/) · [GitHub 仓库](https://github.com/TrickEye/paper-reading-room)
 
@@ -23,6 +27,7 @@ public/                     GitHub Pages 发布目录，可独立复制到静态
   reader/                   固定 loader.js 与带内容摘要的共用 CSS、JavaScript
   content/manifest.json     论文与阅读器资源清单
   content/<paper-id>/       带内容摘要的 PaperDocument JSON、独立原图
+  notes/<paper-id>/notes.md 手工维护的笔记源文件，可直接在 GitHub 网页提交
   pdfs/                     原始论文 PDF
 reader/                     阅读器源代码、外壳模板、共用与论文特有样式
 data/                      文稿、翻译、原图及来源记录
@@ -36,7 +41,7 @@ scripts/                    Python 构建、内容审计及浏览器验收
 skills/paper-reading-room/  可复用论文制作 skill
 ```
 
-`public/` 只包含运行所需文件。制作源不直接发布；构建器从现有文稿格式转换到统一 `PaperDocument v1`。复杂富文本、表格与 MathML 在所属单元内保留 HTML，图片不嵌入 JSON。详见[内容接口与构建说明](docs/reader-architecture.md)。
+`public/` 只包含运行所需文件。论文制作源不直接发布；构建器从现有文稿格式转换到统一 `PaperDocument v1`。复杂富文本、表格与 MathML 在所属单元内保留 HTML，图片不嵌入 JSON。`public/notes/` 内的 Markdown 是手工维护的笔记源，构建会原样保留，不为笔记内容或文件存在状态生成清单，因此可以单独提交笔记，无需重建其他产物。详见[内容接口与构建说明](docs/reader-architecture.md)。
 
 ## 本地预览与维护
 
