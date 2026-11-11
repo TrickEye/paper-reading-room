@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Build the offline, paragraph-paired reading page from arXiv v1 HTML and source assets."""
+"""Build Permission Denied PaperDocument from arXiv v1 HTML and source assets."""
 from __future__ import annotations
 
-import base64
 import hashlib
 from html.parser import HTMLParser
 from pathlib import Path
@@ -18,7 +17,6 @@ PUBLIC = ROOT / "public"
 SRC = ROOT / "data" / "permission-denied"
 PDF = PUBLIC / "pdfs" / "Permission-Denied-2608.02670v1.pdf"
 HTML_SOURCE = SRC / "arxiv.html"
-OUTPUT = PUBLIC / "papers" / "permission-denied.html"
 PDF_URL = "https://arxiv.org/pdf/2608.02670v1"
 HTML_URL = "https://arxiv.org/html/2608.02670v1"
 EPRINT_URL = "https://arxiv.org/e-print/2608.02670v1"
@@ -310,8 +308,8 @@ def svg_dimensions(path):
     return round(width_pt * 4 / 3), round(height_pt * 4 / 3)
 
 
-def image_data_url(path):
-    return "data:image/svg+xml;base64," + base64.b64encode(path.read_bytes()).decode("ascii")
+def image_source_url(path):
+    return "assets/" + path.name
 
 
 def decorate_paragraphs(root, paras):
@@ -435,7 +433,7 @@ def decorate_figures(root, meta, source_pages):
         fig.add_class("ltx_figure")
         fig.children.append(tag("span", [("id", source_id), ("class", "source-anchor"), ("aria-hidden", "true")], []))
         img = tag("img", [
-            ("src", image_data_url(path)), ("alt", caption), ("width", width), ("height", height),
+            ("src", image_source_url(path)), ("alt", caption), ("width", width), ("height", height),
             ("loading", "lazy"), ("decoding", "async")
         ], [])
         button = tag("button", [("type", "button"), ("class", "figure-zoom"), ("aria-label", f"放大图 {number}")], [img])
@@ -577,33 +575,12 @@ def main():
         source_record["source_archive_sha256"] = hashlib.sha256(source_archive.read_bytes()).hexdigest()
     (SRC / "source.json").write_text(json.dumps(source_record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    ace = (PUBLIC / "papers" / "ace.html").read_text(encoding="utf-8")
-    head = ace[:ace.index("<body>")]
-    head = re.sub(r"<title>.*?</title>", "<title>Permission Denied · 中文全文与逐段对照</title>", head)
-    head = re.sub(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Permission Denied 论文中文全文，逐段英文原文对照，四幅独立原图和十五张完整表格。">', head)
-    extra_css = """
-.bilingual-unit{margin:0 0 1.25em}.bilingual-unit>.zh{margin:0 0 .55em}.bilingual-unit>.en{margin:0!important;padding:0!important;border:0!important;color:var(--text)!important;line-height:1.8}.paper-meta{font-size:13px;color:var(--muted);margin:14px 0 24px}.paper-meta p{margin:4px 0}.paper-meta .metadata{font-variant-numeric:tabular-nums}.ltx_title_abstract{font-size:17px;color:var(--accent);letter-spacing:.12em}.ltx_figure svg{max-width:100%;height:auto}.ltx_table{margin:30px 0 40px}.ltx_table table{min-width:600px;white-space:normal}.ltx_table th,.ltx_table td{text-align:left;vertical-align:top;white-space:normal;max-width:50ch}.ltx_table td .zh,.ltx_table th .zh{display:block}.ltx_table td .en,.ltx_table th .en{display:block}.ltx_table .table-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--line);border-radius:4px}.equation-table{display:table;margin:20px auto;border-collapse:collapse}.equation-table .equation-body{display:table-row-group}.equation-table .equation-row{display:table-row}.equation-table .equation-cell{display:table-cell;padding:2px 5px;vertical-align:middle}.source-anchor{display:block;width:0;height:0;overflow:hidden;scroll-margin-top:110px}.ltx_bib_title{font-size:.9em;color:var(--muted);margin:.25em 0 .7em}.ltx_bibitem{margin-bottom:1.1em}.ltx_note_content{display:block}.ltx_note_content>.en{display:block}.ltx_note_content>.zh{display:block;margin-bottom:6px}.table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-[data-lang=zh] .bilingual-unit>.en{display:none!important}
-[data-lang=en] .bilingual-unit>.zh{display:none!important}
-[data-lang=en] .bilingual-unit>.en{display:block!important}
-[data-lang=dual] .bilingual-unit>.en{display:block!important}
-[data-lang=dual] .ltx_table .zh,[data-lang=dual] .ltx_table .en{display:block}
-"""
-    head = head.replace("</style>", "\n" + extra_css + "\n</style>")
-    shell = ace[ace.index("<body>"):ace.index("<main>")]
-    shell = shell.replace('class="brand-name">ACE<span>论文索引</span>', 'class="brand-name">Permission Denied<span>论文索引</span>')
-    shell = shell.replace("2510.04618.pdf", PDF.name)
-    shell = shell.replace("原图保留 · 可离线浏览", "4 幅原图 · 15 张完整表格 · 离线阅读")
-    nav = build_nav(article, meta)
-    shell = re.sub(r'<nav aria-label="论文章节">.*?</nav>', '<nav aria-label="论文章节">' + nav + '</nav>', shell, flags=re.S)
-    tail = ace[ace.index('<dialog id="image-dialog"'):]
-    tail = tail.replace("$('dialog-caption').textContent=img.alt", "$('dialog-caption').textContent=button.closest('figure').querySelector('figcaption').innerText")
-    tail = tail.replace(":'zh';root.dataset.lang=mode.value", ":'dual';root.dataset.lang=mode.value")
-    # Close main because the copied ACE tail starts with the image dialog.
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    from paper_document import emit_paper, toc_from_html
     article.set_attr("id", "paper")
     article.set_attr("lang", "zh-CN")
-    OUTPUT.write_text(head + shell + "<main>" + serialize(article) + "</main>" + tail, encoding="utf-8")
-    print(f"Built {OUTPUT.name}: {len(paras)} paired prose paragraphs, 4 figures, {len(table_records)} tables, 27 references.")
+    emit_paper('permission-denied', serialize(article), toc_from_html(build_nav(article, meta)))
+    print(f"Built Permission Denied document: {len(paras)} paired prose paragraphs, 4 figures, {len(table_records)} tables, 27 references.")
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
 interface:
   display_name: "论文双语阅读室"
-  short_description: "将论文链接整理为忠实逐段对照、保留独立原图和完整表格的离线网页"
-  default_prompt: "使用 $paper-reading-room 将给定论文链接整理成与项目 ACE 页面一致的中文全文与逐段中英对照阅读页，并更新现有 index。"
+  short_description: "将论文整理为忠实逐段对照、保留独立原图和完整表格的在线阅读页"
+  default_prompt: "使用 $paper-reading-room 将给定论文链接整理为统一 PaperDocument JSON 与独立原图，接入项目共用阅读器，保留中文全文和逐段中英对照，并更新现有 index。"

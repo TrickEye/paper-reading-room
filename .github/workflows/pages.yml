@@ -20,10 +20,33 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-      - name: Rebuild and validate offline pages
+      - name: Rebuild and audit complete paper documents
         run: python3 -B scripts/build.py
+      - name: Validate content boundaries
+        run: python3 -B -m unittest discover -s tests -v
       - name: Verify committed output is current
-        run: git diff --exit-code -- public data
+        run: |
+          git diff --exit-code -- public data
+          test -z "$(git ls-files --others --exclude-standard -- public data)"
+      - name: Set up browser test runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+      - name: Verify reader in Chromium
+        env:
+          BROWSER_OUTPUT_DIR: ${{ runner.temp }}/reader-browser-check
+        run: node scripts/browser_check.cjs
+      - name: Save browser verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reader-browser-check
+          path: ${{ runner.temp }}/reader-browser-check
+          if-no-files-found: ignore
       - name: Upload publication directory
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v4

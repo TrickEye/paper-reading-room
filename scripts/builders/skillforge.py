@@ -1,27 +1,18 @@
-"""Rebuild the offline SkillForge reading page with ACE's reader shell.
+"""Build the SkillForge PaperDocument from its bilingual editorial sources.
 
 Run: python3 scripts/builders/skillforge.py
 Sources: the bundled ACL Anthology PDF, bilingual JSON, and original figure assets.
 """
 from pathlib import Path
-import base64,html,json,re
+import html,json,re
 ROOT=Path(__file__).resolve().parents[2]
 PUBLIC=ROOT/'public'
 SRC=ROOT/'data'/'skillforge'
 load=lambda name:json.loads((SRC/(name+'.json')).read_text())
 e=html.escape
-ace=(PUBLIC/'papers'/'ace.html').read_text()
-head=ace[:ace.index('<body>')]
-head=re.sub(r'<title>.*?</title>','<title>SkillForge · 中文全文与逐段对照</title>',head)
-head=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="SkillForge 论文中文全文，逐段英文原文对照，16 幅独立原图、4 张完整数据表与附录。">',head)
-head=head.replace('data-lang="zh"','data-lang="dual"')
-extra='''
-[data-lang=dual] .paper-original-title{display:none}.affiliations .zh,.affiliations .en{white-space:pre-line}
-.code-pair{margin:24px 0;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace}.code-pair pre{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:18px;margin:0;font:inherit}.code-pair .en{margin-top:14px!important}[data-lang=en] .code-pair .en,[data-lang=dual] .code-pair .en{display:block}.equation{font-family:Georgia,"Times New Roman",serif;text-align:center;overflow-x:auto;padding:12px 4px;margin:18px 0;line-height:2;white-space:nowrap}.equation sub,.equation sup{font-size:.72em}.equation .eq-no{float:right;color:var(--muted);font-size:.85em;margin-left:18px}.frac{display:inline-flex;flex-direction:column;vertical-align:middle;line-height:1.5;text-align:center;margin:0 5px}.frac>span:first-child{border-bottom:1px solid currentColor}.prompt-heading{margin-top:28px;font-size:16px}.table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}.ltx_table table{min-width:540px}.ltx_table:first-child{margin-top:20px}.ltx_table th[scope=row]{background:transparent;color:var(--text);font-weight:400}.ltx_table td.best{font-weight:750}.paper-note{font-size:.8em;color:var(--muted);border-left:2px solid var(--line);padding:12px 16px;margin:20px 0}.table-note{font:12px/1.8 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;color:var(--muted);margin:10px 0}.ltx_bibitem a{overflow-wrap:anywhere}@media print{.code-pair{font-size:8pt}.code-pair pre{break-inside:auto}.equation{overflow:visible}.ltx_table table{min-width:0}} 
-'''
-head=head.replace('</style>','\n'+extra+'</style>')
-shell=ace[ace.index('<body>'):ace.index('<main>')]
-shell=shell.replace('>ACE<span>','>SkillForge<span>').replace('2510.04618.pdf','2026.emnlp-main.1954.pdf')
+import sys
+sys.path.insert(0,str(ROOT/'scripts'))
+from paper_document import emit_paper,toc_from_html
 main,app=load('main'),load('appendix')
 figs={x['number']:x for x in load('figures')};assets={x['figure']:x for x in load('assets')};tables={x['number']:x for x in load('tables')}
 nav=[]
@@ -30,8 +21,6 @@ for r in main+app:
   if r['id']=='A1':nav.append('<a class="nav-main" href="#bib">参考文献</a>')
   nav.append(f'<a class="nav-{ "main" if r["kind"]=="h2" else "sub"}" href="#{r["id"]}">{e(r["zh"])}</a>')
 nav.append('<a class="nav-main" href="#source">来源与翻译说明</a>')
-shell=re.sub(r'<nav aria-label="论文章节">.*?</nav>','<nav aria-label="论文章节">'+''.join(nav)+'</nav>',shell,flags=re.S)
-shell=shell.replace('原图保留 · 可离线浏览','16 幅原图 · 4 张表 · 离线阅读')
 units=0
 section_map={'2':'S2','2.1':'S2.SS1','2.2':'S2.SS2','2.3':'S2.SS3','3':'S3','3.1':'S3.SS1','3.2':'S3.SS2','3.3':'S3.SS3',**{f'B.{i}':f'A2.SS{i}' for i in range(1,8)},'D.1':'A4.SS1','D.2':'A4.SS2'}
 def rich(text):
@@ -60,8 +49,8 @@ def attrs(id=None):
  return f'data-unit="sf{units:03d}" id="{id or "sf"+str(units).zfill(3)}" data-searchable="true"'
 
 def fig(n):
- r,a=figs[n],assets[n];data=(SRC/'assets'/a['file']).read_bytes();mime='image/jpeg' if a['file'].endswith('.jpg') else 'image/png'
- return f'''<figure class="ltx_figure" id="F{n}" data-source-page="{a['page']}" data-original-image="{a['file']}"><button type="button" class="figure-zoom" aria-label="{e(r['zh'])} 点击放大查看原图"><img src="data:{mime};base64,{base64.b64encode(data).decode()}" alt="{e(r['zh'])}" width="{a['width']}" height="{a['height']}" loading="lazy" decoding="async"></button><figcaption {attrs()}>{pair(r['zh'],r['en'])}</figcaption></figure>'''
+ r,a=figs[n],assets[n]
+ return f'''<figure class="ltx_figure" id="F{n}" data-source-page="{a['page']}" data-original-image="{a['file']}"><button type="button" class="figure-zoom" aria-label="{e(r['zh'])} 点击放大查看原图"><img src="assets/{a['file']}" alt="{e(r['zh'])}" width="{a['width']}" height="{a['height']}" loading="lazy" decoding="async"></button><figcaption {attrs()}>{pair(r['zh'],r['en'])}</figcaption></figure>'''
 
 def cell(v):return pair(*v) if isinstance(v,list) else e(f'{v:.3f}' if isinstance(v,float) else str(v))
 def table(n):
@@ -105,7 +94,7 @@ def eq(text):
  return None
 
 current=False;sub=False
-out=[head,shell,'<main><article class="ltx_document" lang="zh-CN" id="paper"><p class="eyebrow">RESEARCH PAPER / EMNLP 2026</p>']
+out=['<article class="ltx_document" lang="zh-CN" id="paper"><p class="eyebrow">RESEARCH PAPER / EMNLP 2026</p>']
 out.append('<h1 '+attrs('paper-title')+'>'+pair('SkillForge：从成功—失败边界学习，实现一致的长程智能体','SkillForge: Learning from Success–Failure Boundaries for Consistent Long-Horizon Agents')+'</h1>')
 out.append('''<p class="paper-original-title">SkillForge: Learning from Success–Failure Boundaries for Consistent Long-Horizon Agents</p><div class="authors"><p>Guangya Wan<sup>*1,2</sup>, Hao Wang<sup>1</sup>, Xiao Ling<sup>1</sup>, Mingyang Ling<sup>1</sup>, Xiaoqi Ren<sup>1</sup>, Sheng Li<sup>2</sup></p><p class="affiliations">'''+pair('¹ Google Cloud AI　·　² 弗吉尼亚大学\n* 本工作在 Google 实习期间完成。','¹ Google Cloud AI · ² University of Virginia\n* Work done during internship at Google.')+'''</p></div><div class="metadata"><span>EMNLP 2026 · ACL Anthology: 2026.emnlp-main.1954</span><span>25 页 · 16 图 · 4 表</span><span>DOI: 10.18653/2026.emnlp-main.1954</span></div>''')
 out.append('<aside class="translation-note"><strong>中文全文阅读版</strong><p>'+pair('依据原始论文逐段翻译；中英对照模式按“中文一段、英文原文一段”排列，正文、附录、图注及表注均保留对应原文。图像使用论文独立原图，图内文字保留原样；提示词另附完整文字对照。作者名、模型名、API、标识符及数据保留原写法。','Paragraph-aligned Chinese translation of the original paper, including the main text, appendices, figure captions, and table captions. Original figures and data are preserved; prompt figures also have bilingual text transcriptions.')+'</p></aside>')
@@ -160,12 +149,6 @@ close()
 out.append('<section class="ltx_appendix" id="A4.cases"><h3 '+attrs()+'>'+pair('论文中的案例图','Case figures from the paper')+'</h3>')
 for n in range(13,17):out.append(fig(n))
 out.append('</section>')
-out.append('<footer class="source-footer" id="source"><p class="eyebrow">SOURCE &amp; ATTRIBUTION</p><h2>'+pair('来源与翻译说明','Source and translation notes')+'</h2><p>'+pair('原作：Guangya Wan、Hao Wang、Xiao Ling、Mingyang Ling、Xiaoqi Ren、Sheng Li。EMNLP 2026，第 44486–44510 页。','Original work by Guangya Wan, Hao Wang, Xiao Ling, Mingyang Ling, Xiaoqi Ren, and Sheng Li. EMNLP 2026, pages 44486–44510.')+'</p><p><a href="https://aclanthology.org/2026.emnlp-main.1954/">ACL Anthology</a> · <a href="https://doi.org/10.18653/2026.emnlp-main.1954">DOI</a> · <a href="../pdfs/2026.emnlp-main.1954.pdf">原始 PDF / Original PDF</a></p><p>'+pair('本阅读版的改动为中文翻译、段落配对及网页排版；中文译文由 AI 生成，原作者未对译文背书。16 幅图均来自原始 PDF：8 幅直接提取原始内嵌图片，8 幅将矢量图或提示词框单独渲染；均不含周围正文或页码。表格的数值、舍入和原文中的表述按原作保留。','This edition adds an AI-generated Chinese translation, paragraph alignment, and web layout. The original authors have not endorsed the translation. All 16 figures come from the original PDF: 8 directly extracted embedded images and 8 isolated renderings of vector figures or prompt boxes. Table values, rounding, and source statements are preserved as printed.')+'</p><p>'+pair('更新日期：2026 年 11 月 9 日。全部图像已内嵌，正文与图表均可离线阅读；原始 PDF 在 pdfs/ 目录提供。','Updated November 9, 2026. All images are embedded for offline reading; the original PDF is provided in the pdfs/ directory.')+'</p></footer></article></main>')
-tail=ace[ace.index('<dialog id="image-dialog"'):]
-
-tail=tail.replace("?get('mode'):'zh'","?get('mode'):'dual'")
-tail=tail.replace('td[data-searchable],th[data-searchable]', 'td[data-searchable],th[data-searchable],pre')
-tail=tail.replace("$('dialog-caption').textContent=img.alt", "$('dialog-caption').textContent=button.closest('figure').querySelector('figcaption').innerText")
-out.append(tail)
-(PUBLIC/'papers'/'skillforge.html').write_text('\n'.join(out))
-print(f'Built {units} paired/content units, 16 figures, 4 tables, 49 references.')
+out.append('<footer class="source-footer" id="source"><p class="eyebrow">SOURCE &amp; ATTRIBUTION</p><h2>'+pair('来源与翻译说明','Source and translation notes')+'</h2><p>'+pair('原作：Guangya Wan、Hao Wang、Xiao Ling、Mingyang Ling、Xiaoqi Ren、Sheng Li。EMNLP 2026，第 44486–44510 页。','Original work by Guangya Wan, Hao Wang, Xiao Ling, Mingyang Ling, Xiaoqi Ren, and Sheng Li. EMNLP 2026, pages 44486–44510.')+'</p><p><a href="https://aclanthology.org/2026.emnlp-main.1954/">ACL Anthology</a> · <a href="https://doi.org/10.18653/2026.emnlp-main.1954">DOI</a> · <a href="../pdfs/2026.emnlp-main.1954.pdf">原始 PDF / Original PDF</a></p><p>'+pair('本阅读版的改动为中文翻译、段落配对及网页排版；中文译文由 AI 生成，原作者未对译文背书。16 幅图均来自原始 PDF：8 幅直接提取原始内嵌图片，8 幅将矢量图或提示词框单独渲染；均不含周围正文或页码。表格的数值、舍入和原文中的表述按原作保留。','This edition adds an AI-generated Chinese translation, paragraph alignment, and web layout. The original authors have not endorsed the translation. All 16 figures come from the original PDF: 8 directly extracted embedded images and 8 isolated renderings of vector figures or prompt boxes. Table values, rounding, and source statements are preserved as printed.')+'</p><p>'+pair('更新日期：2026 年 11 月 9 日。全部图像已内嵌，正文与图表均可离线阅读；原始 PDF 在 pdfs/ 目录提供。','Updated November 9, 2026. All images are embedded for offline reading; the original PDF is provided in the pdfs/ directory.')+'</p></footer></article>')
+emit_paper('skillforge','\n'.join(out),toc_from_html(''.join(nav)))
+print(f'Built SkillForge document: {units} paired/content units, 16 figures, 4 tables, 49 references.')

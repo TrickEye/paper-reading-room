@@ -1,11 +1,11 @@
 ---
 name: paper-reading-room
-description: 将论文链接或本地 PDF 制作、修订为项目中的离线双语全文阅读页，保留独立原图和完整表格，并接入已有论文索引。适用于全文翻译与逐段中英对照维护；仅要求论文摘要或观点解读时不使用。
+description: 将论文链接或本地 PDF 制作、修订为项目中的基于共用阅读器的双语全文阅读页，保留独立原图和完整表格，并接入已有论文索引。适用于全文翻译与逐段中英对照维护；仅要求论文摘要或观点解读时不使用。
 ---
 
 # 论文双语阅读室
 
-目标：从可核验的论文原文制作可离线阅读、可追溯、可维护的双语网页。在此项目中，以 `public/papers/ace.html` 的阅读界面为基准，而不是以旧版概述式 SkillForge 页面为基准。用户指定的范围、版本及排版优先。
+目标：从可核验的论文原文制作可追溯、可维护的双语网页。本项目采用共用阅读器、统一 PaperDocument JSON 与独立原图；以 `reader/` 的现有界面和 `docs/reader-architecture.md` 的数据接口为准。用户指定的范围、版本及排版优先。
 
 ## 四项不可替代的内容要求
 
@@ -20,10 +20,10 @@ description: 将论文链接或本地 PDF 制作、修订为项目中的离线�
 
 ### 1. 定位项目与确认原文
 
-- 本仓库的发布边界是 `public/`：索引为 `public/index.html`，阅读页为 `public/papers/<paper-id>.html`，PDF 为 `public/pdfs/`；源数据及原图放 `data/<paper-id>/`，生成器放 `scripts/builders/`，说明放 `docs/`。不要把制作文件放入站点发布目录。
-- 阅读页返回索引用 `../index.html`，PDF 用 `../pdfs/<file>.pdf`；索引到论文用 `papers/<paper-id>.html`。使用相对 URL，兼容本地离线与 GitHub Pages 的仓库子路径，不使用以 `/` 开头的站内 URL。
+- 本仓库的发布边界是 `public/`：索引为 `public/index.html`，阅读页为 `public/papers/<paper-id>.html`，PDF 为 `public/pdfs/`；源数据及原图放 `data/<paper-id>/`，生成器放 `scripts/builders/`，说明放 `docs/`。共用阅读器源在 `reader/`，发布内容在 `public/content/`，发布脚本与样式在 `public/reader/`；不要把制作文件放入站点发布目录。
+- 阅读页返回索引用 `../index.html`，PDF 用 `../pdfs/<file>.pdf`；索引到论文用 `papers/<paper-id>.html`。使用相对 URL，兼容本地 HTTP 与 GitHub Pages 仓库子路径，不使用以 `/` 开头的站内 URL。外壳、资源清单与论文 JSON 各自的 URL 基准见架构说明。
 
-- 检查项目规则、`public/index.html`、阅读说明和参考阅读页，识别现有语言切换、目录、搜索、字号、主题、图片放大、打印及移动端行为。只读取必要片段，避免将内嵌 base64 图片输出到上下文。
+- 检查项目规则、`public/index.html`、阅读说明和通过 HTTP 加载的参考阅读页，识别现有语言切换、目录、搜索、字号、主题、图片放大、打印及移动端行为。只读取必要片段，避免将内嵌 base64 图片输出到上下文。
 - 从用户链接读取论文元数据并解析正式 PDF 下载地址；下载后验证确为 PDF、可解析且页数合理。保留原始 PDF，记录最终下载 URL、论文标识、版本、日期及 SHA-256。不要混用不同版本的正文、图表和附录。
 - 环境有工作区依赖定位工具时先定位 Python、PDF 与浏览器工具；不要把本机运行时绝对路径写成 skill 的必备依赖。
 
@@ -37,8 +37,8 @@ description: 将论文链接或本地 PDF 制作、修订为项目中的离线�
 
 - 每幅图记录图号、源页、源资源或裁图边界、方法、文件名和尺寸；不能假定 PDF 中“第 N 张图片”就是论文“图 N”。复杂子图优先保留完整组合图。
 - 批量提取时可使用 `scripts/extract_figures.py`；先人工确定图与资源／边界的对应关系。调用和提取方案见 [references/extraction-and-verification.md](references/extraction-and-verification.md)。
-- 沿用 ACE 的阅读器视觉与交互结构；替换论文特有标题、作者、元数据、目录和 PDF 路径，不复制 ACE 正文或遗留其图号、页数、链接。SkillForge 现有 `data/skillforge/` 是实现示例，**其中的 16 图、4 表、49 条参考文献不是新论文的默认数量**。
-- 尽量以双语数据与图表源文件生成 HTML；后续维护修改数据源并重建，不只手改生成页。正文、图表与必要脚本／样式可离线使用。
+- 沿用共用阅读器视觉与交互结构；在 `data/reader-meta.json` 与适配器中配置标题、作者、元数据、目录和 PDF 路径。禁止从 ACE 发布外壳截取 CSS、脚本或模板，也不复制 ACE 正文。SkillForge 现有 `data/skillforge/` 是实现示例，**其中的 16 图、4 表、49 条参考文献不是新论文的默认数量**。
+- 以双语源文稿和原图通过适配器输出统一 PaperDocument JSON，使用 `scripts/paper_document.py` 的 `emit_paper` 接口。正文按结构化单元组织，复杂富文本可保留局部 HTML／MathML；图片引用独立资源，禁止把整篇塞入单个 HTML 字段或重新嵌入 Base64。后续修改制作源并完整重建，不手改发布 JSON／外壳。
 
 ### 4. 接入已有索引
 
@@ -50,11 +50,12 @@ description: 将论文链接或本地 PDF 制作、修订为项目中的离线�
 - 依据清单核对译文覆盖率；逐段对照英文审校，重点复查否定、条件、数字、提升百分比与百分点、实验比较、局限和公式。**DOM 配对完整不等于译文忠实。**
 - 执行下方检查脚本，随后在浏览器检查中文／英文／逐段对照三种模式、目录、搜索、原图放大、字号、深色、打印布局，以及桌面和窄屏。确认图片真正解码成功、整页不横向溢出，宽表仅在自身容器内滚动。视觉检查也要看正文、长图、表和代码块，不能只看首页。
 - 检查索引仍可打开新旧论文及 PDF。若有无法取得或核实的内容，明确标记缺口与范围，不能用摘要或推断填满后宣称完成。
-- 运行 `python3 -B scripts/build.py` 重建并检查；已有产物可运行 `python3 -B scripts/check.py`。新增论文仍须完成原文和浏览器验收。最后给出阅读页链接、已完成范围和实际验证结果；保留双语数据、生成器及原图来源记录。
+- 运行 `python3 -B scripts/build.py` 重建并检查完整正文与发布资源；已有产物可运行 `python3 -B scripts/check.py`。新增论文仍须完成原文和浏览器验收。最后给出阅读页链接、已完成范围和实际验证结果；保留双语数据、生成器及原图来源记录。
 
 ```bash
 python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/<paper-id>.html' \
+  --document 'public/content/<paper-id>/paper.<实际摘要>.json' \
   --source-dir 'data/<paper-id>' --index public/index.html
 ```
 
-`--source-dir` 用于含 `assets.json`、`tables.json` 等本项目约定数据的目录；没有该目录时可省略，并用 `--expected-figures`、`--expected-tables` 传入从原作清单核实的数量。脚本仅做结构、资源和数据核对，不判断翻译质量或裁图边界是否正确。检查方法和失败后的处理见 [references/extraction-and-verification.md](references/extraction-and-verification.md)。
+`--source-dir` 用于含 `assets.json`、`tables.json` 等本项目约定数据的目录；没有该目录时可省略，并用 `--expected-figures`、`--expected-tables` 传入从原作清单核实的数量。`--document` 指向资源清单中该论文的实际 JSON；不能只审计无正文的 HTML 外壳。浏览器验收运行 `node scripts/browser_check.cjs`，依赖安装方式见 README。脚本仅做结构、资源和数据核对，不判断翻译质量或裁图边界是否正确。检查方法和失败后的处理见 [references/extraction-and-verification.md](references/extraction-and-verification.md)。

@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Build SkillCAT v2 as a self-contained, paragraph-paired offline reading page."""
+"""Build SkillCAT PaperDocument from matching v2 sources and translations."""
 from pathlib import Path
-import base64,copy,hashlib,html,json,re
+import copy,hashlib,html,json,re
 from html_tree import Node,TreeParser,serialize,tag,text_node
 ROOT=Path(__file__).resolve().parents[2]
 PUBLIC=ROOT/'public'
 SRC=ROOT/'data'/'skillcat'
 PDF=PUBLIC/'pdfs'/'SkillCAT-2606.13317v2.pdf'
-OUTPUT=PUBLIC/'papers'/'skillcat.html'
 VERSION='2606.13317v2'
 def save(name,value):
  (SRC/(name+'.json')).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n')
@@ -132,7 +131,7 @@ def main():
   else:
    match=re.search(r'<svg[^>]*width="([\d.]+)pt"[^>]*height="([\d.]+)pt"',data.decode());w,h=[round(float(v)*4/3) for v in match.groups()]
   cap=f.find_all(lambda n:n.tag=='figcaption')[0]
-  image=tag('img',[('src','data:image/'+('png' if ext=='png' else 'svg+xml')+';base64,'+base64.b64encode(data).decode()),('alt',translations[cap.attr('data-unit')]),('width',w),('height',h),('loading','lazy'),('decoding','async')])
+  image=tag('img',[('src','assets/'+filename),('alt',translations[cap.attr('data-unit')]),('width',w),('height',h),('loading','lazy'),('decoding','async')])
   f.children=[tag('span',[('id',sid),('class','source-anchor')]),tag('button',[('type','button'),('class','figure-zoom'),('aria-label',f'放大图 {num}')],[image]),cap]
   for ch in f.children:ch.parent=f
   f.set_attr('id',f'F{num}');f.set_attr('data-source-page',[1,3,6,7][num-1]);f.set_attr('data-original-image',filename)
@@ -155,21 +154,12 @@ def main():
  archive=SRC/'source.tar'
  if archive.exists():source_record['source_archive_sha256']=hashlib.sha256(archive.read_bytes()).hexdigest()
  save('source',source_record)
- ace=(PUBLIC/'papers'/'ace.html').read_text();head=ace[:ace.index('<body>')]
- head=re.sub(r'<title>.*?</title>','<title>SkillCAT · 中文全文与逐段对照</title>',head)
- head=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="SkillCAT 论文完整中文译文与逐段英文对照，4 幅原图、2 张完整表格，支持离线阅读。">',head)
- css=(SRC/'reader.css').read_text();head=head.replace('</style>',css+'</style>')
- shell=ace[ace.index('<body>'):ace.index('<main>')].replace('class="brand-name">ACE<span>','class="brand-name">SkillCAT<span>').replace('2510.04618.pdf',PDF.name).replace('原图保留 · 可离线浏览','4 幅原图 · 2 张完整表格 · 离线阅读')
  nav='<a href="#abstract1" class="nav-main">摘要 / Abstract</a>'
  for level,target,label in headings:nav+=f'<a class="nav-{"main" if level=="h2" else "sub"}" href="#{target}">{html.escape(label)}</a>'
  nav+='<a href="#alg1" class="nav-main">算法 1 · SkillCAT 流程</a><a href="#source" class="nav-main">来源与翻译说明</a>'
- shell=re.sub(r'<nav aria-label="论文章节">.*?</nav>','<nav aria-label="论文章节">'+nav+'</nav>',shell,flags=re.S)
- tail=ace[ace.index('<dialog id="image-dialog"'):].replace("ace-reader-","skillcat-reader-").replace(":'zh';root.dataset.lang=mode.value",":'dual';root.dataset.lang=mode.value")
- tail=tail.replace("$('dialog-caption').textContent=img.alt","$('dialog-caption').textContent=button.closest('figure').querySelector('figcaption').innerText")
- # Search only the visible language, including inline-paired algorithm lines.
- tail=tail.replace("p[data-searchable],h1", "[data-unit][data-searchable],h1")
- tail=tail.replace("filter(Boolean);\nlinks.forEach","filter(Boolean).sort((a,b)=>a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING?-1:1);\nlinks.forEach")
- tail=tail.replace("let count=0;for(const el of candidates){", "let count=0;for(const el of candidates){if(!el.getClientRects().length)continue;")
- OUTPUT.write_text(head+shell+'<main>'+serialize(a)+'</main>'+tail)
- print('Built',OUTPUT.name,':',len(records),'main units,',len(extra_expected),'algorithm/table units; 4 figures, 2 tables, 34 references.')
+ import sys
+ sys.path.insert(0,str(ROOT/'scripts'))
+ from paper_document import emit_paper,toc_from_html
+ emit_paper('skillcat',serialize(a),toc_from_html(nav))
+ print('Built SkillCAT document:',len(records),'main units,',len(extra_expected),'algorithm/table units; 4 figures, 2 tables, 34 references.')
 if __name__=='__main__':main()

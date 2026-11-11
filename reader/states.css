@@ -1,0 +1,14 @@
+[hidden]{display:none!important}
+/* Paper-specific table/note styles must not reveal the hidden language. */
+html[data-lang=en] article :is(.zh,.translation){display:none!important}
+html[data-lang=zh] article .en{display:none!important}
+/* Keep the existing original reference titles in Chinese bibliography mode. */
+html[data-lang=zh] article .ltx_bib_title .en{display:block!important}
+.reader-feedback{max-width:920px;margin:0 auto;padding:40px;background:var(--surface);border:1px solid var(--line);border-radius:3px;min-height:180px;line-height:1.9}
+.reader-feedback p{font-size:18px}.reader-feedback a{color:var(--primary)}
+#retry-button{margin-right:12px;min-height:44px}
+#print-status{max-width:920px;margin:0 auto 20px;color:var(--accent)}
+.image-error{font:13px/1.8 system-ui;color:var(--accent);padding:12px}
+#paper-selector{max-width:190px;font-size:13px}
+@media(max-width:580px){.reader-feedback{padding:30px 22px;border:0}#paper-selector{max-width:130px}}
+@media print{.reader-feedback,#print-status,.image-error{display:none!important}}

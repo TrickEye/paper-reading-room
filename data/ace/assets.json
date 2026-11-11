@@ -1,0 +1,128 @@
+[
+  {
+    "figure": 1,
+    "file": "figure-01.svg",
+    "width": 521,
+    "height": 160,
+    "sha256": "9ec920c8726361cb4239f93f9543f20666c841005642f9edfd70bbb243df2a54",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "S1.F1"
+  },
+  {
+    "figure": 2,
+    "file": "figure-02.png",
+    "width": 439,
+    "height": 173,
+    "sha256": "82ad3dd51c196e93b4a03c2521ded61dd02dc2b4d505d1fc814ffc0044eab463",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "S2.F2"
+  },
+  {
+    "figure": 3,
+    "file": "figure-03.png",
+    "width": 494,
+    "height": 329,
+    "sha256": "9e625302c86f4d9686f6753ad4d0cd35a909f3e077176db4224c361a7fd9e5a9",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "S2.F3"
+  },
+  {
+    "figure": 4,
+    "file": "figure-04.png",
+    "width": 521,
+    "height": 172,
+    "sha256": "6c89d29a95d8d33a1a5b82b5ebb2f50c2038c4c9cd8dbbd70311f2bf41ee66a5",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "S3.F4"
+  },
+  {
+    "figure": 5,
+    "file": "figure-05.png",
+    "width": 439,
+    "height": 181,
+    "sha256": "6187b4c61ff9de484a83e4e402c13a5d24ab99aabf4547af5b9f952bba62bdd4",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A4.F5"
+  },
+  {
+    "figure": 6,
+    "file": "figure-06.svg",
+    "width": 548,
+    "height": 513,
+    "sha256": "8f976c94d382fef534dad8ba3d38790e63fc2c559bcb08c42e9119e6f9d41297",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F6"
+  },
+  {
+    "figure": 7,
+    "file": "figure-07.svg",
+    "width": 548,
+    "height": 833,
+    "sha256": "75f8496b9967c5ef9fbd5f0ee717d17b1826ffcc5837841f07ae2a6453ba8bec",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F7"
+  },
+  {
+    "figure": 8,
+    "file": "figure-08.svg",
+    "width": 548,
+    "height": 693,
+    "sha256": "7f105ff6367b2584814a024d37bcf271d25598675860ff78c0562b3926d5a66a",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F8"
+  },
+  {
+    "figure": 9,
+    "file": "figure-09.svg",
+    "width": 548,
+    "height": 639,
+    "sha256": "2d9069f3e89e78968574bb002991dbc1523aea1e4bd12e3c45e138d70bb1d9e3",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F9"
+  },
+  {
+    "figure": 10,
+    "file": "figure-10.svg",
+    "width": 548,
+    "height": 890,
+    "sha256": "77462b360788f242f0a9442186231d2a8496dd84d54fecc452af9ec28434db60",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F10"
+  },
+  {
+    "figure": 11,
+    "file": "figure-11.svg",
+    "width": 548,
+    "height": 785,
+    "sha256": "b43e540e2a14fb341d6389071832898c661210ed8d34fe058f9085f634e98e90",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F11"
+  },
+  {
+    "figure": 12,
+    "file": "figure-12.svg",
+    "width": 548,
+    "height": 343,
+    "sha256": "4bc17daecb8001818bc7252bfc36e915e54baaf82e5ea5211ec4fb66ff0ca4f7",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F12"
+  },
+  {
+    "figure": 13,
+    "file": "figure-13.svg",
+    "width": 548,
+    "height": 519,
+    "sha256": "4343dfa8151515d7199cd30816bf2b425136b9c165a1e748724b379c23f45404",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F13"
+  },
+  {
+    "figure": 14,
+    "file": "figure-14.svg",
+    "width": 548,
+    "height": 554,
+    "sha256": "4b99efbde87ba896e3ef0f6ad5df7e63c970bd62a798ee431a90d8d4afbe5d17",
+    "method": "无损提取自迁移前 ACE 阅读页的内嵌原图；原图名保留在正文 data-original-image 中",
+    "id": "A6.F14"
+  }
+]

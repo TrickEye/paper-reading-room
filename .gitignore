@@ -4,3 +4,6 @@ __pycache__/
 
 # Local operating system metadata
 .DS_Store
+
+# Optional browser acceptance dependencies
+node_modules/

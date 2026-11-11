@@ -107,7 +107,16 @@ def grid(table):
 
 def audit(args):
     errors, warnings = [], []
-    content = args.html.read_text(encoding='utf-8')
+    resource_base = args.html.parent
+    if getattr(args, 'document', None):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'scripts'))
+        from paper_document import render_article, validate_document
+        record = json.loads(args.document.read_text(encoding='utf-8'))
+        validate_document(record)
+        content = render_article(record)
+        resource_base = args.document.parent
+    else:
+        content = args.html.read_text(encoding='utf-8')
     document = Document(content)
     nodes = list(document.root.descendants())
     ids = Counter(n.attrs['id'] for n in nodes if n.attrs.get('id'))
@@ -132,7 +141,7 @@ def audit(args):
             href = node.attrs['href']
             if href.startswith('#') and unquote(href[1:]) not in ids:
                 errors.append(f'broken anchor: {href}')
-            target = local_target(href, args.html.parent)
+            target = local_target(href, resource_base)
             if target is not None and not target.exists():
                 errors.append(f'missing linked file: {target.name}')
     figures = [n for n in nodes if n.tag == 'figure' and n.has('ltx_figure')]
@@ -159,7 +168,7 @@ def audit(args):
                         raise ValueError('image data URL is not base64')
                     raw = base64.b64decode(data, validate=True)
                 else:
-                    target = local_target(src, args.html.parent)
+                    target = local_target(src, resource_base)
                     if target is None:
                         raise ValueError('remote/missing image prevents offline use')
                     raw = target.read_bytes()
@@ -172,7 +181,7 @@ def audit(args):
     for node in nodes:
         url = node.attrs.get('src') if node.tag == 'script' else node.attrs.get('href') if node.tag == 'link' and node.attrs.get('rel') == 'stylesheet' else None
         if url:
-            target = local_target(url, args.html.parent)
+            target = local_target(url, resource_base)
             if target is None and not url.startswith('data:'):
                 errors.append('remote script/stylesheet prevents guaranteed offline use')
             elif target is not None and not target.exists():
@@ -191,7 +200,7 @@ def audit(args):
             if len({str(a['figure']) for a in assets}) != len(assets):
                 errors.append('duplicate figures in assets manifest')
             for asset in assets:
-                fid = 'F' + str(asset['figure'])
+                fid = asset.get('id', 'F' + str(asset['figure']))
                 raw = image_data.get(fid)
                 target = args.source_dir / 'assets' / asset['file']
                 if not target.exists():
@@ -248,6 +257,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('html', type=Path)
     parser.add_argument('--source-dir', type=Path)
+    parser.add_argument('--document', type=Path, help='Audit the full PaperDocument JSON belonging to this shell')
     parser.add_argument('--index', type=Path)
     parser.add_argument('--expected-figures', type=int)
     parser.add_argument('--expected-tables', type=int)

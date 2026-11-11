@@ -55,7 +55,7 @@ python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/s
 - 不再使用旧 `.original-page` 整页图容器或 `.source-page` 按页折叠原文；
 - 内部锚点、阅读页及索引本地链接存在；
 - 图像资源非空、base64 可解析、alt 和尺寸存在，无依赖远程资源的图片／脚本／样式；
-- 有源清单时，图号数量、内嵌图片与文件字节及摘要一致；
+- 有源清单时，图号数量、发布图片与源文件字节及摘要一致；
 - 有表格 JSON 时，将 HTML 表格的合并单元格展开，与全部源数据行比较；
 - 参考文献数量及双语源字段基本完整。
 
@@ -86,3 +86,8 @@ python3 skills/paper-reading-room/scripts/audit_reading_page.py 'public/papers/n
 - 索引：新旧论文阅读页及 PDF 仍可打开，无重复卡片、旧标题或错误计数。
 
 浏览器截图只用于验收，不作为论文插图交付。无浏览器可用时报告没有完成视觉验收，不能把结构审计称为视觉验证。网络或解析失败时保留已完成工作，明确具体缺口；不要以模型概述、空占位图或整页截图代替。
+
+
+## 共用阅读器发布格式
+
+本项目发布页为轻量外壳。审计时必须传入 `--document public/content/<paper-id>/paper.<实际摘要>.json`，完整命令与浏览器验收见仓库 README；直接检查外壳不能证明正文完整。独立原图以文件发布，不再要求嵌入 Base64。保留原图字节、来源与 SHA-256，并通过 HTTP 检查实际图片解码、MathML、表格、搜索、打印及仓库子路径。
