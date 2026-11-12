@@ -19,11 +19,11 @@ reader/reader.<sha256前16位>.css
 reader/reader.<sha256前16位>.js
 content/manifest.json
 content/ace/paper.<sha256前16位>.json
-content/ace/assets/figure-01.<sha256前16位>.svg
+content/ace/assets/figure-01.svg
 pdfs/Agentic-Context-Engineering-2510.04618.pdf
 ```
 
-摘要取文件的实际 UTF-8 字节或原始图片字节计算，无构建时间戳。构建会清除自己管理的过期版本，保证产物确定。资源清单请求采用 HTTP 重验证，其余资源沿用浏览器缓存。外壳引用固定的 `reader/loader.js`。该小入口重验证资源清单，修正缓存外壳中的样式地址，再导入当前的摘要脚本；因此旧外壳不依赖已被清理的旧摘要脚本。加载清单、样式或主模块失败均提供重试；不自动刷新整页或静默展示不完整正文。
+摘要取文件的实际 UTF-8 字节或原始图片字节计算，无构建时间戳。构建会清除自己管理的过期版本，保证产物确定。资源清单请求采用 HTTP 重验证，其余资源沿用浏览器缓存。每张原图只发布一份，`url` 使用不含哈希的固定文件名（如 `assets/figure-01.svg`），正文和笔记共用同一地址。重建覆盖原文件并清理旧的哈希图片和其他过期图片，不生成额外副本；图片 SHA-256 仅用于字节校验。外壳引用固定的 `reader/loader.js`。该小入口重验证资源清单，修正缓存外壳中的样式地址，再导入当前的摘要脚本；因此旧外壳不依赖已被清理的旧摘要脚本。加载清单、样式或主模块失败均提供重试；不自动刷新整页或静默展示不完整正文。
 
 ## PaperDocument
 
@@ -44,7 +44,7 @@ pdfs/Agentic-Context-Engineering-2510.04618.pdf
     "storageKey": "ace-reader-"
   },
   "toc": [{"id": "S1", "label": "1 引言", "level": 2}],
-  "assets": [{"id": "figure-01", "url": "assets/figure-01.HASH.svg", "width": 1000, "height": 600, "sha256": "完整摘要", "source": {}}],
+  "assets": [{"id": "figure-01", "url": "assets/figure-01.svg", "width": 1000, "height": 600, "sha256": "完整摘要", "source": {}}],
   "blocks": []
 }
 ```
@@ -99,7 +99,7 @@ python3 skills/paper-reading-room/scripts/audit_reading_page.py public/papers/ac
 
 `reader/notes.js` 是独立笔记控制器，布局样式合入共用 CSS。资源清单提供可选的 `notes: {js, vendor, documents, github}`：`js` 为带内容摘要的模块，`vendor` 为带校验清单摘要的目录 URL，`documents` 为 `../notes/`，这些地址均相对清单解析。`github` 为公开的 `{owner, repo, branch, directory}`，当前值为 `TrickEye`、`paper-reading-room`、`main`、`public/notes/`。旧清单缺少新增配置时仍可使用内存笔记编辑。阅读器载入控制器后创建默认隐藏的面板；仅第一次打开时请求 Vditor 4.0.1、Lute、中文语言包、图标和 KaTeX。关闭面板保留实例。编辑器资源失败时降级为纯 Markdown 文本框，可继续编辑并重试加载。
 
-固定版本发布资源保存在 `reader/vendor/vditor-4.0.1/`，`checksums.json` 记录官方 npm tarball 的 SHA-512、各文件 SHA-256 与许可证来源。构建校验并原样复制所需文件，不运行 npm，不联网下载。发布审计验证目录摘要、全部文件及意外资源；不发布上游示例 HTML 或源码。代码块预览关闭，数学预览启用；编辑器使用本地资源地址。Lute 内置安全过滤之外，编辑器 DOM 转换边界进一步移除活动 HTML、图片和危险链接属性，笔记 HTML 不进入论文正文。
+固定版本发布资源保存在 `reader/vendor/vditor-4.0.1/`，`checksums.json` 记录官方 npm tarball 的 SHA-512、各文件 SHA-256 与许可证来源。构建校验并原样复制所需文件，不运行 npm，不联网下载。发布审计验证目录摘要、全部文件及意外资源；不发布上游示例 HTML 或源码。代码块预览关闭，数学预览启用；编辑器使用本地资源地址。Lute 内置安全过滤之外，编辑器 DOM 转换边界进一步移除活动 HTML、站外图片和危险链接属性，笔记 HTML 不进入论文正文。
 
 笔记仅保存在控制器内存，既不读取旧版 `paper-reader:<站点路径>:notes:v1:<paperId>` 记录，也不新增、删除或修改该记录；不再提供本地自动保存和跨标签页冲突处理。关闭面板保留本页草稿，刷新和跨论文导航重新加载部署版。主题、字号和 `paper-reader:<站点路径>:notes-width` 等界面偏好仍使用 localStorage。
 
@@ -111,4 +111,6 @@ GitHub 提交只通过网页交接，不持有令牌或调用写 API。提交面
 
 `public/notes/` 是手工维护的发布源文件目录，构建不会生成、改写或清理 Markdown，也不会把笔记列表、正文或摘要加入资源清单。GitHub 网页可以只提交笔记文件，重新构建仍保持其他产物一致；笔记初始不存在属于正常情况，不要求占位文件。
 
-摘录保存实际选中文字，追加 Markdown 引用和论文外壳相对链接；优先引用已有正文锚点，跳过临时搜索 ID，不改写论文数据。跨段选择定位起点。移动端回跳收起抽屉；桌面面板开关尽量保持当前可见内容单元位置。笔记不参与全文搜索、阅读进度或打印。新增浏览器用例在 `scripts/browser_notes.cjs`，由共用验收入口执行；真实软键盘体验仍需 iOS Safari 和 Android Chrome 实机核验。
+正文图片在鼠标悬停或键盘聚焦时显示「摘录到笔记」，触屏设备始终显示入口；原图放大弹窗也提供相同操作。摘录追加 Markdown 图片引用、当前阅读模式下可见的纯文本图注和图的原有锚点链接，支持撤销；没有图注时使用图片替代文本。图片引用相对 `notes/<paper-id>/notes.md` 解析，预览 DOM 将地址解析为绝对地址，但 Markdown 保留相对写法，以兼容 GitHub 渲染、项目子路径与预览入口。笔记编辑器只预览本站 `content/<paper-id>/assets/figure-…` 原图，移除图片事件、srcset、内联样式和其他图片属性；不预览外部地址、data URL 或内联 SVG。刷新远端和输入法组合期间禁用图片摘录，编辑器加载失败时仍可向纯 Markdown 文本框插入引用。
+
+文字摘录保存实际选中文字，追加 Markdown 引用和论文外壳相对链接；优先引用已有正文锚点，跳过临时搜索 ID，不改写论文数据。跨段选择定位起点。移动端回跳收起抽屉；桌面面板开关尽量保持当前可见内容单元位置。笔记不参与全文搜索、阅读进度或打印。新增浏览器用例在 `scripts/browser_notes.cjs`，由共用验收入口执行；真实软键盘体验仍需 iOS Safari 和 Android Chrome 实机核验。

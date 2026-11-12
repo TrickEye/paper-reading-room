@@ -60,7 +60,7 @@ emit_paper(
 
 `toc.json` 是有序列表，例如 `[{"id":"S1","label":"1 引言","level":2}]`；每个目标必须存在于正文中。二级目录用 `level:3`。
 
-图片输入写 `src="assets/figure-01.svg"`，相对 `data/<paper-id>/`；`width`、`height` 为正整数。图号清单与正文图片顺序须一致。构建器复制原字节、计算摘要并生成发布地址，源文件不使用摘要名或 Base64。图表的编号、来源属性、完整表格结构与双语配对详见 [content-and-layout.md](content-and-layout.md)。
+图片输入写 `src="assets/figure-01.svg"`，相对 `data/<paper-id>/`；`width`、`height` 为正整数。图号清单与正文图片顺序须一致。构建器复制原字节到不含哈希的固定发布地址，正文和笔记共用同一份图片；SHA-256 仅用于字节校验。源文件不使用摘要名或 Base64。图表的编号、来源属性、完整表格结构与双语配对详见 [content-and-layout.md](content-and-layout.md)。
 
 正文中的 `#锚点` 保留。PDF 和返回索引的源链接仍按阅读页位置写作 `../pdfs/<filename>.pdf`、`../index.html`；导出器会转换为相对论文 JSON 的地址。不要提前手写 `../../pdfs/`，否则会被再次转换。样式在 `reader/` 维护，不放入论文内容。
 
@@ -74,7 +74,7 @@ python3 -B -m unittest discover -s tests -v
 完整构建会输出并审计：
 
 - `public/content/<paper-id>/paper.<摘要>.json`：顶层含 `schemaVersion:1`、`id`、`meta`、`toc`、`assets`、`blocks`。
-- `public/content/<paper-id>/assets/`：带摘要名的独立原图。
+- `public/content/<paper-id>/assets/`：使用 `figure-01.svg` 等固定文件名的独立原图，每张仅一份。
 - `public/content/manifest.json`：该论文实际 JSON、PDF 与阅读器资源地址。
 - `public/papers/<paper-id>.html`：引用共用阅读器的轻量外壳。
 

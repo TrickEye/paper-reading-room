@@ -97,7 +97,7 @@ def emit_paper(slug, article_html, toc):
                 raise ValueError('Source asset leaves its paper directory')
             raw, ext = target.read_bytes(), target.suffix[1:]
         sha = digest(raw)
-        filename = f'assets/figure-{i:02d}.{sha[:16]}.{ext}'
+        filename = f'assets/figure-{i:02d}.{ext}'
         path = directory / filename
         path.parent.mkdir(exist_ok=True)
         path.write_bytes(raw)

@@ -87,6 +87,63 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert.equal(new URL(page.url()).hash,'#abstract1');
 
   console.log('PASS notes editor, formatting, security, excerpt and undo');
+  // Figure actions reference stable URLs relative to notes.md, including IR round trips.
+  const originalNote='# 已有笔记\n\n末尾标记';
+  await (await source(page)).fill(originalNote); await page.click('#notes-edit'); await page.click('#notes-close');
+  await page.selectOption('#reading-mode','zh');
+  const figure = page.locator('figure').filter({has:page.locator('.figure-zoom')}).first();
+  await figure.scrollIntoViewIfNeeded(); await figure.locator('.figure-image-actions').hover();
+  const imageAction=figure.locator('.figure-note-excerpt');
+  await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector('.figure-note-excerpt')).opacity)===1);
+  await imageAction.click();
+  await page.waitForSelector('#notes-editor .vditor-ir img');
+  await page.locator('.vditor-ir').focus();
+  await page.keyboard.press(process.platform==='darwin'?'Meta+z':'Control+z');
+  assert.equal((await draft(page)).trim(),originalNote,'image excerpt undo preserves existing notes');
+  await page.click('#notes-edit');
+  await page.click('#notes-close'); await page.selectOption('#reading-mode','en');
+  await figure.locator('.figure-zoom').click();
+  await page.click('#notes-image-excerpt');
+  assert(!(await page.locator('#image-dialog').isVisible()));
+  assert(await page.locator('#notes-panel').isVisible());
+  await page.waitForSelector('#notes-editor .vditor-ir img');
+  assert(await page.locator('.vditor-ir').evaluate(el=>el.contains(document.activeElement)),'dialog handoff focuses notes');
+  await page.screenshot({path:path.join(output,'notes-image-excerpt-desktop.png')});
+  const imageMarkdown=await draft(page);
+  assert(imageMarkdown.indexOf('末尾标记')<imageMarkdown.indexOf('!['),'image appends after existing content');
+  assert(imageMarkdown.includes('../../content/ace/assets/figure-01.svg'));
+  assert.equal(await page.locator('#notes-editor .vditor-ir img').getAttribute('src'),await figure.locator('img').getAttribute('src'),'notes and paper share one image URL');
+  assert(imageMarkdown.includes('[返回原图](ace.html#S1.F1)'));
+  assert(imageMarkdown.includes('Overall Performance Results'));
+  assert(!imageMarkdown.includes('总体性能结果'),'caption and alt use the selected language');
+  for(let i=0;i<2;i++) {
+    await page.click('#notes-edit');
+    await page.waitForFunction(()=>{const img=document.querySelector('#notes-editor .vditor-ir img');return img?.naturalWidth>0});
+    assert(await page.locator('#notes-editor .vditor-ir img').evaluate(el=>el.getBoundingClientRect().width<=el.closest('.vditor-ir').clientWidth));
+    assert.equal((await draft(page)).trim(),imageMarkdown.trim(),'image markdown survives mode switches');
+  }
+  // Inserting while in source mode also appends and remains undoable.
+  await page.click('#notes-close'); await figure.locator('.figure-zoom').click(); await page.click('#notes-image-excerpt');
+  assert.equal(((await draft(page)).match(/!\[/g)||[]).length,2);
+  await page.locator('.vditor-sv').focus(); await page.keyboard.press(process.platform==='darwin'?'Meta+z':'Control+z');
+  assert.equal((await draft(page)).trim(),imageMarkdown.trim(),'source-mode image excerpt is undoable');
+  await page.click('#notes-edit');
+  assert.equal((await handoff(page)).trim(),imageMarkdown.trim()); await closeHandoff(page);
+  // Reload deployed image markup, preserve image safety, and follow the original anchor.
+  remote.set(notesPath,{status:200,body:imageMarkdown});
+  await ready(page); await open(page);
+  await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
+  await page.locator('.vditor-ir__link').filter({hasText:'返回原图'}).click();
+  assert.equal(new URL(page.url()).hash,'#S1.F1');
+  assert(await page.locator('#S1\\.F1').evaluate(el=>el.classList.contains('notes-target')));
+  const unsafeImages='\n![external](https://example.invalid/tracker.png)\n![data](data:image/svg+xml;base64,PHN2Zz4=)\n<img src="../../content/ace/assets/figure-01.svg" onerror="window.__notesXSS=true" srcset="https://example.invalid/other.png 2x">\n';
+  await (await source(page)).fill(imageMarkdown+unsafeImages); await page.click('#notes-edit');
+  assert.equal(await page.locator('#notes-editor img[srcset],#notes-editor img[onerror]').count(),0);
+  assert(await page.locator('#notes-editor img').evaluateAll(nodes=>nodes.every(el=>el.src.startsWith(location.origin+'/content/'))));
+  assert(!(await page.evaluate(()=>window.__notesXSS)));
+  remote.delete(notesPath);
+  await page.click('#notes-refresh'); await page.waitForFunction(()=>!document.querySelector('#notes-refresh').disabled);
+  console.log('PASS notes image excerpt, undo, stable relative URLs, remote reload, modes and safety');
   // New-file encoding and immutable snapshot, with a real intercepted popup.
   const special = '# 中文 & + # % ?\n\n第二行 😀\n[x](https://example.org/?a=1&b=2)\n';
   await (await source(page)).fill(special);
@@ -143,6 +200,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert(await page.locator('#notes-editor').evaluate(el=>el.inert));
   assert(await page.locator('#notes-fallback').evaluate(el=>el.readOnly));
   assert(await page.locator('#notes-github').isDisabled());
+  assert(await page.locator('.figure-note-excerpt').first().isDisabled());
   while (!pending) await new Promise(r=>setTimeout(r,10));
   pending(); pending=null;
   await page.waitForFunction(()=>!document.querySelector('#notes-refresh').disabled);
@@ -176,13 +234,17 @@ module.exports = async function checkNotes({browser, route, output}) {
   // IME blocks handoff/refresh until composition finishes.
   const src=await source(page); await src.dispatchEvent('compositionstart'); await src.fill('中文输入法');
   assert(await page.locator('#notes-github').isDisabled()); assert(await page.locator('#notes-refresh').isDisabled());
+  assert(await page.locator('.figure-note-excerpt').first().isDisabled());
   await src.dispatchEvent('compositionend'); assert(!(await page.locator('#notes-github').isDisabled()));
   assert((await page.locator('#notes-save-status').innerText()).includes('未提交'));
   assert(!await page.evaluate(()=>Object.keys(localStorage).some(k=>k.includes(':notes:') && localStorage.getItem(k)!=='legacy-note-record')),'no note storage written');
 
+  await (await source(page)).fill(imageMarkdown); await page.click('#notes-edit');
+  await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
   for (const width of [1920,1440,1024,390,320]) {
     await page.setViewportSize({width,height:900});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`no overflow at ${width}`);
+    assert(await page.locator('#notes-editor .vditor-ir img').evaluate(el=>el.getBoundingClientRect().width<=el.closest('.vditor-ir').clientWidth),`image fits at ${width}`);
     const box=await page.locator('#notes-panel').boundingBox();
     if(width<=940) assert(Math.abs(box.height-450)<2,'half-height mobile sheet');
     if(width===1024) { await page.click('#menu-button'); assert(!(await page.locator('#notes-panel').isVisible())); await page.keyboard.press('Escape'); await open(page); }
@@ -196,11 +258,20 @@ module.exports = async function checkNotes({browser, route, output}) {
   const shell=await (await page.request.get(route('ace'))).text();
   const previewURL=new URL('/reader-preview.html?paper=ace',route('ace')).href;
   await page.route(previewURL,r=>r.fulfill({contentType:'text/html',body:shell.replaceAll('../','')}));
-  remote.set(notesPath,{status:200,body:'预览笔记'});
+  remote.set(notesPath,{status:200,body:imageMarkdown});
   await page.goto(previewURL); await page.waitForSelector('#notes-panel',{state:'attached'}); await open(page);
-  assert.equal((await draft(page)).trim(),'预览笔记');
+  assert.equal((await draft(page)).trim(),imageMarkdown.trim());
+  await page.click('#notes-edit');
+  await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
   await ready(page,'ace','/project'); await open(page); assert.equal((await draft(page)).trim(),'');
   assert(requests.some(url=>new URL(url).pathname==='/project/notes/ace/notes.md'));
+  await page.click('#notes-edit'); await page.click('#notes-close'); await page.locator('.figure-zoom').first().focus();
+  await page.keyboard.press('Tab');
+  assert(await page.locator('.figure-note-excerpt').first().evaluate(el=>el===document.activeElement));
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
+  assert((await page.locator('#notes-editor .vditor-ir img').getAttribute('src')).includes('/project/content/ace/assets/figure-01.svg'));
+  assert((await draft(page)).includes('../../content/ace/assets/figure-01.svg'));
   await ready(page,'skillforge'); await open(page); assert.equal((await draft(page)).trim(),'');
   assert(!requests.some(url=>/example\.invalid|\/js\/(mermaid|echarts|graphviz)/.test(url)));
   assert(requests.every(url=>url.startsWith(new URL(route('ace')).origin)),'main page makes only same-origin requests');
@@ -229,6 +300,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   acceptLeave(mobile);
   await mobile.addInitScript(()=>Object.defineProperty(window,'visualViewport',{value:Object.assign(new EventTarget(),{height:innerHeight,offsetTop:0})}));
   await ready(mobile); await open(mobile); await (await source(mobile)).focus();
+  assert.equal(await mobile.locator('.figure-note-excerpt').first().evaluate(el=>getComputedStyle(el).opacity),'1','touch action remains visible');
   await mobile.evaluate(()=>{visualViewport.height=400;visualViewport.dispatchEvent(new Event('resize'));});
   assert(Math.abs((await mobile.locator('#notes-panel').boundingBox()).height-280)<2);
   assert((await mobile.locator('.vditor-sv').boundingBox()).height>40,'keyboard leaves usable editor');
@@ -243,6 +315,20 @@ module.exports = async function checkNotes({browser, route, output}) {
   await mobile.waitForSelector('#notes-excerpt:visible');await mobile.tap('#notes-excerpt');
   assert((await draft(mobile)).includes(english),'touch excerpt includes only selected language');
   assert(!(await draft(mobile)).includes('大语言模型'));
+  await mobile.tap('#notes-edit'); await mobile.tap('#notes-close'); await mobile.locator('.figure-zoom').first().tap();
+  await mobile.tap('#notes-image-excerpt');
+  await mobile.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
+  assert(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile image fits');
+  await mobile.waitForFunction(()=>{
+    const el=document.querySelector('#notes-editor .vditor-ir img');
+    const image=el.getBoundingClientRect(),area=el.closest('.vditor-reset').getBoundingClientRect();
+    return image.top>=area.top && image.bottom<=area.bottom;
+  });
+  await mobile.screenshot({path:path.join(output,'notes-image-excerpt-mobile.png')});
+  await mobile.locator('.vditor-ir__link').filter({hasText:'返回原图'}).tap();
+  assert(!(await mobile.locator('#notes-panel').isVisible()),'mobile image citation closes sheet');
+  assert.equal(new URL(mobile.url()).hash,'#S1.F1');
+  await open(mobile);
   await mobile.screenshot({path:path.join(output,'notes-mobile-editor.png')});
   await mobile.close();
 
@@ -292,7 +378,14 @@ module.exports = async function checkNotes({browser, route, output}) {
       await p.waitForSelector('#notes-retry:visible');
       await p.fill('#notes-fallback','降级编辑'); await p.click('#notes-close'); await p.click('#notes-button');
       assert.equal(await p.locator('#notes-fallback').inputValue(),'降级编辑');
-      if(failure!=='storage') { await p.unrouteAll(); await p.click('#notes-retry'); await p.waitForSelector('#notes-editor[data-editor-ready=true]'); assert.equal((await draft(p)).trim(),'降级编辑'); }
+      let expectedDraft='降级编辑';
+      if(failure==='editor') {
+        await p.locator('.figure-zoom').first().click(); await p.click('#notes-image-excerpt');
+        await p.waitForFunction(()=>document.querySelector('#notes-fallback').value.includes('返回原图'));
+        expectedDraft=await p.locator('#notes-fallback').inputValue();
+        assert(expectedDraft.includes('../../content/ace/assets/figure-01.svg'));
+      }
+      if(failure!=='storage') { await p.unrouteAll(); await p.click('#notes-retry'); await p.waitForSelector('#notes-editor[data-editor-ready=true]'); assert.equal((await draft(p)).trim(),expectedDraft.trim()); }
     }
     await p.close();
   }

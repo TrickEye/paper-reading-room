@@ -69,7 +69,7 @@
 </figure>
 ```
 
-这里的 `src` 相对 `data/<paper-id>/`，例如实际源文件为 `data/<paper-id>/assets/figure-02.png`。摘要文件名和发布资源地址由构建器生成，不能手写回制作源。适配器与资源清单约定见 [publication-contract.md](publication-contract.md)。
+这里的 `src` 相对 `data/<paper-id>/`，例如实际源文件为 `data/<paper-id>/assets/figure-02.png`。不含哈希的固定发布资源地址由构建器生成，正文和笔记共用一份原图；不能把发布路径手写回制作源。适配器与资源清单约定见 [publication-contract.md](publication-contract.md)。
 
 - 同一图的所有子图、图内标题、轴标签和图例均应保留。若矢量图散落在多个 PDF 对象里，不把其中一个对象当成完整图。
 - 放大查看真实资源；不能只放大低分辨率预览。设置原始尺寸与按比例缩放；深色模式下保留图本身的原始背景和色彩。

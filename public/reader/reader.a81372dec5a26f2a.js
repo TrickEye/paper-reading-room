@@ -188,14 +188,15 @@ function initArticle() {
     if (!button) return;
     trigger = button;
     const image = button.querySelector('img');
+    dialog.noteImage = image;
     $('dialog-image').src = image.src;
     $('dialog-image').alt = image.alt;
     $('dialog-caption').textContent = button.closest('figure').querySelector('figcaption')?.innerText || image.alt;
-    dialog.showModal(); $('image-close').focus();
+    dialog.returnValue = ''; dialog.showModal(); $('image-close').focus();
   });
   $('image-close').onclick = () => dialog.close();
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
-  dialog.addEventListener('close', () => trigger?.focus());
+  dialog.addEventListener('close', () => { if (dialog.returnValue !== 'notes-excerpt') trigger?.focus(); });
   $('paper').querySelectorAll('img').forEach(imageState);
   imageState($('dialog-image'));
 
@@ -299,6 +300,7 @@ async function load(refresh = false) {
     ready = true;
     document.body.dataset.readerState = 'ready';
     initArticle();
+    document.dispatchEvent(new Event('reader:article-ready'));
     performance.mark('paper-ready');
   } catch (error) {
     $('load-message').textContent = '论文内容加载失败。' + (error.name === 'AbortError' ? '请求超时，请重试。' : error instanceof SyntaxError ? '数据暂时无法读取，请重试。' : error.message);

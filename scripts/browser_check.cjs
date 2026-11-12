@@ -15,11 +15,13 @@ const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {
   const root = document.querySelector('article');
+  const content = root.cloneNode(true);
+  content.querySelectorAll('[data-reader-ui]').forEach(el => el.remove());
   return {ids: [...root.querySelectorAll('[id]')].map(e => e.id),
     units: [...root.querySelectorAll('[data-unit]')].map(e => [e.dataset.unit,e.textContent]),
     tables: [...root.querySelectorAll('table')].map(e => e.outerHTML),
     math: [...root.querySelectorAll('math')].map(e => e.outerHTML),
-    codes: [...root.querySelectorAll('pre')].map(e => e.textContent),text: root.textContent};
+    codes: [...root.querySelectorAll('pre')].map(e => e.textContent),text: content.textContent};
 };
 async function state(page, wanted = 'ready') {
   await page.waitForFunction(value => document.body.dataset.readerState === value, wanted, {timeout: 30000});

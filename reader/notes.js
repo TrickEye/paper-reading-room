@@ -6,6 +6,17 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   const $ = id => document.getElementById(id);
   const narrow = () => matchMedia('(max-width:940px)').matches;
   const base = new URL('../', manifestURL);
+  const noteURL = new URL(`${encodeURIComponent(paperId)}/notes.md`, localURL(resources.documents || '../notes/', manifestURL));
+  // Image URLs belong to notes.md, while existing text citations belong to the shell.
+  function noteImageURL(value) {
+    try {
+      const url = new URL(value, noteURL);
+      const content = new URL('content/', base);
+      if (url.origin !== content.origin || url.search || url.hash || !url.pathname.startsWith(content.pathname)) return null;
+      const path = url.pathname.slice(content.pathname.length);
+      return /^[a-z0-9-]+\/assets\/figure-\d+\.(?:svg|png|jpe?g|webp)$/i.test(path) ? url : null;
+    } catch { return null; }
+  }
   const prefix = `paper-reader:${base.pathname}:`;
   const widthKey = `${prefix}notes-width`;
   const panel = document.createElement('aside');
@@ -23,10 +34,15 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   const excerptButton = document.createElement('button');
   excerptButton.id = 'notes-excerpt'; excerptButton.className = 'notes-excerpt'; excerptButton.hidden = true;
   excerptButton.textContent = '摘录到笔记'; document.body.append(excerptButton);
+  const imageDialog = $('image-dialog');
+  const imageExcerptButton = document.createElement('button');
+  imageExcerptButton.id = 'notes-image-excerpt'; imageExcerptButton.type = 'button';
+  imageExcerptButton.textContent = '摘录到笔记'; imageExcerptButton.hidden = true;
+  imageDialog?.querySelector('.dialog-toolbar').insertBefore(imageExcerptButton, $('image-close'));
   const fallback = $('notes-fallback'), host = $('notes-editor');
   let markdown = '', deployedMarkdown = '', dirty = false, composing = false;
   let editor = null, loading = null, selected = null, opened = false, mode = 'ir';
-  let initializing = false, remoteLoading = false, remoteState = 'unknown';
+  let initializing = false, remoteLoading = false, remoteState = 'unknown', inserting = false;
   const status = text => { $('notes-save-status').textContent = '草稿：' + text; };
   function notice(text, retry = false) {
     $('notes-notice').hidden = false; $('notes-notice-text').textContent = text;
@@ -55,7 +71,9 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     $('notes-edit').disabled = $('notes-source').disabled = remoteLoading || composing;
     $('notes-refresh').disabled = remoteLoading || composing;
     $('notes-github').disabled = remoteLoading || composing;
-    excerptButton.disabled = remoteLoading;
+    for (const button of [excerptButton, imageExcerptButton, ...document.querySelectorAll('.figure-note-excerpt')]) {
+      button.disabled = remoteLoading || composing || inserting;
+    }
   }
   async function loadRemote() {
     if (!resources.documents || remoteLoading || composing) return;
@@ -225,8 +243,17 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
         const lute = editor.vditor.lute;
         const safeHTML = html => {
           const template = document.createElement('template'); template.innerHTML = html;
-          template.content.querySelectorAll('script,iframe,object,embed,base,link,meta,style,form,img,video,audio,source,svg').forEach(el => el.remove());
+          template.content.querySelectorAll('script,iframe,object,embed,base,link,meta,style,form,video,audio,source,svg').forEach(el => el.remove());
           for (const el of template.content.querySelectorAll('*')) {
+            if (el.tagName === 'IMG') {
+              const url = noteImageURL(el.getAttribute('src'));
+              if (!url) { el.remove(); continue; }
+              const alt = el.getAttribute('alt') || '';
+              for (const attr of [...el.attributes]) el.removeAttribute(attr.name);
+              el.src = url.href; el.alt = alt; el.loading = 'lazy'; el.decoding = 'async';
+              el.referrerPolicy = 'no-referrer';
+              continue;
+            }
             if (el.tagName === 'INPUT' && el.type !== 'checkbox') { el.remove(); continue; }
             for (const attr of [...el.attributes]) {
               if (/^on/i.test(attr.name) || ['srcdoc','style','id','src','srcset','background','poster','action','formaction'].includes(attr.name)) el.removeAttribute(attr.name);
@@ -346,6 +373,38 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   addEventListener('pagehide', syncDraft); document.addEventListener('visibilitychange', () => { if (document.hidden) syncDraft(); });
   layout();
   const escapeMD = text => text.replace(/([\\`*_{}\[\]()#+\-.!|<>~$])/g, '\\$1');
+  function imageExcerpt(image) {
+    const url = noteImageURL(image?.src);
+    const figure = image?.closest('figure');
+    if (!url || !figure) return null;
+    const caption = (figure.querySelector('figcaption')?.innerText || image.alt || '论文图片').replace(/\s+/g, ' ').trim();
+    const anchor = figure.id ? figure : figure.closest('[id]');
+    const relative = `../../${url.pathname.slice(base.pathname.length)}`;
+    const link = `${paperId}.html#${encodeURIComponent(anchor?.id || 'paper')}`;
+    return `\n\n![${escapeMD(caption)}](${relative})\n\n> ${escapeMD(caption)}\n\n[返回原图](${link})\n\n`;
+  }
+  function installImageActions() {
+    for (const zoom of document.querySelectorAll('#paper .figure-zoom')) {
+      if (!noteImageURL(zoom.querySelector('img')?.src) || zoom.parentElement.classList.contains('figure-image-actions')) continue;
+      const wrapper = document.createElement('div'); wrapper.className = 'figure-image-actions';
+      zoom.before(wrapper); wrapper.append(zoom);
+      const button = document.createElement('button'); button.type = 'button'; button.className = 'figure-note-excerpt';
+      button.dataset.readerUi = 'true'; button.textContent = '摘录到笔记';
+      button.addEventListener('click', () => appendExcerpt(imageExcerpt(zoom.querySelector('img')), true));
+      wrapper.append(button);
+      imageExcerptButton.hidden = false;
+    }
+    access();
+  }
+  document.addEventListener('reader:article-ready', installImageActions);
+  installImageActions();
+  imageExcerptButton.onclick = () => {
+    if (remoteLoading || composing || inserting) return;
+    const md = imageExcerpt(imageDialog.noteImage);
+    if (!md) return;
+    imageDialog.close('notes-excerpt');
+    appendExcerpt(md, true);
+  };
   function captureSelection() {
     const selection = getSelection(), article = $('paper');
     if (!selection?.rangeCount || selection.isCollapsed || !article) { excerptButton.hidden = true; return; }
@@ -368,23 +427,52 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   }
   document.addEventListener('selectionchange', () => requestAnimationFrame(captureSelection));
   excerptButton.addEventListener('pointerdown', event => event.preventDefault());
-  excerptButton.onclick = async () => {
-    if (!selected || remoteLoading) return;
-    const snapshot = selected; selected = null; open(true, false);
-    await ensureEditor();
-    if (remoteLoading) return;
+  excerptButton.onclick = () => {
+    if (!selected || remoteLoading || composing || inserting) return;
+    const snapshot = selected; selected = null;
     const link = `${paperId}.html#${encodeURIComponent(snapshot.id)}`;
     const md = '\n\n' + snapshot.text.split(/\r?\n/).map(line => '> ' + escapeMD(line)).join('\n') + `\n\n[${escapeMD(snapshot.label)} · 返回原文](${link})\n\n`;
-    if (editor) {
-      editor.focus();
-      const area = host.querySelector(editor.getCurrentMode() === 'sv' ? '.vditor-sv' : '.vditor-ir');
-      if (area instanceof HTMLTextAreaElement) area.selectionStart = area.selectionEnd = area.value.length;
-      else { const range = document.createRange(); range.selectNodeContents(area); range.collapse(false); getSelection().removeAllRanges(); getSelection().addRange(range); }
-      editor.insertMD(md);
-      area.scrollTop = area.scrollHeight;
-    } else { fallback.focus(); fallback.setSelectionRange(fallback.value.length, fallback.value.length); document.execCommand('insertText', false, md); fallback.scrollTop = fallback.scrollHeight; }
-    syncDraft(); excerptButton.hidden = true;
+    appendExcerpt(md);
   };
+  async function appendExcerpt(md, showImage = false) {
+    if (!md || remoteLoading || composing || inserting) return;
+    inserting = true; access();
+    try {
+      open(true, false);
+      await ensureEditor();
+      if (remoteLoading || composing) return;
+      if (editor) {
+        editor.focus();
+        const state = editor.vditor;
+        // Flush pending typing into its own undo step before inserting an excerpt.
+        state.undo.addToUndoStack(state);
+        // Keep the full Markdown order; Vditor's insertMD has mode-specific caret
+        // and undo behavior. setValue(..., false) preserves existing undo history.
+        editor.setValue(editor.getValue() + md, false);
+        editor.focus();
+        const area = state[editor.getCurrentMode()].element;
+        if (area instanceof HTMLTextAreaElement) area.selectionStart = area.selectionEnd = area.value.length;
+        else { const range = document.createRange(); range.selectNodeContents(area); range.collapse(false); getSelection().removeAllRanges(); getSelection().addRange(range); }
+        clearTimeout(state[editor.getCurrentMode()].processTimeoutId);
+        state.undo.addToUndoStack(state);
+        area.scrollTop = area.scrollHeight;
+        if (showImage && editor.getCurrentMode() === 'ir') {
+          const image = [...area.querySelectorAll('img')].at(-1);
+          if (image) {
+            const reveal = () => {
+              if (opened && image.isConnected && editor.getCurrentMode() === 'ir') {
+                area.scrollTop += image.getBoundingClientRect().top - area.getBoundingClientRect().top - 12;
+              }
+            };
+            // Wait for caret scrolling and intrinsic image dimensions to settle.
+            image.loading = 'eager'; requestAnimationFrame(reveal);
+            if (!image.complete) image.addEventListener('load', () => requestAnimationFrame(reveal), {once: true});
+          }
+        }
+      } else { fallback.focus(); fallback.setSelectionRange(fallback.value.length, fallback.value.length); document.execCommand('insertText', false, md); fallback.scrollTop = fallback.scrollHeight; }
+      syncDraft(); excerptButton.hidden = true;
+    } finally { inserting = false; access(); }
+  }
   panel.addEventListener('click', event => {
     const link = event.target.closest('a[href]');
     const irLink = event.target.closest('.vditor-ir__link')?.closest('[data-type=a]');

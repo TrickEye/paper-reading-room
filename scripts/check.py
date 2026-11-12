@@ -101,6 +101,8 @@ def check():
         for asset in doc['assets']:
             image = resolve(asset['url'], path.parent)
             assert hashlib.sha256(image.read_bytes()).hexdigest() == asset['sha256'], 'Image hash mismatch'
+            assert image.name == asset['id'] + image.suffix, 'Image URL must be stable'
+        assert {p.relative_to(path.parent).as_posix() for p in (path.parent / 'assets').iterdir()} == {a['url'] for a in doc['assets']}, 'Unexpected or duplicate image resources'
         pdf = resolve(doc['meta']['pdf'], path.parent)
         assert pdf == PUBLIC / 'pdfs' / paper['pdf'] and pdf.read_bytes().startswith(b'%PDF-')
         assert resolve(entry['pdf'], manifest_file.parent) == pdf
