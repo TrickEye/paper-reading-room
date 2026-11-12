@@ -431,7 +431,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     if (!selected || remoteLoading || composing || inserting) return;
     const snapshot = selected; selected = null;
     const link = `${paperId}.html#${encodeURIComponent(snapshot.id)}`;
-    const md = '\n\n' + snapshot.text.split(/\r?\n/).map(line => '> ' + escapeMD(line)).join('\n') + `\n\n[${escapeMD(snapshot.label)} · 返回原文](${link})\n\n`;
+    const md = '\n\n' + snapshot.text.split(/\r?\n/).map(line => '> ' + escapeMD(line)).join('\n') + `\n> [原文](${link})\n\n`;
     appendExcerpt(md);
   };
   async function appendExcerpt(md, showImage = false) {
