@@ -77,7 +77,7 @@
       "version": "2605.10999v1"
     },
     "en": "Contributions. Our main contributions are three-fold:11 1 Code is available via https://github.com/yccm/SkillGen. (1) We formulate a general, end-to-end learning task for automatic inference-time skill synthesis: to produce a single, auditable skill that improves a base agent. (2) We introduce SkillGen, a multi-agent framework that learns from both failed and successful trajectories via contrastive induction, and then generates new candidate skills that are iteratively refined and verified. The final skills are selected to have a positive net-effect on the overall performance. (3) We provide an extensive empirical study to demonstrate consistent and large held-out performance gains. SkillGen outperforms state-of-the-art skill-generation baselines and produces skills that transfer across models without parameter updates.",
-    "zh": "贡献。我们的主要贡献有三点：¹ 代码见 https://github.com/yccm/SkillGen。（1）我们提出自动推理时技能合成这一通用的端到端学习任务：产出单个可审计技能以改善基础智能体。（2）我们提出 SkillGen：一种通过对比归纳同时从失败与成功轨迹中学习的多智能体框架，随后生成新的候选技能，并迭代改进和验证。最终技能依据对整体性能的正向净影响进行选择。（3）我们提供广泛的实证研究，展示持续且显著的留出集性能提升。SkillGen 优于最先进的技能生成基线，并生成无需参数更新即可跨模型迁移的技能。"
+    "zh": "贡献。我们的主要贡献有三点：[[footnote:1]]（1）我们提出自动推理时技能合成这一通用的端到端学习任务：产出单个可审计技能以改善基础智能体。（2）我们提出 SkillGen：一种通过对比归纳同时从失败与成功轨迹中学习的多智能体框架，随后生成新的候选技能，并迭代改进和验证。最终技能依据对整体性能的正向净影响进行选择。（3）我们提供广泛的实证研究，展示持续且显著的留出集性能提升。SkillGen 优于最先进的技能生成基线，并生成无需参数更新即可跨模型迁移的技能。"
   },
   {
     "id": "unit-9",
@@ -527,7 +527,7 @@
       "version": "2605.10999v1"
     },
     "en": "Otherwise, it is marked ‘deprecated’ and replaced by the empty intervention.22 2 Here, g_{\\mathrm{abs}}\\in\\mathbb{Z}_{\\geq 0} is an absolute minimum number of net repairs, and g_{\\mathrm{rel}}\\in[0,1] is a relative minimum as a fraction of the construction-time verification subset. The gate is a simple construction-time safeguard: the absolute term prevents deploying candidates whose gain is negligible in count, the relative term requires the gain to scale with the size of the verification subset, and the final lower bound of 1 requires a strictly positive construction-time net gain. The threshold due to \\gamma_{m} defines the construction-time deployment rule used by SkillGen: across refinement rounds, we first select the candidate with the largest G_{m}, and then mark the selected skill as active if it satisfies Eq. (17); otherwise, the skill is deprecated.",
-    "zh": "否则，将其标记为“deprecated”，并替换为空干预。² 这里，g_{\\mathrm{abs}}\\in\\mathbb{Z}_{\\geq 0} 是净修复数的绝对下限，g_{\\mathrm{rel}}\\in[0,1] 是以构建期验证子集比例表示的相对下限。门控是一种简单的构建期保障：绝对项防止部署按数量计收益微不足道的候选技能，相对项要求收益随验证子集规模增长，最后的下限 1 要求构建期净增益严格为正。\\gamma_{m} 给出的阈值定义了 SkillGen 的构建期部署规则：先在改进轮次间选择 G_{m} 最大的候选技能，再判断是否满足式（17）；满足则标记为 active，否则弃用。"
+    "zh": "否则，将其标记为“deprecated”，并替换为空干预。[[footnote:2]]\\gamma_{m} 给出的阈值定义了 SkillGen 的构建期部署规则：先在改进轮次间选择 G_{m} 最大的候选技能，再判断是否满足式（17）；满足则标记为 active，否则弃用。"
   },
   {
     "id": "S3.SS3.p9.1",
@@ -1037,7 +1037,7 @@
       "version": "2605.10999v1"
     },
     "en": "Table 4 separates one-time construction cost from per-call inference overhead. All values are computed per model and then averaged within each benchmark. The skill-construction pipeline, including baseline trajectory collection, induction, generation, refinement, and verification, is a one-time cost per model–benchmark pair, ranging from 2.2M tokens on ScienceWorld to 10.2M on \\tau-Bench (mean 5.6M). Using GPT-5.4-Mini standard API prices (\\$0.75/M input tokens and \\$4.50/M output tokens),33 3 https://openai.com/api/pricing, accessed April 2026. and the prompt/output mix observed in our training logs, the mean construction budget corresponds to approximately \\$8.2 per generated skill. This cost is paid once for a model–benchmark pair, after which the same skill can be reused across subsequent rollouts and repeated evaluations. The per-call columns show that retrieval keeps inference prompts in the same few-thousand-token regime: the median skill-augmented call is 5,919 tokens, and the largest absolute per-call average in the table is 6,358 tokens on \\tau-Bench.",
-    "zh": "表 4 将一次性构建成本与每次调用的推理开销分开。所有数值先按模型计算，再在每个基准内取平均。技能构建流水线包括基线轨迹收集、归纳、生成、改进和验证，其成本对每个模型—基准对只发生一次，从 ScienceWorld 的 220 万 token 到 τ-Bench 的 1,020 万 token（平均 560 万）。采用 GPT-5.4-Mini 标准 API 价格（输入每百万 token 0.75 美元，输出每百万 token 4.50 美元）³，并依据训练日志观察到的提示词／输出比例，平均构建预算约等于每个生成技能 8.2 美元。³ https://openai.com/api/pricing，访问于 2026 年 4 月。该成本对一个模型—基准对仅支付一次，此后相同技能可在后续执行和重复评估中复用。每次调用列显示，检索使推理提示词保持在几千 token 的量级：技能增强调用的中位数为 5,919 token，表中最大的每次调用平均绝对值为 τ-Bench 的 6,358 token。"
+    "zh": "表 4 将一次性构建成本与每次调用的推理开销分开。所有数值先按模型计算，再在每个基准内取平均。技能构建流水线包括基线轨迹收集、归纳、生成、改进和验证，其成本对每个模型—基准对只发生一次，从 ScienceWorld 的 220 万 token 到 τ-Bench 的 1,020 万 token（平均 560 万）。采用 GPT-5.4-Mini 标准 API 价格（输入每百万 token 0.75 美元，输出每百万 token 4.50 美元）[[footnote:3]]，并依据训练日志观察到的提示词／输出比例，平均构建预算约等于每个生成技能 8.2 美元。该成本对一个模型—基准对仅支付一次，此后相同技能可在后续执行和重复评估中复用。每次调用列显示，检索使推理提示词保持在几千 token 的量级：技能增强调用的中位数为 5,919 token，表中最大的每次调用平均绝对值为 τ-Bench 的 6,358 token。"
   },
   {
     "id": "unit-142",

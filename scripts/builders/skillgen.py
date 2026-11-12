@@ -8,6 +8,13 @@ PUBLIC=ROOT/'public'
 SRC=ROOT/'data'/'skillgen'
 PDF=PUBLIC/'pdfs'/'SkillGen-2605.10999v1.pdf'
 VERSION='2605.10999v1'
+# Chinese translations use explicit markers so their notes follow the same
+# block layout as the source-language footnotes instead of reading as prose.
+TRANSLATED_FOOTNOTES={
+ 'S1.p5.1': {'1':'代码见 <a href="https://github.com/yccm/SkillGen" class="ltx_ref ltx_url ltx_font_typewriter">https://github.com/yccm/SkillGen</a>。'},
+ 'S3.SS3.p8.2': {'2':'这里，g_{\\mathrm{abs}}\\in\\mathbb{Z}_{\\geq 0} 是净修复数的绝对下限，g_{\\mathrm{rel}}\\in[0,1] 是以构建期验证子集比例表示的相对下限。门控是一种简单的构建期保障：绝对项防止部署按数量计收益微不足道的候选技能，相对项要求收益随验证子集规模增长，最后的下限 1 要求构建期净增益严格为正。'},
+ 'A3.SS5.p1.1': {'3':'<a href="https://openai.com/api/pricing" class="ltx_ref ltx_url ltx_font_typewriter">https://openai.com/api/pricing</a>，访问于 2026 年 4 月。'},
+}
 def save(name,value):
  (SRC/(name+'.json')).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n')
 def ancestors(n):
@@ -24,9 +31,17 @@ def strip_ids(n):
  for x in [n]+list(n.descendants()):
   x.attrs=[(k,v) for k,v in x.attrs if k!='id'];x.created=True
  return n
-def translated(zh,n):
+def translated(zh,n,uid):
  # Preserve the exact original MathML for mathematical expressions in Chinese.
  out=html.escape(zh,quote=False)
+ for number,content in TRANSLATED_FOOTNOTES.get(uid,{}).items():
+  marker=html.escape(f'[[footnote:{number}]]',quote=False)
+  note=(f'<span class="ltx_note ltx_role_footnote translation-footnote">'
+        f'<sup class="ltx_note_mark">{number}</sup><span class="ltx_note_outer">'
+        f'<span class="ltx_note_content"><sup class="ltx_note_mark">{number}</sup>{content}'
+        f'</span></span></span>')
+  assert marker in out, f'missing translated footnote marker {number} in {uid}'
+  out=out.replace(marker,note,1)
  expr={}
  for x in n.find_all(lambda x:x.tag=='math'):
   tex=x.attr('alttext')
@@ -44,7 +59,7 @@ def translated(zh,n):
 
 def pair(n,uid,zh):
  original=n.children
- z=tag('span',[('class','zh translation'),('lang','zh-CN')],translated(zh,n))
+ z=tag('span',[('class','zh translation'),('lang','zh-CN')],translated(zh,n,uid))
  e=tag('span',[('class','en original'),('lang','en')],original)
  n.children=[z,e];z.parent=n;e.parent=n;n.set_attr('data-unit',uid);n.set_attr('data-searchable','true')
  for math in n.find_all(lambda x:x.tag=='math'):
