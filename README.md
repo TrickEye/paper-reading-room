@@ -70,7 +70,7 @@ python3 -B -m unittest discover -s tests -v
 
 并行验证新阅读器时可运行 `python3 -B scripts/build.py --preview`，访问 `reader-preview.html?paper=ace` 并切换各篇；它不改写正式论文外壳。正常构建会移除临时预览入口。
 
-浏览器验收需要 Node.js 22 与 Playwright，仅用于开发及 CI：
+可选的本地浏览器验收需要 Node.js 22 与 Playwright，不参与部署流程：
 
 ```bash
 npm install --no-save --package-lock=false playwright@1.62.1
@@ -82,7 +82,7 @@ node scripts/browser_check.cjs
 
 ## GitHub Pages
 
-站点通过 GitHub Actions 发布 `public/`。PR 执行构建、完整正文审计和浏览器验收；`main` 全部检查通过后部署。工作流检查生成结果是否已提交，防止源文稿与发布 JSON 不一致。
+站点通过 GitHub Actions 直接发布仓库里已提交的 `public/`。推送到 `main` 或手动触发工作流后，仅检出仓库、上传静态文件并部署；不重新构建、不安装 Node／Playwright／系统库，也不运行单元测试或浏览器验收。修改阅读器或论文制作源后，需要在本地运行构建并将生成的 `public/` 产物一起提交；单独修改 `public/notes/` 内的笔记无需构建。检查和测试脚本保留为本地按需工具，PR 不触发部署。
 
 站内 URL 使用相对路径，支持 `https://<owner>.github.io/<repo>/`、用户站点和自定义域名。固定的小型 `loader.js` 会重验证资源清单，再加载最新的摘要脚本和样式；旧缓存外壳也能找到当前资源。资源清单地址相对外壳解析，清单内地址相对清单解析，正文资源地址相对论文 JSON 解析。共用脚本、样式、JSON 和图片使用内容摘要文件名，未变化资源保持原地址。
 

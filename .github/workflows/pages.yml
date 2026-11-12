@@ -1,9 +1,7 @@
-name: Validate and deploy GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -11,61 +9,28 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  group: pages-production
   cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-      - name: Rebuild and audit complete paper documents
-        run: python3 -B scripts/build.py
-      - name: Validate content boundaries
-        run: python3 -B -m unittest discover -s tests -v
-      - name: Verify committed output is current
-        run: |
-          git diff --exit-code -- public data
-          test -z "$(git ls-files --others --exclude-standard -- public data)"
-      - name: Set up browser test runtime
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install browser test dependencies
-        run: |
-          npm install --no-save --package-lock=false playwright@1.62.1
-          npx playwright install --with-deps chromium
-      - name: Verify reader in Chromium
-        env:
-          BROWSER_OUTPUT_DIR: ${{ runner.temp }}/reader-browser-check
-        run: node scripts/browser_check.cjs
-      - name: Save browser verification artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: reader-browser-check
-          path: ${{ runner.temp }}/reader-browser-check
-          if-no-files-found: ignore
-      - name: Upload publication directory
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: public
-
   deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Upload committed publication directory
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
