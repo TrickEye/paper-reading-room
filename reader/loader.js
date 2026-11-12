@@ -11,8 +11,8 @@ const save = (name, value) => { try { localStorage.setItem(key + name, value); }
 // Restore and operate the small shell controls while the manifest is pending.
 function theme(value) {
   root.dataset.theme = value;
-  $('theme-button').textContent = value === 'dark' ? '浅色' : '深色';
-  $('theme-button').setAttribute('aria-pressed', String(value === 'dark'));
+  $('theme-button').setAttribute('aria-checked', String(value === 'dark'));
+  $('theme-button').title = value === 'dark' ? '切换到浅色模式' : '切换到深色模式';
 }
 function font(value) {
   const size = Math.max(16, Math.min(24, value || 18));
@@ -23,10 +23,26 @@ function font(value) {
 let size = font(Number(get('font')));
 $('font-down').onclick = () => { size = font(size - 1); save('font', String(size)); };
 $('font-up').onclick = () => { size = font(size + 1); save('font', String(size)); };
+const modeGroup = $('reading-mode');
+function setMode(value) {
+  if (!['zh', 'dual', 'en'].includes(value)) return;
+  root.dataset.lang = value;
+  for (const button of modeGroup.querySelectorAll('[data-mode]')) {
+    const selected = button.dataset.mode === value;
+    button.setAttribute('aria-checked', String(selected)); button.tabIndex = selected ? 0 : -1;
+  }
+  save('mode', value);
+}
 const storedMode = get('mode');
-$('reading-mode').value = ['zh','en','dual'].includes(storedMode) ? storedMode : paperId === 'ace' ? 'zh' : 'dual';
-root.dataset.lang = $('reading-mode').value;
-$('reading-mode').onchange = () => { root.dataset.lang = $('reading-mode').value; save('mode', root.dataset.lang); };
+setMode(['zh','en','dual'].includes(storedMode) ? storedMode : paperId === 'ace' ? 'zh' : 'dual');
+modeGroup.onclick = event => { const button = event.target.closest('[data-mode]'); if (button) setMode(button.dataset.mode); };
+modeGroup.onkeydown = event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const buttons = [...modeGroup.querySelectorAll('[data-mode]')];
+  const current = buttons.findIndex(button => button.getAttribute('aria-checked') === 'true');
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (current + (event.key === 'ArrowLeft' ? -1 : 1) + buttons.length) % buttons.length;
+  event.preventDefault(); setMode(buttons[next].dataset.mode); buttons[next].focus();
+};
 theme(get('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 $('theme-button').onclick = () => { theme(root.dataset.theme === 'dark' ? 'light' : 'dark'); save('theme', root.dataset.theme); };
 

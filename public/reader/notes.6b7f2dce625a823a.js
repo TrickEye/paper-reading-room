@@ -21,16 +21,13 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   const widthKey = `${prefix}notes-width`;
   const panel = document.createElement('aside');
   panel.id = 'notes-panel'; panel.className = 'notes-panel'; panel.hidden = true;
-  panel.setAttribute('aria-labelledby', 'notes-heading');
+  panel.setAttribute('aria-label', '阅读笔记');
   panel.innerHTML = `<div id="notes-resize" class="notes-resize" role="separator" tabindex="0" aria-label="调整笔记宽度" aria-orientation="vertical" aria-controls="notes-panel"></div>
-    <header class="notes-head"><div><span class="eyebrow">READING NOTES</span><h2 id="notes-heading">阅读笔记</h2><p id="notes-paper"></p></div><button id="notes-close" aria-label="关闭笔记">关闭</button></header>
-    <div id="notes-remote" class="notes-remote" hidden><div class="notes-actions"><button id="notes-refresh" aria-describedby="notes-refresh-help">刷新远端</button><button id="notes-github" hidden>保存到 GitHub</button></div><p id="notes-remote-status" role="status" aria-live="polite"></p><p id="notes-refresh-help">刷新成功会用部署版覆盖当前草稿。</p></div>
-    <div class="notes-mode" role="group" aria-label="笔记编辑模式"><button id="notes-edit" aria-pressed="true">编辑</button><button id="notes-source" aria-pressed="false">源码</button><span id="notes-engine" role="status"></span></div>
+    <div id="notes-remote" class="notes-remote" hidden><div class="notes-actions" aria-label="笔记操作"><button id="notes-mode-toggle" class="notes-mode-toggle" type="button" role="switch" aria-label="笔记模式：编辑" aria-checked="false" title="当前模式：编辑"><span class="notes-mode-icon notes-mode-icon--edit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5 4 4"/><path d="M4 20l4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16 4 20Z"/></svg></span><span class="notes-mode-icon notes-mode-icon--source" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6"/><path d="m16 6 6 6-6 6"/><path d="m14 4-4 16"/></svg></span><span class="notes-mode-thumb" aria-hidden="true"></span></button><span class="notes-actions-spacer" aria-hidden="true"></span><span class="notes-action-buttons"><button id="notes-refresh" class="notes-icon-button" aria-label="刷新远端" title="刷新远端"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0-14.9-4L4 9"/><path d="M4 4v5h5"/><path d="M4 13a8.1 8.1 0 0 0 14.9 4L20 15"/><path d="M20 20v-5h-5"/></svg></button><button id="notes-local-save" class="notes-icon-button" aria-label="保存" title="保存" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg></button><button id="notes-github" class="notes-icon-button" aria-label="保存到 GitHub" title="保存到 GitHub" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg></button></span><span id="notes-engine" class="notes-sr-only" role="status"></span></div><p id="notes-remote-status" role="status" aria-live="polite"></p></div>
     <div id="notes-notice" class="notes-notice" hidden><p id="notes-notice-text" role="status"></p><button id="notes-retry">重试加载编辑器</button></div>
     <div id="notes-editor" class="notes-editor" hidden></div><textarea id="notes-fallback" class="notes-fallback" aria-label="Markdown 笔记" placeholder="写下阅读心得，或选中原文后摘录到这里…" spellcheck="false"></textarea>
-    <footer class="notes-footer"><span id="notes-save-status" role="status" aria-live="polite">草稿：尚无修改</span><span>草稿仅在当前页面内，离开前请在 GitHub 提交。</span></footer>`;
+    <p id="notes-save-status" class="notes-sr-only" role="status" aria-live="polite">草稿：尚无修改</p>`;
   document.body.append(panel);
-  $('notes-paper').textContent = title;
   const excerptButton = document.createElement('button');
   excerptButton.id = 'notes-excerpt'; excerptButton.className = 'notes-excerpt'; excerptButton.hidden = true;
   excerptButton.textContent = '摘录到笔记'; document.body.append(excerptButton);
@@ -43,6 +40,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   let markdown = '', deployedMarkdown = '', dirty = false, composing = false;
   let editor = null, loading = null, selected = null, opened = false, mode = 'ir';
   let initializing = false, remoteLoading = false, remoteState = 'unknown', inserting = false;
+  const localHost = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
   const status = text => { $('notes-save-status').textContent = '草稿：' + text; };
   function notice(text, retry = false) {
     $('notes-notice').hidden = false; $('notes-notice-text').textContent = text;
@@ -68,9 +66,10 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     host.inert = remoteLoading;
     fallback.readOnly = remoteLoading;
     host.setAttribute('aria-busy', String(remoteLoading));
-    $('notes-edit').disabled = $('notes-source').disabled = remoteLoading || composing;
+    $('notes-mode-toggle').disabled = remoteLoading || composing;
     $('notes-refresh').disabled = remoteLoading || composing;
     $('notes-github').disabled = remoteLoading || composing;
+    $('notes-local-save').disabled = remoteLoading || composing;
     for (const button of [excerptButton, imageExcerptButton, ...document.querySelectorAll('.figure-note-excerpt')]) {
       button.disabled = remoteLoading || composing || inserting;
     }
@@ -79,7 +78,7 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     if (!resources.documents || remoteLoading || composing) return;
     syncDraft();
     remoteLoading = true; remoteState = 'unknown'; access();
-    $('notes-remote-status').textContent = '部署版：正在加载…';
+    $('notes-remote-status').textContent = localHost ? '' : '部署版：正在加载…';
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
     try {
@@ -88,14 +87,14 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
       const response = await fetch(url, {cache: 'no-cache', signal: controller.signal});
       if (response.status === 404) {
         remoteState = 'missing';
-        $('notes-remote-status').textContent = '部署版：尚未发布，已保留当前草稿。';
+        $('notes-remote-status').textContent = localHost ? '' : '部署版：尚未发布，已保留当前草稿。';
         return;
       }
       if (!response.ok) throw new Error(`请求失败（${response.status}）`);
       const value = await response.text();
       remoteState = 'exists';
-      deployedMarkdown = value; replace(value); dirty = false; status('已载入部署版，尚无修改');
-      $('notes-remote-status').textContent = '部署版：已载入，后续编辑仍需在 GitHub 提交。';
+      deployedMarkdown = value; replace(value); dirty = false; status(localHost ? '已载入本地文件，尚无修改' : '已载入部署版，尚无修改');
+      $('notes-remote-status').textContent = localHost ? '' : '部署版：已载入，后续编辑仍需在 GitHub 提交。';
     } catch (error) {
       $('notes-remote-status').textContent = '部署版：加载失败，已保留当前草稿，可继续编辑并刷新重试。' + (error.name === 'AbortError' ? '请求超时。' : '');
     } finally {
@@ -104,13 +103,40 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
   }
   $('notes-remote').hidden = !resources.documents;
   $('notes-refresh').onclick = loadRemote;
+  if (localHost) {
+    $('notes-remote').hidden = false;
+    $('notes-local-save').hidden = false;
+    $('notes-remote-status').classList.add('notes-sr-only');
+    $('notes-local-save').onclick = async () => {
+      if (remoteLoading || composing) return;
+      syncDraft();
+      const snapshot = read();
+      $('notes-local-save').disabled = true;
+      $('notes-remote-status').textContent = '';
+      try {
+        const response = await fetch('/_local/notes', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({paperId, markdown: snapshot})
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || `保存失败（${response.status}）`);
+        deployedMarkdown = snapshot;
+        dirty = false;
+        status('已保存到本地文件');
+        $('notes-remote-status').textContent = '本地笔记已保存。';
+      } catch (error) {
+        $('notes-remote-status').textContent = '本地保存失败：' + error.message + '。请确认使用 scripts/dev_server.py 启动服务。';
+      } finally {
+        $('notes-local-save').disabled = false;
+      }
+    };
+  }
 
   // Only public repository coordinates belong in the manifest; no credentials are used.
   const github = resources.github;
   if (github && [github.owner, github.repo, github.branch, github.directory].every(value => typeof value === 'string' && value)) {
     $('notes-remote').hidden = false; $('notes-refresh').hidden = !resources.documents;
-    $('notes-refresh-help').hidden = !resources.documents;
-    $('notes-github').hidden = false;
+    $('notes-github').hidden = localHost;
     const dialog = document.createElement('dialog');
     dialog.id = 'notes-handoff'; dialog.className = 'notes-handoff';
     dialog.setAttribute('aria-labelledby', 'notes-handoff-title');
@@ -305,10 +331,13 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
       control.dispatchEvent(new Event(navigator.userAgent.includes('iPhone') ? 'touchstart' : 'click', {bubbles: true, cancelable: true}));
       editor.setPreviewMode('editor');
     }
-    $('notes-edit').setAttribute('aria-pressed', String(next === 'ir'));
-    $('notes-source').setAttribute('aria-pressed', String(next === 'sv'));
+    const source = next === 'sv';
+    const toggle = $('notes-mode-toggle');
+    toggle.setAttribute('aria-checked', String(source));
+    toggle.setAttribute('aria-label', `笔记模式：${source ? '源码' : '编辑'}`);
+    toggle.title = `当前模式：${source ? '源码' : '编辑'}`;
   }
-  $('notes-edit').onclick = () => setMode('ir'); $('notes-source').onclick = () => setMode('sv');
+  $('notes-mode-toggle').onclick = () => setMode(mode === 'ir' ? 'sv' : 'ir');
   let preferredWidth = 400;
   let viewportHeight = innerHeight;
   try { preferredWidth = Number(localStorage.getItem(widthKey)) || 400; } catch {}
@@ -328,12 +357,21 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     root.style.setProperty('--notes-height', `${height * (keyboard ? .7 : .5)}px`);
     panel.style.setProperty('--notes-bottom', `${Math.max(0, innerHeight - height - (viewport?.offsetTop || 0))}px`);
   }
+  let panelHideTimer = 0;
   function open(value, focus = true) {
     const header = parseFloat(getComputedStyle(root).getPropertyValue('--header'));
     const visibleUnit = [...document.querySelectorAll('#paper [data-unit]')].find(el => el.getBoundingClientRect().bottom > header + 8);
     const offset = visibleUnit?.getBoundingClientRect().top;
     if (value && !opened) closeDirectory();
-    opened = value; panel.hidden = !value; root.classList.toggle('notes-open', value);
+    opened = value; clearTimeout(panelHideTimer);
+    if (value) {
+      panel.hidden = false;
+      requestAnimationFrame(() => { if (opened) panel.classList.add('notes-visible'); });
+    } else {
+      panel.classList.remove('notes-visible');
+      panelHideTimer = setTimeout(() => { if (!opened) panel.hidden = true; }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 240);
+    }
+    root.classList.toggle('notes-open', value);
     $('notes-button').setAttribute('aria-expanded', String(value));
     layout();
     if (visibleUnit) {
@@ -344,7 +382,6 @@ export function initNotes({paperId, manifestURL, resources, title, closeDirector
     else { syncDraft(); if (panel.contains(document.activeElement)) document.activeElement.blur(); if (focus) $('notes-button').focus(); }
   }
   $('notes-button').onclick = () => open(!opened);
-  $('notes-close').onclick = () => open(false);
   document.addEventListener('reader:open-directory', () => { if (opened && innerWidth <= 1439) open(false, false); });
   panel.addEventListener('keydown', event => {
     if (event.key !== 'Escape' || event.defaultPrevented || composing) return;

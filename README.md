@@ -45,13 +45,13 @@ skills/paper-reading-room/  可复用论文制作 skill
 
 ## 本地预览与维护
 
-使用 Python 3.10 或更新版本，从仓库根目录运行：
+使用 Python 3.10 或更新版本，从仓库根目录运行本地开发服务：
 
 ```bash
-python3 -m http.server 8000 --directory public
+python3 scripts/dev_server.py
 ```
 
-打开 [本地索引](http://localhost:8000/)。请通过 HTTP 访问，直接双击 `file://` 页面不能可靠请求论文 JSON；本项目不再生成单文件离线阅读页。
+打开 [本地索引](http://localhost:8000/)。本地服务在 localhost 提供阅读器和笔记直接保存接口，笔记写入 `public/notes/<paper-id>/notes.md`；GitHub Pages 上则使用「保存到 GitHub」。请通过 HTTP 访问，直接双击 `file://` 页面不能可靠请求论文 JSON；本项目不再生成单文件离线阅读页。
 
 修改文稿、图片或阅读器后，重建全部发布产物并审计：
 

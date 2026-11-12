@@ -14,10 +14,31 @@ let update = () => {};
 let font = Number(get('font')) || 18;
 const mode = $('reading-mode');
 function restoreMode(fallback) {
-  mode.value = ['zh', 'en', 'dual'].includes(get('mode')) ? get('mode') : fallback;
-  root.dataset.lang = mode.value;
+  const value = ['zh', 'en', 'dual'].includes(get('mode')) ? get('mode') : fallback;
+  root.dataset.lang = value;
+  for (const button of mode.querySelectorAll('[data-mode]')) {
+    const selected = button.dataset.mode === value;
+    button.setAttribute('aria-checked', String(selected)); button.tabIndex = selected ? 0 : -1;
+  }
 }
 restoreMode(paperId === 'ace' ? 'zh' : 'dual');
+function setReadingMode(value) {
+  if (!['zh', 'en', 'dual'].includes(value)) return;
+  root.dataset.lang = value;
+  for (const button of mode.querySelectorAll('[data-mode]')) {
+    const selected = button.dataset.mode === value;
+    button.setAttribute('aria-checked', String(selected)); button.tabIndex = selected ? 0 : -1;
+  }
+  save('mode', value); search(); update();
+}
+mode.onclick = event => { const button = event.target.closest('[data-mode]'); if (button) setReadingMode(button.dataset.mode); };
+mode.onkeydown = event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  const buttons = [...mode.querySelectorAll('[data-mode]')];
+  const current = buttons.findIndex(button => button.getAttribute('aria-checked') === 'true');
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (current + (event.key === 'ArrowLeft' ? -1 : 1) + buttons.length) % buttons.length;
+  event.preventDefault(); buttons[next].focus(); setReadingMode(buttons[next].dataset.mode);
+};
 function applyFont() {
   font = Math.max(16, Math.min(24, font));
   root.style.setProperty('--body-size', font + 'px');
@@ -31,13 +52,12 @@ $('font-up').onclick = () => { font++; applyFont(); };
 applyFont();
 function setTheme(theme) {
   root.dataset.theme = theme;
-  $('theme-button').textContent = theme === 'dark' ? '浅色' : '深色';
-  $('theme-button').setAttribute('aria-pressed', String(theme === 'dark'));
+  $('theme-button').setAttribute('aria-checked', String(theme === 'dark'));
+  $('theme-button').title = theme === 'dark' ? '切换到浅色模式' : '切换到深色模式';
   save('theme', theme);
 }
 setTheme(get('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 $('theme-button').onclick = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-mode.onchange = () => { root.dataset.lang = mode.value; save('mode', mode.value); search(); update(); };
 
 const mobile = () => matchMedia('(max-width:940px)').matches || (root.classList.contains('notes-open') && matchMedia('(max-width:1439px)').matches);
 let lastFocus = null;
@@ -244,25 +264,6 @@ function initArticle() {
   update();
 }
 
-async function printPaper() {
-  if (!ready) return;
-  const button = $('print-button'), status = $('print-status');
-  button.disabled = true; status.hidden = false; status.textContent = '正在准备打印图片…';
-  try {
-    await Promise.all([...$('paper').querySelectorAll('img')].map(async image => {
-      image.loading = 'eager';
-      let timeout;
-      try {
-        await Promise.race([image.decode(), new Promise((_, reject) => { timeout = setTimeout(() => reject(new Error('图片加载超时')), 20000); })]);
-      } finally { clearTimeout(timeout); }
-    }));
-    status.hidden = true;
-    window.print();
-  } catch {
-    status.textContent = '打印图片尚未加载完成，请重试失败图片后再次点击打印。';
-  } finally { button.disabled = false; }
-}
-$('print-button').onclick = printPaper;
 addEventListener('beforeprint', () => $('paper')?.querySelectorAll('img').forEach(img => { img.loading = 'eager'; }));
 
 let loading = false;
@@ -296,7 +297,7 @@ async function load(refresh = false) {
     }
     $('paper-mount').replaceChildren(fragment);
     $('reader-feedback').hidden = true;
-    $('search-input').disabled = false; $('print-button').disabled = false;
+    $('search-input').disabled = false;
     ready = true;
     document.body.dataset.readerState = 'ready';
     initArticle();
