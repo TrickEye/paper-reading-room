@@ -1,0 +1,203 @@
+{
+  "source_pdf": "MASA-2605.30723v1.pdf",
+  "source_pages": 20,
+  "sections": [
+    {
+      "id": "abstract",
+      "pages": [
+        1
+      ]
+    },
+    {
+      "id": "S1",
+      "pages": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "S2",
+      "pages": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "S3",
+      "pages": [
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "S4",
+      "pages": [
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": "S5",
+      "pages": [
+        8,
+        9
+      ]
+    },
+    {
+      "id": "Sx1",
+      "pages": [
+        9
+      ]
+    },
+    {
+      "id": "Sx2",
+      "pages": [
+        9
+      ]
+    },
+    {
+      "id": "bib",
+      "pages": [
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "id": "A1",
+      "pages": [
+        12
+      ]
+    },
+    {
+      "id": "A2",
+      "pages": [
+        12,
+        13
+      ]
+    },
+    {
+      "id": "A3",
+      "pages": [
+        13,
+        14
+      ]
+    },
+    {
+      "id": "A4",
+      "pages": [
+        14,
+        15
+      ]
+    },
+    {
+      "id": "A5",
+      "pages": [
+        15,
+        16
+      ]
+    },
+    {
+      "id": "A6",
+      "pages": [
+        16
+      ]
+    },
+    {
+      "id": "A7",
+      "pages": [
+        16,
+        17,
+        18
+      ]
+    },
+    {
+      "id": "A8",
+      "pages": [
+        18,
+        19
+      ]
+    },
+    {
+      "id": "A9",
+      "pages": [
+        19,
+        20
+      ]
+    },
+    {
+      "id": "A10",
+      "pages": [
+        20
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "number": 1,
+      "page": 1
+    },
+    {
+      "number": 2,
+      "page": 3
+    },
+    {
+      "number": 3,
+      "page": 8
+    },
+    {
+      "number": 4,
+      "page": 13
+    },
+    {
+      "number": 5,
+      "page": 19
+    }
+  ],
+  "tables": [
+    {
+      "number": 1,
+      "page": 6
+    },
+    {
+      "number": 2,
+      "page": 7
+    },
+    {
+      "number": 3,
+      "page": 12
+    },
+    {
+      "number": 4,
+      "page": 17
+    },
+    {
+      "number": 5,
+      "page": 18
+    },
+    {
+      "number": 6,
+      "page": 18
+    },
+    {
+      "number": 7,
+      "page": 15
+    },
+    {
+      "number": 8,
+      "page": 18
+    },
+    {
+      "number": 9,
+      "page": 20
+    }
+  ],
+  "display_equations": 7,
+  "algorithm_blocks": 2,
+  "references": 46,
+  "appendices": 10
+}

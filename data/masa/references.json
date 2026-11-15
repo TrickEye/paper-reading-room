@@ -1,0 +1,232 @@
+[
+  {
+    "id": "bib.bib37",
+    "en": "Anthropic (2024) Anthropic The claude 3 model family: opus, sonnet, haiku. Technical report Anthropic. External Links: Link Cited by: Limitations.",
+    "zh": "Claude 3 模型家族：Opus、Sonnet 与 Haiku。原始引文：Anthropic (2024) Anthropic The claude 3 model family: opus, sonnet, haiku. Technical report Anthropic. External Links: Link Cited by: Limitations."
+  },
+  {
+    "id": "bib.bib42",
+    "en": "Chen et al. (2026) L. Chen, E. Feng, Y. Xia, and H. Chen SkVM: revisiting language vm for skills across heterogenous llms and harnesses. arXiv preprint arXiv:2604.03088. Cited by: Appendix A.",
+    "zh": "SkVM：重新审视面向异构大语言模型与智能体框架的技能语言虚拟机。原始引文：Chen et al. (2026) L. Chen, E. Feng, Y. Xia, and H. Chen SkVM: revisiting language vm for skills across heterogenous llms and harnesses. arXiv preprint arXiv:2604.03088. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib25",
+    "en": "Chen et al. (2024) M. Chen, Y. Li, Y. Yang, S. Yu, B. Lin, and X. He Automanual: constructing instruction manuals by llm agents via interactive environmental learning. Advances in Neural Information Processing Systems 37, pp. 589–631. Cited by: Appendix A, §1.",
+    "zh": "AutoManual：大语言模型智能体通过交互式环境学习构建操作手册。原始引文：Chen et al. (2024) M. Chen, Y. Li, Y. Yang, S. Yu, B. Lin, and X. He Automanual: constructing instruction manuals by llm agents via interactive environmental learning. Advances in Neural Information Processing Systems 37, pp. 589–631. Cited by: Appendix A, §1."
+  },
+  {
+    "id": "bib.bib14",
+    "en": "Chen et al. (2023) Y. Chen, Z. Wen, G. Fan, Z. Chen, W. Wu, D. Liu, Z. Li, B. Liu, and Y. Xiao Mapo: boosting large language model performance with model-adaptive prompt optimization. In Findings of the Association for Computational Linguistics: EMNLP 2023, pp. 3279–3304. Cited by: Appendix A.",
+    "zh": "MAPO：通过模型自适应提示词优化提升大语言模型表现。原始引文：Chen et al. (2023) Y. Chen, Z. Wen, G. Fan, Z. Chen, W. Wu, D. Liu, Z. Li, B. Liu, and Y. Xiao Mapo: boosting large language model performance with model-adaptive prompt optimization. In Findings of the Association for Computational Linguistics: EMNLP 2023, pp. 3279–3304. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib38",
+    "en": "DeepSeek-AI (2026) DeepSeek-AI DeepSeek-v4 technical report. Technical report DeepSeek-AI. External Links: Link Cited by: §4.1.",
+    "zh": "DeepSeek-V4 技术报告。原始引文：DeepSeek-AI (2026) DeepSeek-AI DeepSeek-v4 technical report. Technical report DeepSeek-AI. External Links: Link Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib35",
+    "en": "Grattafiori et al. (2024) A. Grattafiori, A. Dubey, A. Jauhri, A. Pandey, A. Kadian, A. Al-Dahle, A. Letman, A. Mathur, A. Schelten, A. Vaughan, et al. The llama 3 herd of models. arXiv preprint arXiv:2407.21783. Cited by: Limitations.",
+    "zh": "Llama 3 模型家族。原始引文：Grattafiori et al. (2024) A. Grattafiori, A. Dubey, A. Jauhri, A. Pandey, A. Kadian, A. Al-Dahle, A. Letman, A. Mathur, A. Schelten, A. Vaughan, et al. The llama 3 herd of models. arXiv preprint arXiv:2407.21783. Cited by: Limitations."
+  },
+  {
+    "id": "bib.bib13",
+    "en": "Guo et al. (2024) Q. Guo, R. Wang, J. Guo, B. Li, K. Song, X. Tan, G. Liu, J. Bian, and Y. Yang Connecting large language models with evolutionary algorithms yields powerful prompt optimizers. In International Conference on Learning Representations, Vol. 2024, pp. 34133–34156. Cited by: Appendix A.",
+    "zh": "结合大语言模型与进化算法构建强大的提示词优化器。原始引文：Guo et al. (2024) Q. Guo, R. Wang, J. Guo, B. Li, K. Song, X. Tan, G. Liu, J. Bian, and Y. Yang Connecting large language models with evolutionary algorithms yields powerful prompt optimizers. In International Conference on Learning Representations, Vol. 2024, pp. 34133–34156. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib22",
+    "en": "Ho et al. (2020) X. Ho, A. D. Nguyen, S. Sugawara, and A. Aizawa Constructing a multi-hop qa dataset for comprehensive evaluation of reasoning steps. In Proceedings of the 28th International Conference on Computational Linguistics, pp. 6609–6625. Cited by: §4.1.",
+    "zh": "构建用于全面评估推理步骤的多跳问答数据集。原始引文：Ho et al. (2020) X. Ho, A. D. Nguyen, S. Sugawara, and A. Aizawa Constructing a multi-hop qa dataset for comprehensive evaluation of reasoning steps. In Proceedings of the 28th International Conference on Computational Linguistics, pp. 6609–6625. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib44",
+    "en": "Hsiao et al. (2025) V. Hsiao, M. Roberts, and L. Smith Procedural knowledge improves agentic llm workflows. arXiv preprint arXiv:2511.07568. Cited by: §1.",
+    "zh": "程序性知识改善智能体大语言模型工作流。原始引文：Hsiao et al. (2025) V. Hsiao, M. Roberts, and L. Smith Procedural knowledge improves agentic llm workflows. arXiv preprint arXiv:2511.07568. Cited by: §1."
+  },
+  {
+    "id": "bib.bib43",
+    "en": "Jiang et al. (2026) Y. Jiang, D. Li, H. Deng, B. Ma, X. Wang, Q. Wang, and G. Yu SoK: agentic skills–beyond tool use in llm agents. arXiv preprint arXiv:2602.20867. Cited by: §1.",
+    "zh": "知识综述：智能体技能——超越大语言模型智能体中的工具使用。原始引文：Jiang et al. (2026) Y. Jiang, D. Li, H. Deng, B. Ma, X. Wang, Q. Wang, and G. Yu SoK: agentic skills–beyond tool use in llm agents. arXiv preprint arXiv:2602.20867. Cited by: §1."
+  },
+  {
+    "id": "bib.bib19",
+    "en": "Joshi et al. (2017) M. Joshi, E. Choi, D. S. Weld, and L. Zettlemoyer Triviaqa: a large scale distantly supervised challenge dataset for reading comprehension. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 1601–1611. Cited by: §4.1.",
+    "zh": "TriviaQA：面向阅读理解的大规模远程监督挑战数据集。原始引文：Joshi et al. (2017) M. Joshi, E. Choi, D. S. Weld, and L. Zettlemoyer Triviaqa: a large scale distantly supervised challenge dataset for reading comprehension. In Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 1601–1611. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib31",
+    "en": "Kamath et al. (2025) A. Kamath, J. Ferret, S. Pathak, N. Vieillard, R. Merhej, S. Perrin, T. Matejovicova, A. Ramé, M. Rivière, L. Rouillard, et al. Gemma 3 technical report. arXiv preprint arXiv:2503.19786 4. Cited by: §C.3.",
+    "zh": "Gemma 3 技术报告。原始引文：Kamath et al. (2025) A. Kamath, J. Ferret, S. Pathak, N. Vieillard, R. Merhej, S. Perrin, T. Matejovicova, A. Ramé, M. Rivière, L. Rouillard, et al. Gemma 3 technical report. arXiv preprint arXiv:2503.19786 4. Cited by: §C.3."
+  },
+  {
+    "id": "bib.bib16",
+    "en": "Kocsis and Szepesvári (2006) L. Kocsis and C. Szepesvári Bandit based monte-carlo planning. In European conference on machine learning, pp. 282–293. Cited by: §3.2.",
+    "zh": "基于多臂赌博机的蒙特卡洛规划。原始引文：Kocsis and Szepesvári (2006) L. Kocsis and C. Szepesvári Bandit based monte-carlo planning. In European conference on machine learning, pp. 282–293. Cited by: §3.2."
+  },
+  {
+    "id": "bib.bib18",
+    "en": "Kwiatkowski et al. (2019) T. Kwiatkowski, J. Palomaki, O. Redfield, M. Collins, A. Parikh, C. Alberti, D. Epstein, I. Polosukhin, J. Devlin, K. Lee, et al. Natural questions: a benchmark for question answering research. Transactions of the Association for Computational Linguistics 7, pp. 453–466. Cited by: §4.1.",
+    "zh": "Natural Questions：问答研究基准。原始引文：Kwiatkowski et al. (2019) T. Kwiatkowski, J. Palomaki, O. Redfield, M. Collins, A. Parikh, C. Alberti, D. Epstein, I. Polosukhin, J. Devlin, K. Lee, et al. Natural questions: a benchmark for question answering research. Transactions of the Association for Computational Linguistics 7, pp. 453–466. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib36",
+    "en": "Liu et al. (2026) A. H. Liu, K. Khandelwal, S. Subramanian, V. Jouault, A. Rastogi, A. Sadé, A. Jeffares, A. Jiang, A. Cahill, A. Gavaudan, et al. Ministral 3. arXiv preprint arXiv:2601.08584. Cited by: Limitations.",
+    "zh": "Ministral 3。原始引文：Liu et al. (2026) A. H. Liu, K. Khandelwal, S. Subramanian, V. Jouault, A. Rastogi, A. Sadé, A. Jeffares, A. Jiang, A. Cahill, A. Gavaudan, et al. Ministral 3. arXiv preprint arXiv:2601.08584. Cited by: Limitations."
+  },
+  {
+    "id": "bib.bib45",
+    "en": "Lu et al. (2026) Z. Lu, Z. Yao, J. Wu, C. Han, Q. Gu, X. Cai, W. Lu, J. Xiao, Y. Zhuang, and Y. Shen Skill0: in-context agentic reinforcement learning for skill internalization. arXiv preprint arXiv:2604.02268. Cited by: §1.",
+    "zh": "Skill0：用于技能内化的上下文内智能体强化学习。原始引文：Lu et al. (2026) Z. Lu, Z. Yao, J. Wu, C. Han, Q. Gu, X. Cai, W. Lu, J. Xiao, Y. Zhuang, and Y. Shen Skill0: in-context agentic reinforcement learning for skill internalization. arXiv preprint arXiv:2604.02268. Cited by: §1."
+  },
+  {
+    "id": "bib.bib46",
+    "en": "Ma et al. (2026) Z. Ma, S. Yang, Y. Ji, X. Wang, Y. Wang, Y. Hu, T. Huang, and X. Chu Skillclaw: let skills evolve collectively with agentic evolver. arXiv preprint arXiv:2604.08377. Cited by: §1.",
+    "zh": "SkillClaw：借助智能体演化器让技能集体演化。原始引文：Ma et al. (2026) Z. Ma, S. Yang, Y. Ji, X. Wang, Y. Wang, Y. Hu, T. Huang, and X. Chu Skillclaw: let skills evolve collectively with agentic evolver. arXiv preprint arXiv:2604.08377. Cited by: §1."
+  },
+  {
+    "id": "bib.bib20",
+    "en": "Mallen et al. (2023) A. Mallen, A. Asai, V. Zhong, R. Das, D. Khashabi, and H. Hajishirzi When not to trust language models: investigating effectiveness of parametric and non-parametric memories. In Proceedings of the 61st annual meeting of the association for computational linguistics (volume 1: Long papers), pp. 9802–9822. Cited by: §4.1.",
+    "zh": "何时不应信任语言模型：参数化与非参数化记忆的有效性研究。原始引文：Mallen et al. (2023) A. Mallen, A. Asai, V. Zhong, R. Das, D. Khashabi, and H. Hajishirzi When not to trust language models: investigating effectiveness of parametric and non-parametric memories. In Proceedings of the 61st annual meeting of the association for computational linguistics (volume 1: Long papers), pp. 9802–9822. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib39",
+    "en": "OpenAI (2025) OpenAI Introducing openai o3 and o4-mini. Technical report OpenAI. External Links: Link Cited by: Limitations.",
+    "zh": "介绍 OpenAI o3 与 o4-mini。原始引文：OpenAI (2025) OpenAI Introducing openai o3 and o4-mini. Technical report OpenAI. External Links: Link Cited by: Limitations."
+  },
+  {
+    "id": "bib.bib41",
+    "en": "Ouyang et al. (2026) S. Ouyang, J. Yan, Y. Chen, R. Han, Z. Wang, B. D. Mishra, R. Meng, C. Li, Y. Jiao, K. Zha, et al. SkillOS: learning skill curation for self-evolving agents. arXiv preprint arXiv:2605.06614. Cited by: Appendix A, §1.",
+    "zh": "SkillOS：学习技能整理以构建自演化智能体。原始引文：Ouyang et al. (2026) S. Ouyang, J. Yan, Y. Chen, R. Han, Z. Wang, B. D. Mishra, R. Meng, C. Li, Y. Jiao, K. Zha, et al. SkillOS: learning skill curation for self-evolving agents. arXiv preprint arXiv:2605.06614. Cited by: Appendix A, §1."
+  },
+  {
+    "id": "bib.bib24",
+    "en": "Press et al. (2023) O. Press, M. Zhang, S. Min, L. Schmidt, N. A. Smith, and M. Lewis Measuring and narrowing the compositionality gap in language models. In Findings of the Association for Computational Linguistics: EMNLP 2023, pp. 5687–5711. Cited by: §4.1.",
+    "zh": "衡量并缩小语言模型的组合性差距。原始引文：Press et al. (2023) O. Press, M. Zhang, S. Min, L. Schmidt, N. A. Smith, and M. Lewis Measuring and narrowing the compositionality gap in language models. In Findings of the Association for Computational Linguistics: EMNLP 2023, pp. 5687–5711. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib29",
+    "en": "Russell (2010) S. J. Russell Artificial intelligence a modern approach. Pearson Education, Inc.. Cited by: §3.2.",
+    "zh": "人工智能：一种现代方法。原始引文：Russell (2010) S. J. Russell Artificial intelligence a modern approach. Pearson Education, Inc.. Cited by: §3.2."
+  },
+  {
+    "id": "bib.bib4",
+    "en": "Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom Toolformer: language models can teach themselves to use tools. Advances in neural information processing systems 36, pp. 68539–68551. Cited by: §1.",
+    "zh": "Toolformer：语言模型可以自学使用工具。原始引文：Schick et al. (2023) T. Schick, J. Dwivedi-Yu, R. Dessì, R. Raileanu, M. Lomeli, E. Hambro, L. Zettlemoyer, N. Cancedda, and T. Scialom Toolformer: language models can teach themselves to use tools. Advances in neural information processing systems 36, pp. 68539–68551. Cited by: §1."
+  },
+  {
+    "id": "bib.bib27",
+    "en": "Sclar et al. (2024) M. Sclar, Y. Choi, Y. Tsvetkov, and A. Suhr Quantifying language models’ sensitivity to spurious features in prompt design or: how i learned to start worrying about prompt formatting. In International Conference on Learning Representations, Vol. 2024, pp. 25055–25083. Cited by: Appendix A.",
+    "zh": "量化语言模型对提示词设计中虚假特征的敏感性：我如何开始担忧提示词格式。原始引文：Sclar et al. (2024) M. Sclar, Y. Choi, Y. Tsvetkov, and A. Suhr Quantifying language models’ sensitivity to spurious features in prompt design or: how i learned to start worrying about prompt formatting. In International Conference on Learning Representations, Vol. 2024, pp. 25055–25083. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib11",
+    "en": "Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao Reflexion: language agents with verbal reinforcement learning. Advances in neural information processing systems 36, pp. 8634–8652. Cited by: Appendix A.",
+    "zh": "Reflexion：使用语言强化学习的语言智能体。原始引文：Shinn et al. (2023) N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, and S. Yao Reflexion: language agents with verbal reinforcement learning. Advances in neural information processing systems 36, pp. 8634–8652. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib2",
+    "en": "Shridhar et al. (2020) M. Shridhar, X. Yuan, M. Côté, Y. Bisk, A. Trischler, and M. Hausknecht Alfworld: aligning text and embodied environments for interactive learning. arXiv preprint arXiv:2010.03768. Cited by: §1, §2.1, §4.1.",
+    "zh": "ALFWorld：对齐文本与具身环境以进行交互学习。原始引文：Shridhar et al. (2020) M. Shridhar, X. Yuan, M. Côté, Y. Bisk, A. Trischler, and M. Hausknecht Alfworld: aligning text and embodied environments for interactive learning. arXiv preprint arXiv:2010.03768. Cited by: §1, §2.1, §4.1."
+  },
+  {
+    "id": "bib.bib17",
+    "en": "Singh et al. (2023) A. Singh, J. D. Co-Reyes, R. Agarwal, A. Anand, P. Patil, X. Garcia, P. J. Liu, J. Harrison, J. Lee, K. Xu, et al. Beyond human data: scaling self-training for problem-solving with language models. arXiv preprint arXiv:2312.06585. Cited by: Appendix A.",
+    "zh": "超越人类数据：扩展语言模型解决问题的自训练。原始引文：Singh et al. (2023) A. Singh, J. D. Co-Reyes, R. Agarwal, A. Anand, P. Patil, X. Garcia, P. J. Liu, J. Harrison, J. Lee, K. Xu, et al. Beyond human data: scaling self-training for problem-solving with language models. arXiv preprint arXiv:2312.06585. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib40",
+    "en": "Sun et al. (2025) Q. Sun, K. Cheng, Z. Ding, C. Jin, Y. Wang, F. Xu, Z. Wu, C. Jia, L. Chen, Z. Liu, et al. Os-genesis: automating gui agent trajectory construction via reverse task synthesis. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 5555–5579. Cited by: Limitations.",
+    "zh": "OS-Genesis：通过逆向任务合成自动构建图形界面智能体轨迹。原始引文：Sun et al. (2025) Q. Sun, K. Cheng, Z. Ding, C. Jin, Y. Wang, F. Xu, Z. Wu, C. Jia, L. Chen, Z. Liu, et al. Os-genesis: automating gui agent trajectory construction via reverse task synthesis. In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pp. 5555–5579. Cited by: Limitations."
+  },
+  {
+    "id": "bib.bib23",
+    "en": "Trivedi et al. (2022) H. Trivedi, N. Balasubramanian, T. Khot, and A. Sabharwal MuSiQue: multihop questions via single-hop question composition. Transactions of the Association for Computational Linguistics 10, pp. 539–554. Cited by: §4.1.",
+    "zh": "MuSiQue：通过单跳问题组合构建多跳问题。原始引文：Trivedi et al. (2022) H. Trivedi, N. Balasubramanian, T. Khot, and A. Sabharwal MuSiQue: multihop questions via single-hop question composition. Transactions of the Association for Computational Linguistics 10, pp. 539–554. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib5",
+    "en": "Wang et al. (2023) G. Wang, Y. Xie, Y. Jiang, A. Mandlekar, C. Xiao, Y. Zhu, L. Fan, and A. Anandkumar Voyager: an open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291. Cited by: Appendix A, §1.",
+    "zh": "Voyager：基于大语言模型的开放式具身智能体。原始引文：Wang et al. (2023) G. Wang, Y. Xie, Y. Jiang, A. Mandlekar, C. Xiao, Y. Zhu, L. Fan, and A. Anandkumar Voyager: an open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291. Cited by: Appendix A, §1."
+  },
+  {
+    "id": "bib.bib9",
+    "en": "Wang et al. (2025a) J. Wang, Q. Yan, Y. Wang, Y. Tian, S. S. Mishra, Z. Xu, M. Gandhi, P. Xu, and L. L. Cheong Reinforcement learning for self-improving agent with skill library. arXiv preprint arXiv:2512.17102. Cited by: §1.",
+    "zh": "使用技能库进行自我改进智能体强化学习。原始引文：Wang et al. (2025a) J. Wang, Q. Yan, Y. Wang, Y. Tian, S. S. Mishra, Z. Xu, M. Gandhi, P. Xu, and L. L. Cheong Reinforcement learning for self-improving agent with skill library. arXiv preprint arXiv:2512.17102. Cited by: §1."
+  },
+  {
+    "id": "bib.bib32",
+    "en": "Wang et al. (2024a) L. Wang, C. Ma, X. Feng, Z. Zhang, H. Yang, J. Zhang, Z. Chen, J. Tang, X. Chen, Y. Lin, et al. A survey on large language model based autonomous agents. Frontiers of Computer Science 18 (6), pp. 186345. Cited by: §1.",
+    "zh": "基于大语言模型的自主智能体综述。原始引文：Wang et al. (2024a) L. Wang, C. Ma, X. Feng, Z. Zhang, H. Yang, J. Zhang, Z. Chen, J. Tang, X. Chen, Y. Lin, et al. A survey on large language model based autonomous agents. Frontiers of Computer Science 18 (6), pp. 186345. Cited by: §1."
+  },
+  {
+    "id": "bib.bib15",
+    "en": "Wang et al. (2025b) Y. Wang, Q. Liu, Z. Wang, Z. Li, W. Wei, Y. Liu, and Y. Bao PromptBridge: cross-model prompt transfer for large language models. arXiv preprint arXiv:2512.01420. Cited by: Appendix A.",
+    "zh": "PromptBridge：大语言模型之间的跨模型提示词迁移。原始引文：Wang et al. (2025b) Y. Wang, Q. Liu, Z. Wang, Z. Li, W. Wei, Y. Liu, and Y. Bao PromptBridge: cross-model prompt transfer for large language models. arXiv preprint arXiv:2512.01420. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib6",
+    "en": "Wang et al. (2024b) Z. Wang, S. Cai, A. Liu, Y. Jin, J. Hou, B. Zhang, H. Lin, Z. He, Z. Zheng, Y. Yang, et al. Jarvis-1: open-world multi-task agents with memory-augmented multimodal language models. IEEE Transactions on Pattern Analysis and Machine Intelligence 47 (3), pp. 1894–1907. Cited by: Appendix A, §1.",
+    "zh": "JARVIS-1：使用记忆增强多模态语言模型的开放世界多任务智能体。原始引文：Wang et al. (2024b) Z. Wang, S. Cai, A. Liu, Y. Jin, J. Hou, B. Zhang, H. Lin, Z. He, Z. Zheng, Y. Yang, et al. Jarvis-1: open-world multi-task agents with memory-augmented multimodal language models. IEEE Transactions on Pattern Analysis and Machine Intelligence 47 (3), pp. 1894–1907. Cited by: Appendix A, §1."
+  },
+  {
+    "id": "bib.bib28",
+    "en": "Wang et al. (2024c) Z. Z. Wang, J. Mao, D. Fried, and G. Neubig Agent workflow memory. arXiv preprint arXiv:2409.07429. Cited by: §1.",
+    "zh": "智能体工作流记忆。原始引文：Wang et al. (2024c) Z. Z. Wang, J. Mao, D. Fried, and G. Neubig Agent workflow memory. arXiv preprint arXiv:2409.07429. Cited by: §1."
+  },
+  {
+    "id": "bib.bib8",
+    "en": "Xia et al. (2026) P. Xia, J. Chen, H. Wang, J. Liu, K. Zeng, Y. Wang, S. Han, Y. Zhou, X. Zhao, H. Chen, et al. Skillrl: evolving agents via recursive skill-augmented reinforcement learning. arXiv preprint arXiv:2602.08234. Cited by: Appendix A, §1, §2.1, §3.1, §4.1.",
+    "zh": "SkillRL：通过递归的技能增强强化学习演化智能体。原始引文：Xia et al. (2026) P. Xia, J. Chen, H. Wang, J. Liu, K. Zeng, Y. Wang, S. Han, Y. Zhou, X. Zhao, H. Chen, et al. Skillrl: evolving agents via recursive skill-augmented reinforcement learning. arXiv preprint arXiv:2602.08234. Cited by: Appendix A, §1, §2.1, §3.1, §4.1."
+  },
+  {
+    "id": "bib.bib10",
+    "en": "Xu et al. (2025) Y. Xu, D. Lu, Z. Shen, J. Wang, Z. Wang, Y. Mao, C. Xiong, and T. Yu Agenttrek: agent trajectory synthesis via guiding replay with web tutorials. In International Conference on Learning Representations, Vol. 2025, pp. 79822–79843. Cited by: Appendix A.",
+    "zh": "AgentTrek：利用网页教程引导重放以合成智能体轨迹。原始引文：Xu et al. (2025) Y. Xu, D. Lu, Z. Shen, J. Wang, Z. Wang, Y. Mao, C. Xiong, and T. Yu Agenttrek: agent trajectory synthesis via guiding replay with web tutorials. In International Conference on Learning Representations, Vol. 2025, pp. 79822–79843. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib30",
+    "en": "Yang et al. (2025) A. Yang, A. Li, B. Yang, B. Zhang, B. Hui, B. Zheng, B. Yu, C. Gao, C. Huang, C. Lv, et al. Qwen3 technical report. arXiv preprint arXiv:2505.09388. Cited by: §1, §2.1, §4.1.",
+    "zh": "Qwen3 技术报告。原始引文：Yang et al. (2025) A. Yang, A. Li, B. Yang, B. Zhang, B. Hui, B. Zheng, B. Yu, C. Gao, C. Huang, C. Lv, et al. Qwen3 technical report. arXiv preprint arXiv:2505.09388. Cited by: §1, §2.1, §4.1."
+  },
+  {
+    "id": "bib.bib12",
+    "en": "Yang et al. (2024) C. Yang, X. Wang, Y. Lu, H. Liu, Q. V. Le, D. Zhou, and X. Chen Large language models as optimizers. In International Conference on Learning Representations, Vol. 2024, pp. 12028–12068. Cited by: Appendix A.",
+    "zh": "大语言模型作为优化器。原始引文：Yang et al. (2024) C. Yang, X. Wang, Y. Lu, H. Liu, Q. V. Le, D. Zhou, and X. Chen Large language models as optimizers. In International Conference on Learning Representations, Vol. 2024, pp. 12028–12068. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib21",
+    "en": "Yang et al. (2018) Z. Yang, P. Qi, S. Zhang, Y. Bengio, W. Cohen, R. Salakhutdinov, and C. D. Manning HotpotQA: a dataset for diverse, explainable multi-hop question answering. In Proceedings of the 2018 conference on empirical methods in natural language processing, pp. 2369–2380. Cited by: §4.1.",
+    "zh": "HotpotQA：用于多样化、可解释的多跳问答的数据集。原始引文：Yang et al. (2018) Z. Yang, P. Qi, S. Zhang, Y. Bengio, W. Cohen, R. Salakhutdinov, and C. D. Manning HotpotQA: a dataset for diverse, explainable multi-hop question answering. In Proceedings of the 2018 conference on empirical methods in natural language processing, pp. 2369–2380. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib1",
+    "en": "Yao et al. (2022a) S. Yao, H. Chen, J. Yang, and K. Narasimhan Webshop: towards scalable real-world web interaction with grounded language agents. Advances in Neural Information Processing Systems 35, pp. 20744–20757. Cited by: §4.1.",
+    "zh": "WebShop：基于真实场景的大规模网页交互语言智能体。原始引文：Yao et al. (2022a) S. Yao, H. Chen, J. Yang, and K. Narasimhan Webshop: towards scalable real-world web interaction with grounded language agents. Advances in Neural Information Processing Systems 35, pp. 20744–20757. Cited by: §4.1."
+  },
+  {
+    "id": "bib.bib3",
+    "en": "Yao et al. (2022b) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao React: synergizing reasoning and acting in language models. arXiv preprint arXiv:2210.03629. Cited by: Appendix A.",
+    "zh": "ReAct：协同语言模型的推理与行动。原始引文：Yao et al. (2022b) S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao React: synergizing reasoning and acting in language models. arXiv preprint arXiv:2210.03629. Cited by: Appendix A."
+  },
+  {
+    "id": "bib.bib33",
+    "en": "Yao et al. (2025) Z. Yao, Y. Xu, H. Xu, Y. Liao, and Z. Xie Efficient deployment of large language models on resource-constrained devices. arXiv preprint arXiv:2501.02438. Cited by: §1.",
+    "zh": "在资源受限设备上高效部署大语言模型。原始引文：Yao et al. (2025) Z. Yao, Y. Xu, H. Xu, Y. Liao, and Z. Xie Efficient deployment of large language models on resource-constrained devices. arXiv preprint arXiv:2501.02438. Cited by: §1."
+  },
+  {
+    "id": "bib.bib26",
+    "en": "Zhao et al. (2024) A. Zhao, D. Huang, Q. Xu, M. Lin, Y. Liu, and G. Huang Expel: llm agents are experiential learners. In Proceedings of the AAAI Conference on Artificial Intelligence, Vol. 38, pp. 19632–19642. Cited by: Appendix A, §1.",
+    "zh": "ExpeL：大语言模型智能体是经验学习者。原始引文：Zhao et al. (2024) A. Zhao, D. Huang, Q. Xu, M. Lin, Y. Liu, and G. Huang Expel: llm agents are experiential learners. In Proceedings of the AAAI Conference on Artificial Intelligence, Vol. 38, pp. 19632–19642. Cited by: Appendix A, §1."
+  },
+  {
+    "id": "bib.bib34",
+    "en": "Zheng et al. (2025) Y. Zheng, Y. Chen, B. Qian, X. Shi, Y. Shu, and J. Chen A review on edge large language models: design, execution, and applications. ACM Computing Surveys 57 (8), pp. 1–35. Cited by: §1.",
+    "zh": "边缘大语言模型综述：设计、执行与应用。原始引文：Zheng et al. (2025) Y. Zheng, Y. Chen, B. Qian, X. Shi, Y. Shu, and J. Chen A review on edge large language models: design, execution, and applications. ACM Computing Surveys 57 (8), pp. 1–35. Cited by: §1."
+  },
+  {
+    "id": "bib.bib7",
+    "en": "Zhu et al. (2023) X. Zhu, Y. Chen, H. Tian, C. Tao, W. Su, C. Yang, G. Huang, B. Li, L. Lu, X. Wang, et al. Ghost in the minecraft: generally capable agents for open-world environments via large language models with text-based knowledge and memory. arXiv preprint arXiv:2305.17144. Cited by: Appendix A, §1.",
+    "zh": "Minecraft 中的幽灵：借助基于文本的知识和记忆，以大语言模型构建开放世界通用智能体。原始引文：Zhu et al. (2023) X. Zhu, Y. Chen, H. Tian, C. Tao, W. Su, C. Yang, G. Huang, B. Li, L. Lu, X. Wang, et al. Ghost in the minecraft: generally capable agents for open-world environments via large language models with text-based knowledge and memory. arXiv preprint arXiv:2305.17144. Cited by: Appendix A, §1."
+  }
+]

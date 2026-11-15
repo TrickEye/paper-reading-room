@@ -97,5 +97,21 @@
     "defaultMode": "dual",
     "storageKey": "ace-reader-",
     "summary": "原图保留 · 按需加载"
+  },
+  "masa": {
+    "title": "MASA · 中文全文与逐段对照",
+    "description": "MASA 论文完整中文译文与逐段英文对照，包含正文、附录 A–J、5 幅原图、9 张完整表格和 2 个算法。",
+    "brand": "MASA",
+    "authors": [
+      "Jianxiang Yu",
+      "Jiapeng Zhu",
+      "Bochen Lin",
+      "Qier Cui",
+      "Zichen Ding",
+      "Xiang Li"
+    ],
+    "defaultMode": "dual",
+    "storageKey": "ace-reader-",
+    "summary": "原图保留 · 按需加载"
   }
 }

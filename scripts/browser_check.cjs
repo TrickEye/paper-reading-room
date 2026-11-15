@@ -10,7 +10,7 @@ const http = require('node:http');
 const {createHash} = require('node:crypto');
 const root = path.resolve(__dirname, '../public');
 const output = process.env.BROWSER_OUTPUT_DIR || path.join(require('node:os').tmpdir(), 'paper-reader-browser-check');
-const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7]};
+const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7], masa: [234,5,9]};
 const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {
@@ -61,6 +61,17 @@ async function main() {
     assert((await pdf.body()).subarray(0,5).toString() === '%PDF-');
     await card.locator('a.primary').click(); await state(index);
     assert.equal(await index.locator('body').getAttribute('data-paper'),'skill-transfer');
+    await index.goto(base + '/');
+    assert.equal(await index.locator('.card').count(),7);
+    const masaCard = index.locator('.card').filter({hasText:'Model-Aware Skill Alignment for LLM Agents'});
+    assert.equal(await masaCard.count(),1);
+    assert.equal(await masaCard.locator('a.primary').getAttribute('href'),'papers/masa.html');
+    assert.equal(await masaCard.locator('a.secondary').getAttribute('href'),'pdfs/MASA-2605.30723v1.pdf');
+    const masaPdf = await index.request.get(base + '/pdfs/MASA-2605.30723v1.pdf');
+    assert.equal(masaPdf.status(),200);
+    assert((await masaPdf.body()).subarray(0,5).toString() === '%PDF-');
+    await masaCard.locator('a.primary').click(); await state(index);
+    assert.equal(await index.locator('body').getAttribute('data-paper'),'masa');
     await index.close();
   }
   const metrics = [];
@@ -75,18 +86,29 @@ async function main() {
     const doc = JSON.parse(await fs.readFile(path.join(root,'content',manifest.papers[id].url)));
     assert.deepEqual(await page.evaluate(() => [document.querySelectorAll('article [data-unit]').length,document.querySelectorAll('figure.ltx_figure').length,document.querySelectorAll('article table').length]), counts);
     const actual = await page.evaluate(snapshot);
+    if (process.env.BROWSER_HASH_REPORT === id) {
+      console.log('CONTENT HASH',id,JSON.stringify(Object.fromEntries(Object.entries(actual).map(([key,value]) => [key,createHash('sha256').update(JSON.stringify(value)).digest('hex')]))));
+    }
     if (process.env.MIGRATION_BASELINE_DIR) {
       const old = JSON.parse(await fs.readFile(path.join(process.env.MIGRATION_BASELINE_DIR, `${id}-dom.json`)));
       assert.deepEqual(actual, old, `${id}: original IDs, bilingual text, complete tables, math, code and article text must remain unchanged`);
     }
     if (baselineHashes[id]) {
       for (const [key,value] of Object.entries(actual)) assert.equal(createHash('sha256').update(JSON.stringify(value)).digest('hex'),baselineHashes[id][key],`${id}: migration baseline ${key}`);
-    } else if (id === 'skill-transfer') {
+    }
+    if (id === 'skill-transfer') {
       assert.equal(await page.locator('.ltx_bibitem').count(),46);
       assert.equal(await page.locator('.code-pair').count(),5);
       assert.equal(await page.locator('#T3 tbody tr').count(),10);
       assert(await page.locator('#S5').getByText('技能迁移').count());
       assert(await page.locator('#D').getByText('附录 D').count());
+    }
+    if (id === 'masa') {
+      assert.equal(await page.locator('.ltx_bibitem').count(),46);
+      assert.equal(await page.locator('.algorithm .code-pair').count(),2);
+      assert.equal(await page.locator('#T9 tbody tr').count(),5);
+      assert(await page.locator('#A10').getByText('附录 J').count());
+      assert(await page.locator('[id="A4.p4.1"] pre.zh').getByText('架构元数据').count());
     }
     assert(await page.locator('math').evaluateAll(nodes => nodes.every(n => n.namespaceURI === 'http://www.w3.org/1998/Math/MathML' && [...n.querySelectorAll('*')].every(x => x.namespaceURI === n.namespaceURI))), `${id}: MathML namespace`);
     await page.screenshot({path:path.join(output,`${id}-desktop.png`)});
@@ -97,6 +119,22 @@ async function main() {
         if (kind === 'figure') await element.locator('img').first().evaluate(img => img.decode());
         await page.screenshot({path:path.join(output,`${id}-${kind}.png`)});
       }
+    }
+    if (id === 'masa') {
+      for (let n = 2; n <= 5; n++) {
+        const figure = page.locator(`#F${n}`);
+        await figure.scrollIntoViewIfNeeded();
+        await figure.locator('img').evaluate(img => img.decode());
+        await page.screenshot({path:path.join(output,`masa-F${n}.png`)});
+      }
+      for (const target of ['T4','T9','alg1','A4.p4.1']) {
+        const element = page.locator(`[id="${target}"]`);
+        await element.scrollIntoViewIfNeeded();
+        await page.screenshot({path:path.join(output,`masa-${target.replaceAll('.','-')}.png`)});
+      }
+      assert.equal(await page.locator('#T4 table').count(),1);
+      assert(await page.locator('#T4').getByText('绝不可跳过系统性搜索').count());
+      assert(await page.locator('#T9').getByText('算法式子串匹配').count());
     }
     for (const mode of ['en','dual','zh']) {
       await page.locator(`#reading-mode [data-mode="${mode}"]`).click();

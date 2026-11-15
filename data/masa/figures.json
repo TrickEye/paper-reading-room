@@ -1,0 +1,27 @@
+[
+  {
+    "number": 1,
+    "en": "Figure 1: Skill granularity is not one-size-fits-all. ALFWorld success rate (%) for four Qwen3 backbones under a No-Skill control and three granularity levels (Concise, Moderate, Detailed). The optimal level differs across backbones.",
+    "zh": "图 1：技能粒度并非一体适用。图示四个 Qwen3 底座模型在“无技能”对照及三个粒度级别（精简、中等、详细）下的 ALFWorld 成功率（%）。最佳粒度因底座模型而异。"
+  },
+  {
+    "number": 2,
+    "en": "Figure 2: The overall framework of MASA.",
+    "zh": "图 2：MASA 的整体框架。"
+  },
+  {
+    "number": 3,
+    "en": "Figure 3: OOD generalization of MASA-Rewriter on held-out ALFWorld task types. Pink bars denote baselines and blue bars denote MASA-Rewriter variants.",
+    "zh": "图 3：MASA 改写器在保留的 ALFWorld 任务类型上的分布外泛化。粉色柱表示基线，蓝色柱表示 MASA 改写器的不同版本。"
+  },
+  {
+    "number": 4,
+    "en": "Figure 4: The supplementary validation of Gemma family.",
+    "zh": "图 4：Gemma 系列上的补充验证。"
+  },
+  {
+    "number": 5,
+    "en": "Figure 5: Per-task OOD generalization of MASA-Rewriter. Rows: target backbones (4B–32B). Columns: held-out task types (Clean, Heat, Cool).",
+    "zh": "图 5：MASA 改写器的分布外逐任务泛化。各行是目标底座模型（4B–32B），各列是保留的任务类型（Clean、Heat、Cool）。"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "title": "Skill is Not One-Size-Fits-All: Model-Aware Skill Alignment for LLM Agents",
+  "authors": [
+    "Jianxiang Yu",
+    "Jiapeng Zhu",
+    "Bochen Lin",
+    "Qier Cui",
+    "Zichen Ding",
+    "Xiang Li"
+  ],
+  "institution": "East China Normal University, Shanghai, China",
+  "arxiv_id": "2605.30723",
+  "version": "v1",
+  "version_date": "2026-05-29",
+  "pdf_source_url": "https://arxiv.org/pdf/2605.30723v1",
+  "html_source_url": "https://arxiv.org/html/2605.30723v1",
+  "pdf_file": "MASA-2605.30723v1.pdf",
+  "pdf_sha256": "915452ead8006c64d9aebdb6cbcae06544fb742f21d1afc638928b053cf47dc9",
+  "html_sha256": "effd2f4d1f5f2b23db1023416a0099b564a03f7db420686b71ab79b444bf2422",
+  "pages": 20,
+  "retrieved_date": "2026-11-15",
+  "content_scope": "Full main paper, limitations, ethics, references, appendices A–J, five figures, nine numbered tables, two algorithms and model card.",
+  "translation_status": "complete"
+}

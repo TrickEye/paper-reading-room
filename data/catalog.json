@@ -40,5 +40,12 @@
     "figures": 3,
     "tables": 7,
     "builder": "skill_transfer.py"
+  },
+  {
+    "id": "masa",
+    "pdf": "MASA-2605.30723v1.pdf",
+    "figures": 5,
+    "tables": 9,
+    "builder": "masa.py"
   }
 ]

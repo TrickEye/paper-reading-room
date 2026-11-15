@@ -1,0 +1,1300 @@
+[
+  {
+    "number": 1,
+    "rows": [
+      [
+        "",
+        "",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "WebShop",
+        "WebShop",
+        "WebShop"
+      ],
+      [
+        "Model",
+        "Method",
+        "Pick",
+        "Look",
+        "Clean",
+        "Heat",
+        "Cool",
+        "Pick2",
+        "SR ↑\\uparrow",
+        "Steps ↓\\downarrow",
+        "SR ↑\\uparrow",
+        "Score ↑\\uparrow",
+        "Steps ↓\\downarrow"
+      ],
+      [
+        "Qwen3-4B",
+        "No Skill",
+        "20.0",
+        "15.4",
+        "18.5",
+        "18.8",
+        "16.0",
+        "12.5",
+        "17.1",
+        "44.6",
+        "23.0",
+        "42.2",
+        "9.5"
+      ],
+      [
+        "Qwen3-4B",
+        "+ Base Skill",
+        "20.0",
+        "30.8",
+        "29.6",
+        "12.5",
+        "20.0",
+        "8.3",
+        "20.0",
+        "42.3",
+        "19.4",
+        "34.8",
+        "11.0"
+      ],
+      [
+        "Qwen3-4B",
+        "+ DS-Adapter",
+        "28.6",
+        "30.8",
+        "37.0",
+        "18.8",
+        "32.0",
+        "12.5",
+        "27.1",
+        "40.0",
+        "19.2",
+        "25.7",
+        "12.4"
+      ],
+      [
+        "Qwen3-4B",
+        "+ MASA",
+        "25.7",
+        "53.8",
+        "40.7",
+        "37.5",
+        "24.0",
+        "20.8",
+        "31.4",
+        "38.4",
+        "26.4",
+        "49.1",
+        "8.4"
+      ],
+      [
+        "Qwen3-8B",
+        "No Skill",
+        "54.3",
+        "46.2",
+        "29.6",
+        "6.2",
+        "24.0",
+        "20.8",
+        "32.1",
+        "39.1",
+        "4.6",
+        "32.7",
+        "10.0"
+      ],
+      [
+        "Qwen3-8B",
+        "+ Base Skill",
+        "17.1",
+        "38.5",
+        "40.7",
+        "31.2",
+        "20.0",
+        "12.5",
+        "25.0",
+        "40.5",
+        "6.0",
+        "32.6",
+        "9.3"
+      ],
+      [
+        "Qwen3-8B",
+        "+ DS-Adapter",
+        "25.7",
+        "38.5",
+        "44.4",
+        "25.0",
+        "16.0",
+        "16.7",
+        "27.1",
+        "39.6",
+        "4.4",
+        "18.2",
+        "12.6"
+      ],
+      [
+        "Qwen3-8B",
+        "+ MASA",
+        "62.9",
+        "38.5",
+        "70.4",
+        "75.0",
+        "56.0",
+        "37.5",
+        "57.9",
+        "29.2",
+        "28.6",
+        "60.1",
+        "4.7"
+      ],
+      [
+        "Qwen3-14B",
+        "No Skill",
+        "65.7",
+        "38.5",
+        "25.9",
+        "43.8",
+        "16.0",
+        "29.2",
+        "37.9",
+        "36.7",
+        "2.8",
+        "19.9",
+        "12.7"
+      ],
+      [
+        "Qwen3-14B",
+        "+ Base Skill",
+        "68.6",
+        "46.2",
+        "44.4",
+        "25.0",
+        "20.0",
+        "33.3",
+        "42.1",
+        "34.1",
+        "1.6",
+        "14.8",
+        "13.5"
+      ],
+      [
+        "Qwen3-14B",
+        "+ DS-Adapter",
+        "68.6",
+        "53.8",
+        "40.7",
+        "18.8",
+        "40.0",
+        "29.2",
+        "44.3",
+        "34.8",
+        "2.0",
+        "12.6",
+        "13.6"
+      ],
+      [
+        "Qwen3-14B",
+        "+ MASA",
+        "85.7",
+        "53.8",
+        "81.5",
+        "56.2",
+        "44.0",
+        "45.8",
+        "64.3",
+        "25.7",
+        "29.2",
+        "54.4",
+        "8.0"
+      ],
+      [
+        "Qwen3-32B",
+        "No Skill",
+        "48.6",
+        "46.2",
+        "44.4",
+        "25.0",
+        "32.0",
+        "16.7",
+        "36.4",
+        "37.0",
+        "6.6",
+        "35.2",
+        "9.9"
+      ],
+      [
+        "Qwen3-32B",
+        "+ Base Skill",
+        "48.6",
+        "46.2",
+        "40.7",
+        "50.0",
+        "44.0",
+        "20.8",
+        "41.4",
+        "35.6",
+        "7.2",
+        "24.2",
+        "12.0"
+      ],
+      [
+        "Qwen3-32B",
+        "+ DS-Adapter",
+        "51.4",
+        "38.5",
+        "59.3",
+        "37.5",
+        "44.0",
+        "29.2",
+        "45.0",
+        "32.2",
+        "3.6",
+        "14.3",
+        "13.3"
+      ],
+      [
+        "Qwen3-32B",
+        "+ MASA",
+        "57.1",
+        "46.2",
+        "77.8",
+        "81.3",
+        "76.0",
+        "54.2",
+        "65.7",
+        "24.3",
+        "34.6",
+        "59.9",
+        "7.3"
+      ]
+    ]
+  },
+  {
+    "number": 2,
+    "rows": [
+      [
+        "Model",
+        "Method",
+        "Single-Hop QA",
+        "Single-Hop QA",
+        "Single-Hop QA",
+        "Multi-Hop QA",
+        "Multi-Hop QA",
+        "Multi-Hop QA",
+        "Multi-Hop QA",
+        "Avg."
+      ],
+      [
+        "Model",
+        "Method",
+        "NQ†",
+        "TriviaQA⋆",
+        "PopQA⋆",
+        "HotpotQA†",
+        "2Wiki⋆",
+        "MuSiQue⋆",
+        "Bamboogle⋆",
+        "Avg."
+      ],
+      [
+        "Qwen3-4B",
+        "No Skill",
+        "29.4",
+        "51.0",
+        "37.2",
+        "27.7",
+        "22.8",
+        "6.4",
+        "9.3",
+        "32.9"
+      ],
+      [
+        "Qwen3-4B",
+        "+ Base Skill",
+        "34.5",
+        "57.4",
+        "38.2",
+        "28.5",
+        "24.4",
+        "7.8",
+        "10.1",
+        "35.5"
+      ],
+      [
+        "Qwen3-4B",
+        "+ DS-Adapter",
+        "33.0",
+        "56.5",
+        "41.8",
+        "28.6",
+        "23.9",
+        "9.3",
+        "12.9",
+        "36.2"
+      ],
+      [
+        "Qwen3-4B",
+        "+ MASA",
+        "35.5",
+        "55.3",
+        "38.9",
+        "27.4",
+        "27.0",
+        "9.4",
+        "61.3",
+        "36.9"
+      ],
+      [
+        "Qwen3-8B",
+        "No Skill",
+        "19.1",
+        "46.5",
+        "30.3",
+        "24.8",
+        "30.6",
+        "6.7",
+        "68.1",
+        "31.3"
+      ],
+      [
+        "Qwen3-8B",
+        "+ Base Skill",
+        "34.0",
+        "58.5",
+        "38.8",
+        "28.6",
+        "25.9",
+        "6.2",
+        "10.1",
+        "36.1"
+      ],
+      [
+        "Qwen3-8B",
+        "+ DS-Adapter",
+        "33.2",
+        "57.6",
+        "38.7",
+        "27.8",
+        "22.9",
+        "5.6",
+        "7.7",
+        "35.0"
+      ],
+      [
+        "Qwen3-8B",
+        "+ MASA",
+        "36.4",
+        "56.7",
+        "39.0",
+        "28.6",
+        "25.7",
+        "10.0",
+        "62.5",
+        "37.2"
+      ],
+      [
+        "Qwen3-14B",
+        "No Skill",
+        "33.8",
+        "60.2",
+        "40.6",
+        "31.7",
+        "26.8",
+        "7.6",
+        "10.5",
+        "37.6"
+      ],
+      [
+        "Qwen3-14B",
+        "+ Base Skill",
+        "35.3",
+        "60.5",
+        "39.5",
+        "32.7",
+        "30.3",
+        "11.4",
+        "15.3",
+        "38.5"
+      ],
+      [
+        "Qwen3-14B",
+        "+ DS-Adapter",
+        "33.9",
+        "60.2",
+        "39.5",
+        "31.6",
+        "28.5",
+        "9.2",
+        "12.5",
+        "37.7"
+      ],
+      [
+        "Qwen3-14B",
+        "+ MASA",
+        "35.6",
+        "61.8",
+        "40.7",
+        "32.8",
+        "30.0",
+        "9.7",
+        "8.9",
+        "39.0"
+      ],
+      [
+        "Qwen3-32B",
+        "No Skill",
+        "29.1",
+        "59.8",
+        "38.3",
+        "32.2",
+        "29.3",
+        "8.6",
+        "64.5",
+        "38.1"
+      ],
+      [
+        "Qwen3-32B",
+        "+ Base Skill",
+        "33.8",
+        "61.4",
+        "39.3",
+        "33.8",
+        "26.0",
+        "11.7",
+        "67.7",
+        "38.7"
+      ],
+      [
+        "Qwen3-32B",
+        "+ DS-Adapter",
+        "34.4",
+        "61.5",
+        "40.6",
+        "34.0",
+        "32.0",
+        "11.6",
+        "64.1",
+        "40.6"
+      ],
+      [
+        "Qwen3-32B",
+        "+ MASA",
+        "37.0",
+        "61.6",
+        "40.0",
+        "34.2",
+        "35.6",
+        "11.8",
+        "66.1",
+        "41.5"
+      ]
+    ]
+  },
+  {
+    "number": 3,
+    "rows": [
+      [
+        "(a) (a) The search-based evolution pipeline.",
+        "(a) (a) The search-based evolution pipeline.",
+        "(a) (a) The search-based evolution pipeline.",
+        "(a) (a) The search-based evolution pipeline.",
+        "(a) (a) The search-based evolution pipeline."
+      ],
+      [
+        "Variant",
+        "4B",
+        "8B",
+        "14B",
+        "32B"
+      ],
+      [
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld",
+        "ALFWorld"
+      ],
+      [
+        "Full pipeline",
+        "31.4",
+        "57.9",
+        "64.3",
+        "65.7"
+      ],
+      [
+        "w/o Task-specific",
+        "25.0",
+        "32.9",
+        "63.6",
+        "50.0"
+      ],
+      [
+        "w/o General",
+        "25.0",
+        "50.0",
+        "47.9",
+        "64.3"
+      ],
+      [
+        "WebShop",
+        "WebShop",
+        "WebShop",
+        "WebShop",
+        "WebShop"
+      ],
+      [
+        "Full pipeline",
+        "26.4",
+        "28.6",
+        "29.2",
+        "34.6"
+      ],
+      [
+        "w/o Task-specific",
+        "22.4",
+        "25.6",
+        "24.2",
+        "31.8"
+      ],
+      [
+        "w/o General",
+        "23.4",
+        "7.2",
+        "10.2",
+        "9.6"
+      ],
+      [
+        "(b) (b) Model card conditioning in the MASA-Rewriter.",
+        "(b) (b) Model card conditioning in the MASA-Rewriter.",
+        "(b) (b) Model card conditioning in the MASA-Rewriter.",
+        "(b) (b) Model card conditioning in the MASA-Rewriter.",
+        "(b) (b) Model card conditioning in the MASA-Rewriter."
+      ],
+      [
+        "Variant",
+        "4B",
+        "8B",
+        "14B",
+        "32B"
+      ],
+      [
+        "Cross-env",
+        "Cross-env",
+        "Cross-env",
+        "Cross-env",
+        "Cross-env"
+      ],
+      [
+        "w/ Model Card",
+        "32.4",
+        "32.4",
+        "38.2",
+        "51.5"
+      ],
+      [
+        "w/o Model Card",
+        "14.7",
+        "23.5",
+        "33.8",
+        "39.7"
+      ],
+      [
+        "Cross-task",
+        "Cross-task",
+        "Cross-task",
+        "Cross-task",
+        "Cross-task"
+      ],
+      [
+        "w/ Model Card",
+        "32.5",
+        "38.2",
+        "48.5",
+        "55.9"
+      ],
+      [
+        "w/o Model Card",
+        "8.8",
+        "30.9",
+        "20.6",
+        "42.5"
+      ]
+    ]
+  },
+  {
+    "number": 4,
+    "rows": [
+      [
+        "(a) (a) General Skill: Systematic Exploration",
+        "(a) (a) General Skill: Systematic Exploration"
+      ],
+      [
+        "Granularity",
+        "Skill Text"
+      ],
+      [
+        "Concise",
+        "Principle: Search all surfaces and containers once before revisiting."
+      ],
+      [
+        "Moderate",
+        "Principle: Search every plausible surface or container exactly once before revisiting; prioritize unopened or unseen locations to cover the whole room methodically. When to apply: Anytime the goal object count is not yet met and unexplored locations remain."
+      ],
+      [
+        "Detailed",
+        "Principle: When searching for an object, follow these steps exactly: Step 1: Make a mental list of ALL possible locations in the room (countertop 1, countertop 2, shelf 1, drawer 1, cabinet 1, fridge 1, etc.). Step 2: Visit each location one by one using ’go to [location] [number]’ (e.g., ’go to countertop 1’). Step 3: For closed containers (drawer, cabinet, fridge, safe, microwave), always use ’open [container] [number]’ to check inside. Step 4: Read the observation carefully — look for the exact name of the target object. Step 5: Mark each location as ’checked’ mentally and do NOT go back to it. Step 6: Only after checking ALL locations in the room, consider that the object may not be present. EXAMPLE: Looking for a mug → ’go to countertop 1’ → check → ’go to countertop 2’ → check → ’go to shelf 1’ → check → ’open cabinet 1’ → check inside → continue until found. When to apply: At the VERY START of every task that involves finding or locating any object. This is always your first action — never skip the systematic search."
+      ],
+      [
+        "(b) (b) Task-Specific Skill: Open Then Heat",
+        "(b) (b) Task-Specific Skill: Open Then Heat"
+      ],
+      [
+        "Granularity",
+        "Skill Text"
+      ],
+      [
+        "Concise",
+        "Principle: Open microwave, put object in, heat it."
+      ],
+      [
+        "Moderate",
+        "Principle: Upon reaching the microwave with the target in hand, always open the door, place the object inside, and execute the heat action before leaving. When to apply: Immediately after navigating to the microwave with the target object held."
+      ],
+      [
+        "Detailed",
+        "Principle: The microwave heating sequence must be executed in this EXACT order: (1) ’go to microwave 1’ — navigate to the microwave. (2) ’open microwave 1’ — the door must be open to put things in. (3) ’put [object] in/on microwave 1’ — place the object inside. (4) ’heat [object] with microwave 1’ — execute the heating action. (5) ’open microwave 1’ — open the door again to retrieve (if needed). (6) ’take [object] from microwave 1’ — take the now-heated object. COMMON MISTAKE: Trying to ’heat’ without first putting the object in the microwave → fails. ANOTHER MISTAKE: Forgetting to open the microwave before putting the object in → fails. When to apply: When you are holding the target object and ready to heat it. Execute this exact 6-step sequence."
+      ]
+    ]
+  },
+  {
+    "number": 5,
+    "rows": [
+      [
+        "Model",
+        "Skill",
+        "Pick",
+        "Clean",
+        "Heat",
+        "Cool",
+        "Pick2",
+        "Look",
+        "Overall"
+      ],
+      [
+        "Qwen3-4B",
+        "No Skill",
+        "20.0",
+        "18.5",
+        "18.8",
+        "16.0",
+        "12.5",
+        "15.4",
+        "17.1"
+      ],
+      [
+        "Qwen3-4B",
+        "Concise",
+        "3.2",
+        "17.9",
+        "37.5",
+        "9.1",
+        "10.7",
+        "40.0",
+        "16.4"
+      ],
+      [
+        "Qwen3-4B",
+        "Moderate",
+        "20.0",
+        "29.6",
+        "12.5",
+        "20.0",
+        "8.3",
+        "30.8",
+        "20.0"
+      ],
+      [
+        "Qwen3-4B",
+        "Detailed",
+        "1.6",
+        "16.1",
+        "9.3",
+        "6.8",
+        "10.7",
+        "46.7",
+        "12.8"
+      ],
+      [
+        "Qwen3-8B",
+        "No Skill",
+        "54.3",
+        "29.6",
+        "6.2",
+        "24.0",
+        "20.8",
+        "46.2",
+        "32.1"
+      ],
+      [
+        "Qwen3-8B",
+        "Concise",
+        "32.2",
+        "33.9",
+        "25.0",
+        "11.3",
+        "25.0",
+        "40.0",
+        "27.9"
+      ],
+      [
+        "Qwen3-8B",
+        "Moderate",
+        "17.1",
+        "40.7",
+        "31.2",
+        "20.0",
+        "12.5",
+        "38.5",
+        "25.0"
+      ],
+      [
+        "Qwen3-8B",
+        "Detailed",
+        "6.5",
+        "17.9",
+        "21.9",
+        "13.6",
+        "10.7",
+        "50.0",
+        "17.1"
+      ],
+      [
+        "Qwen3-14B",
+        "No Skill",
+        "65.7",
+        "25.9",
+        "43.8",
+        "16.0",
+        "29.2",
+        "38.5",
+        "37.9"
+      ],
+      [
+        "Qwen3-14B",
+        "Concise",
+        "74.2",
+        "26.8",
+        "18.8",
+        "13.7",
+        "30.3",
+        "43.4",
+        "36.8"
+      ],
+      [
+        "Qwen3-14B",
+        "Moderate",
+        "68.6",
+        "44.4",
+        "25.0",
+        "20.0",
+        "33.3",
+        "46.2",
+        "42.1"
+      ],
+      [
+        "Qwen3-14B",
+        "Detailed",
+        "64.5",
+        "46.4",
+        "18.8",
+        "34.1",
+        "46.4",
+        "66.7",
+        "47.5"
+      ],
+      [
+        "Qwen3-32B",
+        "No Skill",
+        "48.6",
+        "44.4",
+        "25.0",
+        "32.0",
+        "16.7",
+        "46.2",
+        "36.4"
+      ],
+      [
+        "Qwen3-32B",
+        "Concise",
+        "56.5",
+        "41.0",
+        "37.5",
+        "18.2",
+        "33.9",
+        "56.6",
+        "40.7"
+      ],
+      [
+        "Qwen3-32B",
+        "Moderate",
+        "48.6",
+        "40.7",
+        "50.0",
+        "44.0",
+        "20.8",
+        "46.2",
+        "41.4"
+      ],
+      [
+        "Qwen3-32B",
+        "Detailed",
+        "54.8",
+        "46.4",
+        "31.2",
+        "36.4",
+        "28.6",
+        "60.0",
+        "42.9"
+      ]
+    ]
+  },
+  {
+    "number": 6,
+    "rows": [
+      [
+        "Model",
+        "Skill",
+        "Pick",
+        "Clean",
+        "Heat",
+        "Cool",
+        "Pick2",
+        "Look",
+        "Overall"
+      ],
+      [
+        "Gemma3-4B",
+        "No Skill",
+        "22.6",
+        "0.0",
+        "0.0",
+        "0.0",
+        "7.1",
+        "40.0",
+        "10.7"
+      ],
+      [
+        "Gemma3-4B",
+        "Concise",
+        "22.6",
+        "7.1",
+        "6.2",
+        "0.0",
+        "7.1",
+        "33.3",
+        "12.1"
+      ],
+      [
+        "Gemma3-4B",
+        "Moderate",
+        "3.2",
+        "7.1",
+        "0.0",
+        "4.5",
+        "7.1",
+        "40.0",
+        "8.6"
+      ],
+      [
+        "Gemma3-4B",
+        "Detailed",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ],
+      [
+        "Gemma3-12B",
+        "No Skill",
+        "16.1",
+        "3.6",
+        "0.0",
+        "0.0",
+        "3.6",
+        "26.7",
+        "7.9"
+      ],
+      [
+        "Gemma3-12B",
+        "Concise",
+        "32.3",
+        "10.7",
+        "12.5",
+        "0.0",
+        "7.1",
+        "33.3",
+        "15.7"
+      ],
+      [
+        "Gemma3-12B",
+        "Moderate",
+        "9.7",
+        "10.7",
+        "0.0",
+        "0.0",
+        "7.1",
+        "33.3",
+        "9.3"
+      ],
+      [
+        "Gemma3-12B",
+        "Detailed",
+        "38.7",
+        "21.4",
+        "6.2",
+        "0.0",
+        "3.6",
+        "6.7",
+        "15.0"
+      ],
+      [
+        "Gemma3-27B",
+        "No Skill",
+        "22.6",
+        "14.3",
+        "18.8",
+        "13.6",
+        "25.0",
+        "40.0",
+        "21.4"
+      ],
+      [
+        "Gemma3-27B",
+        "Concise",
+        "61.3",
+        "21.4",
+        "31.2",
+        "9.1",
+        "42.9",
+        "46.7",
+        "36.4"
+      ],
+      [
+        "Gemma3-27B",
+        "Moderate",
+        "51.6",
+        "32.1",
+        "18.8",
+        "4.5",
+        "42.9",
+        "53.3",
+        "35.0"
+      ],
+      [
+        "Gemma3-27B",
+        "Detailed",
+        "41.9",
+        "60.7",
+        "31.2",
+        "31.8",
+        "35.7",
+        "66.7",
+        "44.3"
+      ]
+    ]
+  },
+  {
+    "number": 7,
+    "rows": [
+      [
+        "Model",
+        "CoT (%)",
+        "Action Len."
+      ],
+      [
+        "Qwen3-4B",
+        "0",
+        "73 chars"
+      ],
+      [
+        "Qwen3-8B",
+        "57",
+        "1,021 chars"
+      ],
+      [
+        "Qwen3-14B",
+        "97",
+        "574 chars"
+      ],
+      [
+        "Qwen3-32B",
+        "66",
+        "491 chars"
+      ]
+    ]
+  },
+  {
+    "number": 8,
+    "rows": [
+      [
+        "",
+        "",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        "Per-Category SR (%)",
+        ""
+      ],
+      [
+        "Model",
+        "Method",
+        "Apparel",
+        "Other",
+        "Footwear",
+        "Home",
+        "Elec.",
+        "Access.",
+        "Beauty",
+        "Avg."
+      ],
+      [
+        "Qwen3-4B",
+        "No Skill",
+        "18.6",
+        "40.0",
+        "11.1",
+        "19.0",
+        "71.4",
+        "20.0",
+        "16.7",
+        "23.0"
+      ],
+      [
+        "Qwen3-4B",
+        "+ Base Skill",
+        "16.1",
+        "27.0",
+        "26.7",
+        "19.0",
+        "28.6",
+        "10.0",
+        "16.7",
+        "19.4"
+      ],
+      [
+        "Qwen3-4B",
+        "+ DS-Adapter",
+        "20.3",
+        "20.0",
+        "13.3",
+        "14.3",
+        "28.6",
+        "10.0",
+        "16.7",
+        "19.2"
+      ],
+      [
+        "Qwen3-4B",
+        "+ MASA",
+        "23.2",
+        "38.0",
+        "28.9",
+        "19.0",
+        "28.6",
+        "20.0",
+        "16.7",
+        "26.4"
+      ],
+      [
+        "Qwen3-8B",
+        "No Skill",
+        "2.6",
+        "11.0",
+        "0.0",
+        "4.8",
+        "14.3",
+        "20.0",
+        "0.0",
+        "4.6"
+      ],
+      [
+        "Qwen3-8B",
+        "+ Base Skill",
+        "5.5",
+        "9.0",
+        "0.0",
+        "0.0",
+        "14.3",
+        "20.0",
+        "16.7",
+        "6.0"
+      ],
+      [
+        "Qwen3-8B",
+        "+ DS-Adapter",
+        "4.8",
+        "5.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "10.0",
+        "16.7",
+        "4.4"
+      ],
+      [
+        "Qwen3-8B",
+        "+ MASA",
+        "27.7",
+        "41.0",
+        "13.3",
+        "14.3",
+        "57.1",
+        "10.0",
+        "33.3",
+        "28.6"
+      ],
+      [
+        "Qwen3-14B",
+        "No Skill",
+        "1.0",
+        "6.0",
+        "6.7",
+        "4.8",
+        "0.0",
+        "10.0",
+        "0.0",
+        "2.8"
+      ],
+      [
+        "Qwen3-14B",
+        "+ Base Skill",
+        "0.3",
+        "2.0",
+        "4.4",
+        "4.8",
+        "0.0",
+        "20.0",
+        "0.0",
+        "1.6"
+      ],
+      [
+        "Qwen3-14B",
+        "+ DS-Adapter",
+        "0.3",
+        "6.0",
+        "2.2",
+        "4.8",
+        "0.0",
+        "10.0",
+        "0.0",
+        "2.0"
+      ],
+      [
+        "Qwen3-14B",
+        "+ MASA",
+        "32.8",
+        "33.0",
+        "6.7",
+        "9.5",
+        "28.6",
+        "30.0",
+        "16.7",
+        "29.2"
+      ],
+      [
+        "Qwen3-32B",
+        "No Skill",
+        "4.2",
+        "16.0",
+        "2.2",
+        "9.5",
+        "0.0",
+        "10.0",
+        "0.0",
+        "6.6"
+      ],
+      [
+        "Qwen3-32B",
+        "+ Base Skill",
+        "4.8",
+        "14.0",
+        "4.4",
+        "9.5",
+        "14.3",
+        "20.0",
+        "0.0",
+        "7.2"
+      ],
+      [
+        "Qwen3-32B",
+        "+ DS-Adapter",
+        "2.3",
+        "8.0",
+        "2.2",
+        "4.8",
+        "0.0",
+        "10.0",
+        "0.0",
+        "3.6"
+      ],
+      [
+        "Qwen3-32B",
+        "+ MASA",
+        "32.2",
+        "48.0",
+        "26.7",
+        "19.0",
+        "42.9",
+        "40.0",
+        "33.3",
+        "34.6"
+      ]
+    ]
+  },
+  {
+    "number": 9,
+    "rows": [
+      [
+        "Model",
+        "Evolved Skill Text",
+        "Failure Mode",
+        "Strategy"
+      ],
+      [
+        "4B",
+        "When selecting a color variant, match the EXACT string from the task requirement to the available options. ‘navy blue’ ≠\\neq ‘light blue’ ≠\\neq ‘navy’. ‘c3-black’ ≠\\neq ‘c-black’. If the exact color name is not available in the options list, this product CANNOT satisfy your requirement---leave immediately. Do NOT select an approximate or similar color.",
+        "Picks visually similar colors by guessing",
+        "Strict binary match: exact or leave"
+      ],
+      [
+        "8B",
+        "Scan ALL color options. If the EXACT color name appears, click it. ‘c3-black’ is NOT the same as ‘a6-black’. If the exact color is NOT available but a SIMILAR one exists (e.g., goal says ‘green’, options have ‘e-green’), select the CLOSEST match and proceed to buy. A close color match gives partial credit which is better than 0. Even if the product doesn’t perfectly match---BUY IT.",
+        "Abandons products too easily (0 credit)",
+        "Flexible match: buy anyway for partial credit"
+      ],
+      [
+        "14B",
+        "If your required color is NOT in the admissible actions list, click ‘back to search’ immediately. Do not try similar colors. Do not try similar sizes. One glance at options →\\to if exact match missing →\\to back to search. Takes 1 step, not 5.",
+        "Wastes steps deliberating on bad products",
+        "Fast-fail: 1-step exit if no exact match"
+      ],
+      [
+        "32B",
+        "Match color by checking if the task’s required color name appears as a SUBSTRING in any admissible action, or vice versa. ‘patina green’ matches ‘patina green’ (exact) but NOT ‘yellow’. ‘green’ matches ‘a1-green’ or ‘d01green’ (contains). When multiple options contain the color word, prefer the one that matches more of the full color name.",
+        "Mishandles coded names (e.g. d01green)",
+        "Algorithmic: substring matching with preference rule"
+      ]
+    ]
+  }
+]

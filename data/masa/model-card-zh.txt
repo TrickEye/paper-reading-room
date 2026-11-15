@@ -1,0 +1,28 @@
+# 模型卡：Qwen3-4B
+# 来源：https://huggingface.co/Qwen/Qwen3-4B
+
+# === 架构元数据 ===
+family: "Qwen3"
+variant: "4B"
+parameter_count: "4B"
+architecture: "稠密 Transformer"
+num_layers: 36
+hidden_size: 2560
+num_attention_heads: 32
+num_kv_heads: 8
+context_window: 32768
+vocab_size: 151936
+
+# === 训练来源 ===
+base_or_instruct: "指令版"
+alignment_method: "SFT + DPO + GRPO"
+training_data_size: "36 万亿 token"
+multilingual: true
+
+# === 官方能力（据发布说明）===
+strengths: "数学、代码生成、遵循指令、
+  多语言、工具使用、支持思考模式"
+
+# === 观察到的弱点（由教师总结）===
+weaknesses: "参数量较小，推理深度受限；
+  可能难以应对复杂的多步规划"

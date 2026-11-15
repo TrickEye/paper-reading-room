@@ -1,0 +1,57 @@
+[
+  {
+    "figure": 1,
+    "id": "F1",
+    "file": "figure-01.svg",
+    "source_page": 1,
+    "source_url": "https://arxiv.org/html/2605.30723v1/best_skill_per_model.svg",
+    "method": "official arXiv v1 HTML standalone original graphic",
+    "width": 471,
+    "height": 331,
+    "sha256": "e5e41c3217dbe288c9b0870bc924a9b979e714f5d38efe3394179de7bf72ee87"
+  },
+  {
+    "figure": 2,
+    "id": "F2",
+    "file": "figure-02.png",
+    "source_page": 3,
+    "source_url": "https://arxiv.org/html/2605.30723v1/overall_0524-1.png",
+    "method": "official arXiv v1 HTML standalone original graphic",
+    "width": 476,
+    "height": 222,
+    "sha256": "7019e0e9ca32830435a0757e11f7d4836257abd80f7a8f4f44b5da23cd74932a"
+  },
+  {
+    "figure": 3,
+    "id": "F3",
+    "file": "figure-03.svg",
+    "source_page": 8,
+    "source_url": "https://arxiv.org/html/2605.30723v1/mcsr_ood_2x2.svg",
+    "method": "official arXiv v1 HTML standalone original graphic",
+    "width": 476,
+    "height": 367,
+    "sha256": "1fe2085e7251dce8e686c38671b53f65d8056716ffebeb2ddfe09a5186878169"
+  },
+  {
+    "figure": 4,
+    "id": "F4",
+    "file": "figure-04.svg",
+    "source_page": 13,
+    "source_url": "https://arxiv.org/html/2605.30723v1/best_skill_per_model_gemma.svg",
+    "method": "official arXiv v1 HTML standalone original graphic",
+    "width": 452,
+    "height": 318,
+    "sha256": "a3481d3cc815faf46ca7a9345b3d551b48b2124b2404760be5ff4b5bd249dd3d"
+  },
+  {
+    "figure": 5,
+    "id": "F5",
+    "file": "figure-05.svg",
+    "source_page": 19,
+    "source_url": "https://arxiv.org/html/2605.30723v1/mcsr_ood_4x3.svg",
+    "method": "official arXiv v1 HTML standalone original graphic",
+    "width": 476,
+    "height": 633,
+    "sha256": "d8b128a0f77b55fcb741cdc61e0592ce63f6b451ab1d3b7bcdcbd9414ab28fd0"
+  }
+]
