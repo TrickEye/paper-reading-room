@@ -2,7 +2,16 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 module.exports = async function checkNotes({browser, route, output}) {
+  const localOrigin = new URL(route('ace')).origin;
+  const testOrigin = localOrigin.replace('127.0.0.1', 'paper-reader.test');
+  const noteRoute = (id, prefix = '') => route(id, prefix).replace(localOrigin, testOrigin);
+  const proxy = async context => context.route(`${testOrigin}/**`, async request => {
+    const target = request.request().url().replace(testOrigin, localOrigin);
+    const response = await request.fetch({url: target});
+    await request.fulfill({response});
+  });
   const context = await browser.newContext({viewport:{width:1440,height:1000}});
+  await proxy(context);
   const errors = [], requests = [], remote = new Map();
   let pending = null;
   await context.route('**/notes/*/notes.md', async r => {
@@ -18,39 +27,51 @@ module.exports = async function checkNotes({browser, route, output}) {
   const acceptLeave = p => p.on('dialog', d => d.accept());
   acceptLeave(page);
   const ready = async (p, id='ace', prefix='') => {
-    await p.goto(route(id,prefix));
+    await p.goto(noteRoute(id,prefix));
     await p.waitForSelector('#notes-panel', {state:'attached'});
     await p.waitForFunction(() => !document.querySelector('#notes-refresh').disabled);
   };
   const open = async p => {
-    if (!(await p.locator('#notes-panel').isVisible())) await p.click('#notes-button');
+    if (await p.locator('#notes-button').getAttribute('aria-expanded') !== 'true') await p.click('#notes-button');
     await p.waitForSelector('#notes-editor[data-editor-ready=true]');
   };
-  const source = async p => { await p.click('#notes-source'); return p.locator('.vditor-sv'); };
+  const source = async p => {
+    if (await p.locator('#notes-mode-toggle').isVisible()) {
+      if (await p.locator('#notes-mode-toggle').getAttribute('aria-checked') !== 'true') await p.click('#notes-mode-toggle');
+    } else await p.locator('#notes-editor [data-mode="sv"]').evaluate(el=>el.click());
+    return p.locator('.vditor-sv');
+  };
+  const edit = async p => {
+    if (await p.locator('#notes-mode-toggle').isVisible()) {
+      if (await p.locator('#notes-mode-toggle').getAttribute('aria-checked') !== 'false') await p.click('#notes-mode-toggle');
+    } else await p.locator('#notes-editor [data-mode="ir"]').evaluate(el=>el.click());
+  };
+  const close = async p => { if (await p.locator('#notes-button').getAttribute('aria-expanded') === 'true') await p.click('#notes-button'); };
+  const readingMode = async (p, mode) => p.locator(`#reading-mode [data-mode="${mode}"]`).click();
   const draft = async p => (await source(p)).inputValue();
   const handoff = async p => { await p.click('#notes-github'); return p.locator('#notes-handoff-source').inputValue(); };
   const closeHandoff = p => p.click('#notes-handoff-close');
   const newURL = p => p.locator('#notes-github-open').getAttribute('href').then(h => new URL(h));
-  const notesPath = new URL('/notes/ace/notes.md', route('ace')).pathname;
+  const notesPath = new URL('/notes/ace/notes.md', noteRoute('ace')).pathname;
   const sample = '# 阅读心得\n\n**重要** 与 *强调*\n\n- 项目\n- [ ] 待办\n\n> 一段引用\n\n| 方法 | 结果 |\n| --- | --- |\n| ACE | 通过 |\n\n```js\nconst a = 1;\n```\n\n$x^2$\n\n$$\nE=mc^2\n$$\n';
 
   await ready(page);
   assert(requests.some(url=>new URL(url).pathname===notesPath),'notes requested before opening panel');
   assert(!requests.some(url=>url.includes('/vendor/')), 'Editor remains lazy');
-  assert(!(await page.locator('#notes-panel').isVisible()));
+  assert.equal(await page.locator('#notes-button').getAttribute('aria-expanded'),'false');
   await open(page);
   await (await source(page)).fill(sample);
-  await page.click('#notes-close'); await open(page);
+  await close(page); await open(page);
   assert((await draft(page)).includes('阅读心得'),'closing panel retains in-memory draft');
-  await page.click('#notes-edit');
+  await edit(page);
   await page.waitForSelector('#notes-editor .katex');
   assert.equal(await page.locator('#notes-editor .vditor-ir table').count(),1);
   assert.equal(await page.locator('#notes-editor .vditor-ir input[type=checkbox]').count(),1);
   assert((await draft(page)).includes('E=mc^2'));
   await page.locator('.vditor-sv').focus(); await page.keyboard.press('Escape');
-  assert(!(await page.locator('#notes-panel').isVisible()));
+  assert.equal(await page.locator('#notes-button').getAttribute('aria-expanded'),'false');
   assert(await page.locator('#notes-button').evaluate(el=>el===document.activeElement));
-  await open(page); await page.click('#notes-edit'); await page.locator('.vditor-ir').focus();
+  await open(page); await edit(page); await page.locator('.vditor-ir').focus();
   await page.waitForTimeout(200); // Vditor's delayed selection handler closes toolbar popups.
   await page.locator('#notes-editor button[data-type=more]').click();
   await page.waitForSelector('#notes-editor .vditor-panel--arrow:visible'); await page.keyboard.press('Escape');
@@ -65,12 +86,12 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert.equal(await page.locator('#notes-resize').getAttribute('aria-valuenow'),'470');
 
   const malicious = sample+'\n<img src="https://example.invalid/a.png" onerror="window.__notesXSS=true">\n\n<iframe src="https://example.invalid/frame"></iframe>\n\n<script>window.__notesXSS=true</script>\n\n[x](javascript:alert(1))\n\n```mermaid\ngraph LR; A-->B\n```\n';
-  await (await source(page)).fill(malicious); await page.click('#notes-edit');
+  await (await source(page)).fill(malicious); await edit(page);
   assert.equal(await page.locator('#notes-editor iframe,#notes-editor img,#notes-editor script').count(),0);
   assert(!(await page.evaluate(()=>window.__notesXSS)));
   // Excerpt and undo retain their existing behavior, without storage.
-  await (await source(page)).fill(''); await page.click('#notes-edit'); await page.click('#notes-close');
-  await page.selectOption('#reading-mode','dual');
+  await (await source(page)).fill(''); await edit(page); await close(page);
+  await readingMode(page,'dual');
   const selectedText = await page.evaluate(()=>{
     const el=document.querySelector('article p[data-unit] .zh'); el.scrollIntoView({behavior:'instant'});
     const range=document.createRange(); range.setStart(el.firstChild,0); range.setEnd(el.firstChild,24);
@@ -80,17 +101,17 @@ module.exports = async function checkNotes({browser, route, output}) {
   await page.waitForFunction(t=>document.querySelector('.vditor-ir').textContent.includes(t),selectedText);
   await page.locator('.vditor-ir').focus();
   await page.keyboard.press(process.platform==='darwin'?'Meta+z':'Control+z');
-  assert(!(await draft(page)).includes('返回原文'),'excerpt is undoable');
-  const citation = `> ${selectedText}\n\n[返回原文](ace.html#abstract1)\n`;
-  await (await source(page)).fill(citation); await page.click('#notes-edit');
-  await page.locator('.vditor-ir__link').filter({hasText:'返回原文'}).click();
+  assert(!(await draft(page)).includes('原文'),'excerpt is undoable');
+  const citation = `> ${selectedText}\n\n[原文](ace.html#abstract1)\n`;
+  await (await source(page)).fill(citation); await edit(page);
+  await page.locator('.vditor-ir__link').filter({hasText:'原文'}).click();
   assert.equal(new URL(page.url()).hash,'#abstract1');
 
   console.log('PASS notes editor, formatting, security, excerpt and undo');
   // Figure actions reference stable URLs relative to notes.md, including IR round trips.
   const originalNote='# 已有笔记\n\n末尾标记';
-  await (await source(page)).fill(originalNote); await page.click('#notes-edit'); await page.click('#notes-close');
-  await page.selectOption('#reading-mode','zh');
+  await (await source(page)).fill(originalNote); await edit(page); await close(page);
+  await readingMode(page,'zh');
   const figure = page.locator('figure').filter({has:page.locator('.figure-zoom')}).first();
   await figure.scrollIntoViewIfNeeded(); await figure.locator('.figure-image-actions').hover();
   const imageAction=figure.locator('.figure-note-excerpt');
@@ -100,8 +121,8 @@ module.exports = async function checkNotes({browser, route, output}) {
   await page.locator('.vditor-ir').focus();
   await page.keyboard.press(process.platform==='darwin'?'Meta+z':'Control+z');
   assert.equal((await draft(page)).trim(),originalNote,'image excerpt undo preserves existing notes');
-  await page.click('#notes-edit');
-  await page.click('#notes-close'); await page.selectOption('#reading-mode','en');
+  await edit(page);
+  await close(page); await readingMode(page,'en');
   await figure.locator('.figure-zoom').click();
   await page.click('#notes-image-excerpt');
   assert(!(await page.locator('#image-dialog').isVisible()));
@@ -117,17 +138,17 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert(imageMarkdown.includes('Overall Performance Results'));
   assert(!imageMarkdown.includes('总体性能结果'),'caption and alt use the selected language');
   for(let i=0;i<2;i++) {
-    await page.click('#notes-edit');
+    await edit(page);
     await page.waitForFunction(()=>{const img=document.querySelector('#notes-editor .vditor-ir img');return img?.naturalWidth>0});
     assert(await page.locator('#notes-editor .vditor-ir img').evaluate(el=>el.getBoundingClientRect().width<=el.closest('.vditor-ir').clientWidth));
     assert.equal((await draft(page)).trim(),imageMarkdown.trim(),'image markdown survives mode switches');
   }
   // Inserting while in source mode also appends and remains undoable.
-  await page.click('#notes-close'); await figure.locator('.figure-zoom').click(); await page.click('#notes-image-excerpt');
+  await close(page); await figure.locator('.figure-zoom').click(); await page.click('#notes-image-excerpt');
   assert.equal(((await draft(page)).match(/!\[/g)||[]).length,2);
   await page.locator('.vditor-sv').focus(); await page.keyboard.press(process.platform==='darwin'?'Meta+z':'Control+z');
   assert.equal((await draft(page)).trim(),imageMarkdown.trim(),'source-mode image excerpt is undoable');
-  await page.click('#notes-edit');
+  await edit(page);
   assert.equal((await handoff(page)).trim(),imageMarkdown.trim()); await closeHandoff(page);
   // Reload deployed image markup, preserve image safety, and follow the original anchor.
   remote.set(notesPath,{status:200,body:imageMarkdown});
@@ -137,7 +158,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert.equal(new URL(page.url()).hash,'#S1.F1');
   assert(await page.locator('#S1\\.F1').evaluate(el=>el.classList.contains('notes-target')));
   const unsafeImages='\n![external](https://example.invalid/tracker.png)\n![data](data:image/svg+xml;base64,PHN2Zz4=)\n<img src="../../content/ace/assets/figure-01.svg" onerror="window.__notesXSS=true" srcset="https://example.invalid/other.png 2x">\n';
-  await (await source(page)).fill(imageMarkdown+unsafeImages); await page.click('#notes-edit');
+  await (await source(page)).fill(imageMarkdown+unsafeImages); await edit(page);
   assert.equal(await page.locator('#notes-editor img[srcset],#notes-editor img[onerror]').count(),0);
   assert(await page.locator('#notes-editor img').evaluateAll(nodes=>nodes.every(el=>el.src.startsWith(location.origin+'/content/'))));
   assert(!(await page.evaluate(()=>window.__notesXSS)));
@@ -194,7 +215,7 @@ module.exports = async function checkNotes({browser, route, output}) {
 
   // Loading locks both fallback and Vditor, including when editor initialization races fetch.
   remote.set(notesPath,{status:200,body:'# 部署版本\n\n远端正文',wait:true});
-  await page.goto(route('ace')); await page.waitForSelector('#notes-panel',{state:'attached'});
+  await page.goto(noteRoute('ace')); await page.waitForSelector('#notes-panel',{state:'attached'});
   await page.waitForFunction(()=>document.querySelector('#notes-refresh').disabled);
   await page.click('#notes-button'); await page.waitForSelector('#notes-editor[data-editor-ready=true]');
   assert(await page.locator('#notes-editor').evaluate(el=>el.inert));
@@ -239,7 +260,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert((await page.locator('#notes-save-status').innerText()).includes('未提交'));
   assert(!await page.evaluate(()=>Object.keys(localStorage).some(k=>k.includes(':notes:') && localStorage.getItem(k)!=='legacy-note-record')),'no note storage written');
 
-  await (await source(page)).fill(imageMarkdown); await page.click('#notes-edit');
+  await (await source(page)).fill(imageMarkdown); await edit(page);
   await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
   for (const width of [1920,1440,1024,390,320]) {
     await page.setViewportSize({width,height:900});
@@ -247,7 +268,7 @@ module.exports = async function checkNotes({browser, route, output}) {
     assert(await page.locator('#notes-editor .vditor-ir img').evaluate(el=>el.getBoundingClientRect().width<=el.closest('.vditor-ir').clientWidth),`image fits at ${width}`);
     const box=await page.locator('#notes-panel').boundingBox();
     if(width<=940) assert(Math.abs(box.height-450)<2,'half-height mobile sheet');
-    if(width===1024) { await page.click('#menu-button'); assert(!(await page.locator('#notes-panel').isVisible())); await page.keyboard.press('Escape'); await open(page); }
+    if(width===1024) { await page.click('#menu-button'); assert.equal(await page.locator('#notes-button').getAttribute('aria-expanded'),'false'); await page.keyboard.press('Escape'); await open(page); }
     await handoff(page);
     assert(await page.locator('#notes-handoff').evaluate(el=>el.scrollWidth<=el.clientWidth),`handoff fits ${width}`);
     await page.screenshot({path:path.join(output,`notes-${width}.png`)}); await closeHandoff(page);
@@ -256,17 +277,16 @@ module.exports = async function checkNotes({browser, route, output}) {
   await page.setViewportSize({width:1440,height:1000});
   // Preview and project subpath resolve their notes from the manifest URL.
   const shell=await (await page.request.get(route('ace'))).text();
-  const previewURL=new URL('/reader-preview.html?paper=ace',route('ace')).href;
+  const previewURL=new URL('/reader-preview.html?paper=ace',noteRoute('ace')).href;
   await page.route(previewURL,r=>r.fulfill({contentType:'text/html',body:shell.replaceAll('../','')}));
   remote.set(notesPath,{status:200,body:imageMarkdown});
   await page.goto(previewURL); await page.waitForSelector('#notes-panel',{state:'attached'}); await open(page);
   assert.equal((await draft(page)).trim(),imageMarkdown.trim());
-  await page.click('#notes-edit');
+  await edit(page);
   await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
   await ready(page,'ace','/project'); await open(page); assert.equal((await draft(page)).trim(),'');
   assert(requests.some(url=>new URL(url).pathname==='/project/notes/ace/notes.md'));
-  await page.click('#notes-edit'); await page.click('#notes-close'); await page.locator('.figure-zoom').first().focus();
-  await page.keyboard.press('Tab');
+  await edit(page); await close(page); await page.locator('.figure-note-excerpt').first().focus();
   assert(await page.locator('.figure-note-excerpt').first().evaluate(el=>el===document.activeElement));
   await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
@@ -274,7 +294,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert((await draft(page)).includes('../../content/ace/assets/figure-01.svg'));
   await ready(page,'skillforge'); await open(page); assert.equal((await draft(page)).trim(),'');
   assert(!requests.some(url=>/example\.invalid|\/js\/(mermaid|echarts|graphviz)/.test(url)));
-  assert(requests.every(url=>url.startsWith(new URL(route('ace')).origin)),'main page makes only same-origin requests');
+  assert(requests.every(url=>url.startsWith(new URL(noteRoute('ace')).origin)),'main page makes only same-origin requests');
   assert.deepEqual(errors,[]);
 
   console.log('PASS notes remote states, IME, viewport and path isolation');
@@ -297,6 +317,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   // Mobile keyboard geometry and touch excerpt retain a usable in-memory editor.
   const mobile=await browser.newPage({viewport:{width:390,height:900},hasTouch:true,
     userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1'});
+  await proxy(mobile.context());
   acceptLeave(mobile);
   await mobile.addInitScript(()=>Object.defineProperty(window,'visualViewport',{value:Object.assign(new EventTarget(),{height:innerHeight,offsetTop:0})}));
   await ready(mobile); await open(mobile); await (await source(mobile)).focus();
@@ -306,7 +327,7 @@ module.exports = async function checkNotes({browser, route, output}) {
   assert((await mobile.locator('.vditor-sv').boundingBox()).height>40,'keyboard leaves usable editor');
   await mobile.screenshot({path:path.join(output,'notes-keyboard-geometry.png')});
   await mobile.evaluate(()=>{visualViewport.height=innerHeight;visualViewport.dispatchEvent(new Event('resize'));});
-  await mobile.tap('#notes-close'); await mobile.selectOption('#reading-mode','en');
+  await close(mobile); await readingMode(mobile,'en');
   const english=await mobile.evaluate(()=>{
     const el=document.querySelector('article p[data-unit] .en');el.scrollIntoView({behavior:'instant'});
     const range=document.createRange();range.setStart(el.firstChild,0);range.setEnd(el.firstChild,12);
@@ -315,18 +336,19 @@ module.exports = async function checkNotes({browser, route, output}) {
   await mobile.waitForSelector('#notes-excerpt:visible');await mobile.tap('#notes-excerpt');
   assert((await draft(mobile)).includes(english),'touch excerpt includes only selected language');
   assert(!(await draft(mobile)).includes('大语言模型'));
-  await mobile.tap('#notes-edit'); await mobile.tap('#notes-close'); await mobile.locator('.figure-zoom').first().tap();
+  await edit(mobile); await close(mobile); await mobile.locator('.figure-zoom').first().tap();
   await mobile.tap('#notes-image-excerpt');
   await mobile.waitForFunction(()=>document.querySelector('#notes-editor .vditor-ir img')?.naturalWidth>0);
   assert(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile image fits');
-  await mobile.waitForFunction(()=>{
-    const el=document.querySelector('#notes-editor .vditor-ir img');
+  await mobile.locator('#notes-editor .vditor-ir img').last().scrollIntoViewIfNeeded();
+  assert(await mobile.evaluate(()=>{
+    const el=[...document.querySelectorAll('#notes-editor .vditor-ir img')].at(-1);
     const image=el.getBoundingClientRect(),area=el.closest('.vditor-reset').getBoundingClientRect();
     return image.top>=area.top && image.bottom<=area.bottom;
-  });
+  }), 'mobile image remains visible within the editor');
   await mobile.screenshot({path:path.join(output,'notes-image-excerpt-mobile.png')});
   await mobile.locator('.vditor-ir__link').filter({hasText:'返回原图'}).tap();
-  assert(!(await mobile.locator('#notes-panel').isVisible()),'mobile image citation closes sheet');
+  assert.equal(await mobile.locator('#notes-button').getAttribute('aria-expanded'),'false','mobile image citation closes sheet');
   assert.equal(new URL(mobile.url()).hash,'#S1.F1');
   await open(mobile);
   await mobile.screenshot({path:path.join(output,'notes-mobile-editor.png')});
@@ -335,6 +357,8 @@ module.exports = async function checkNotes({browser, route, output}) {
   // Timeout and fetch rejection retain memory drafts; clear the stub to retry.
   for (const failure of ['timeout','network']) {
     const p=await browser.newPage(); acceptLeave(p);
+    await proxy(p.context());
+    await p.route('**/notes/*/notes.md', r=>r.fulfill({status:404,body:'missing'}));
     await p.addInitScript(failure=>{
       const original=window.fetch;
       window.fetch=function(url,options){
@@ -347,7 +371,7 @@ module.exports = async function checkNotes({browser, route, output}) {
       };
     },failure);
     if(failure==='timeout') await p.clock.install();
-    await p.goto(route('ace')); await p.waitForSelector('#notes-panel',{state:'attached'});
+    await p.goto(noteRoute('ace')); await p.waitForSelector('#notes-panel',{state:'attached'});
     if(failure==='timeout') { // advance the real controller timeout without sleeping 15 seconds
       await p.clock.runFor(15001);
     }
@@ -361,22 +385,25 @@ module.exports = async function checkNotes({browser, route, output}) {
   // Old manifests, failed editor dependencies and unavailable storage retain usable memory editing.
   for (const failure of ['legacy','editor','parser','stylesheet','storage']) {
     const p=await browser.newPage(); acceptLeave(p);
+    await proxy(p.context());
+    await p.route('**/notes/*/notes.md', r=>r.fulfill({status:404,body:'missing'}));
+    let pattern;
     if(failure==='legacy') await p.route('**/content/manifest.json',async r=>{
-      const response=await r.fetch(), manifest=await response.json(); delete manifest.notes.documents; delete manifest.notes.github;
+      const response=await r.fetch({url:r.request().url().replace(testOrigin,localOrigin)}), manifest=await response.json(); delete manifest.notes.documents; delete manifest.notes.github;
       await r.fulfill({response,json:manifest});
     });
     else if(failure==='storage') await p.addInitScript(()=>{Storage.prototype.getItem=function(){throw new DOMException('blocked','SecurityError')}});
     else {
-      const pattern=failure==='editor'?'**/vendor/**/dist/index.min.js':failure==='parser'?'**/vendor/**/dist/js/lute/lute.min.js':'**/vendor/**/dist/index.css';
+      pattern=failure==='editor'?'**/vendor/**/dist/index.min.js':failure==='parser'?'**/vendor/**/dist/js/lute/lute.min.js':'**/vendor/**/dist/index.css';
       await p.route(pattern,r=>r.fulfill({status:404,body:'missing'}));
     }
-    await p.goto(route('ace')); await p.waitForSelector('#notes-panel',{state:'attached'}); await p.click('#notes-button');
+    await p.goto(noteRoute('ace')); await p.waitForSelector('#notes-panel',{state:'attached'}); await p.click('#notes-button');
     if(failure==='legacy') {
       await p.waitForSelector('#notes-editor[data-editor-ready=true]');
       assert(!(await p.locator('#notes-remote').isVisible())); await (await source(p)).fill('旧清单内存编辑');
     } else {
       await p.waitForSelector('#notes-retry:visible');
-      await p.fill('#notes-fallback','降级编辑'); await p.click('#notes-close'); await p.click('#notes-button');
+      await p.fill('#notes-fallback','降级编辑'); await close(p); await p.click('#notes-button');
       assert.equal(await p.locator('#notes-fallback').inputValue(),'降级编辑');
       let expectedDraft='降级编辑';
       if(failure==='editor') {
@@ -385,7 +412,7 @@ module.exports = async function checkNotes({browser, route, output}) {
         expectedDraft=await p.locator('#notes-fallback').inputValue();
         assert(expectedDraft.includes('../../content/ace/assets/figure-01.svg'));
       }
-      if(failure!=='storage') { await p.unrouteAll(); await p.click('#notes-retry'); await p.waitForSelector('#notes-editor[data-editor-ready=true]'); assert.equal((await draft(p)).trim(),expectedDraft.trim()); }
+      if(failure!=='storage') { await p.unroute(pattern); await p.click('#notes-retry'); await p.waitForSelector('#notes-editor[data-editor-ready=true]'); assert.equal((await draft(p)).trim(),expectedDraft.trim()); }
     }
     await p.close();
   }

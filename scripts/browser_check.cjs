@@ -44,6 +44,10 @@ async function main() {
   const base = `http://127.0.0.1:${server.address().port}`;
   browser = await chromium.launch({headless: true, ...(process.env.CHROME_EXECUTABLE ? {executablePath: process.env.CHROME_EXECUTABLE} : {})});
   const route = (id, prefix = '') => base + prefix + (preview ? `/reader-preview.html?paper=${id}` : `/papers/${id}.html`);
+  if (process.env.BROWSER_NOTES_ONLY === '1') {
+    await require('./browser_notes.cjs')({browser,route,output});
+    return;
+  }
   const manifest = JSON.parse(await fs.readFile(path.join(root,'content/manifest.json')));
   if (!preview) {
     const index = await browser.newPage({viewport:{width:390,height:844}});
