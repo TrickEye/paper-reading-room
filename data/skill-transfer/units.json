@@ -1,0 +1,700 @@
+[
+  {
+    "kind": "h2",
+    "id": "abstract",
+    "source_page": 1,
+    "en": "Abstract",
+    "zh": "摘要"
+  },
+  {
+    "kind": "p",
+    "id": "abs.p1",
+    "source_page": 1,
+    "en": "Agent skills are modular bundles of instructions, code, and resources that an agent loads on demand, increasingly authored and validated on frontier models and shared as an open standard. The same skill behaves differently across models: a strong model turns it into a large performance gain, while a weak model realizes little of that gain and sometimes does worse than with no skill at all. Cost and resource constraints, however, often restrict real deployments to exactly these weaker agents. We hypothesize that the strong model silently supplies procedural steps the skill leaves implicit, which the weak model omits, and formalize closing this gap as Skill Transfer: holding the skill’s capability ceiling and the model’s parameters fixed, we adapt the skill so a specific weak agent can execute it well. Our method abstracts strong and weak trajectories into typed execution structures, localizes their structural divergence with a graph edit distance (GED), and repairs the skill through an iterative diagnoser-patcher loop. Across three benchmarks and two model families, Skill Transfer raises pass rate over the unmodified skill significantly and well over other skill-evolution baselines. The adapted skill also improves the strong agent it was never adapted for, and transfers out of distribution to a structurally related, unseen task. Code is available at https://github.com/ Yifan-Lan/Skill-Transfer.",
+    "zh": "智能体技能是按需加载的模块化指令、代码和资源包，越来越多地由前沿模型编写和验证，并作为开放标准共享。同一技能在不同模型上的表现各异：强模型可借此获得大幅性能提升，弱模型却只能实现其中很小一部分收益，有时甚至不如完全不用技能。然而，成本和资源约束常使实际部署不得不使用这些较弱的智能体。我们假设，强模型会默默补足技能中未明说的操作步骤，而弱模型会省略它们；我们将弥合这一差距形式化为“技能迁移”：在固定技能的能力上限和模型参数的前提下，适配技能，使特定弱智能体能有效执行。我们的方法将强弱智能体的轨迹抽象成带类型的执行结构，用图编辑距离（GED）定位结构差异，再通过迭代的诊断器—补丁器循环修复技能。在三个基准和两个模型系列中，技能迁移相较未修改技能显著提高通过率，且远超其他技能演化基线。适配后的技能还改善了原本并非适配目标的强智能体，并能迁移到一个结构相关但未见过的分布外任务。代码见 https://github.com/Yifan-Lan/Skill-Transfer。"
+  },
+  {
+    "kind": "h2",
+    "id": "S1",
+    "source_page": 1,
+    "en": "1 Introduction",
+    "zh": "1 引言"
+  },
+  {
+    "kind": "p",
+    "id": "S1.p1",
+    "source_page": 1,
+    "en": "Large Language Model agents solve complex tasks by interleaving reasoning [32, 31, 39, 15] with actions over an external environment [38, 26, 37], demonstrating excellent performance. However, they often lack knowledge of some specific domains where fine-tuning is expensive and harmful to general capability. To solve this, agent skills have been proposed, serving as reusable file systems where procedural domain knowledge is structurally packaged [ 2]. Specifically, an agent skill is a self-contained bundle of natural-language instructions, runnable scripts, and reference material that the agent loads only when a task matches. Skills are compositional, interpretable, and portable. An agent can accumulate a library of them and reuse it on unseen tasks [ 28, 34, 19], and recent open standards let a skill authored once be shared across different agents and providers [3, 21]. By design, skills are expected to work effectively across various agents, agnostic to specific harnesses and models.",
+    "zh": "大语言模型智能体通过交替进行推理 [32, 31, 39, 15] 和在外部环境中执行操作 [38, 26, 37] 来解决复杂任务，表现优异。然而，它们往往缺少某些特定领域的知识，而微调成本高昂，也可能损害通用能力。为此，人们提出了智能体技能：一种可复用的文件系统形式，将领域操作知识按结构打包 [2]。具体而言，智能体技能是自包含的自然语言指令、可运行脚本和参考材料组合；只有当任务匹配时，智能体才加载它。技能可组合、可解释、可移植。智能体可积累技能库并在未见过的任务上复用 [28, 34, 19]；近期的开放标准还允许一次编写的技能在不同智能体和提供方之间共享 [3, 21]。按设计，技能应当不依赖具体运行框架和模型，并能在各类智能体上有效工作。"
+  },
+  {
+    "kind": "p",
+    "id": "S1.p2",
+    "source_page": 1,
+    "en": "However, Li et al. [16] report that the same curated skills yield various levels of gains across models and harnesses, demonstrating that some agents improve substantially while others gain little. In addition, Yu et al. [40] show that skills of different granularity suit different agents, and a skill that benefits one agent can even harm another. Furthermore, we find a sharper form of this mismatch. Given one fixed skill, a strong and a weak agent not only differ in task success rate but also follow markedly different procedures, a divergence we quantify with graph edit distance (GED) over their execution trajectories [25, 9]. Figure 1 illustrates this mismatch. The skill itself is effective for the strong agent. The weak agent leaves much of its value unrealized because it omits procedural steps that the strong agent supplies implicitly. This raises a natural question:",
+    "zh": "然而，Li 等人 [16] 报告，同一批精选技能在不同模型和运行框架上带来的收益不同：有些智能体显著改善，另一些几乎没有收益。Yu 等人 [40] 还表明，不同粒度的技能适合不同智能体；有利于某个智能体的技能甚至可能伤害另一个智能体。此外，我们发现了这种不匹配更尖锐的一面。给定同一个固定技能，强弱智能体的差别不仅体现在任务成功率，也体现在明显不同的操作过程；我们用执行轨迹的图编辑距离（GED）量化这种差异 [25, 9]。图 1 展示了这一不匹配。技能本身对强智能体有效；弱智能体却因省略了强智能体隐式补足的操作步骤，未能发挥技能的大部分价值。这自然引出一个问题："
+  },
+  {
+    "kind": "figure",
+    "id": "F1",
+    "number": 1
+  },
+  {
+    "kind": "p",
+    "id": "S1.p3",
+    "source_page": 2,
+    "en": "Can the full value of the skill be recovered for the weak agent without retraining it?",
+    "zh": "能否在不重新训练弱智能体的情况下，让它充分发挥技能的价值？"
+  },
+  {
+    "kind": "p",
+    "id": "S1.p4",
+    "source_page": 2,
+    "en": "We formalize the problem of closing this gap as Skill Transfer. Specifically, given a skill that is already effective for a strong agent, we modify it so that a specific weak agent can use it effectively. We realize Skill Transfer by abstracting the strong and weak agents’ trajectories into a shared structural representation, localizing their procedural gaps, and iteratively patching the skill to close them.",
+    "zh": "我们将弥合这一差距的问题形式化为“技能迁移”。具体来说，给定一个已对强智能体有效的技能，我们修改它，使特定弱智能体也能有效使用。实现技能迁移时，我们把强弱智能体的轨迹抽象成共享的结构表示，定位操作过程中的差距，并迭代修补技能以弥合这些差距。"
+  },
+  {
+    "kind": "p",
+    "id": "S1.p5",
+    "source_page": 2,
+    "en": "This problem matters for deployment. Real-world systems increasingly rely on smaller, cheaper agents to meet cost, latency, and resource constraints [45, 35], whereas the strongest models remain expensive and resource-intensive. Skill Transfer lets such deployments reuse the large and growing corpus of skills authored for frontier models, rather than discarding them or retraining the model.",
+    "zh": "这一问题关系到实际部署。现实系统越来越依赖体量更小、成本更低的智能体，以满足成本、延迟和资源约束 [45, 35]，而最强模型仍然昂贵且耗费大量资源。技能迁移让这类部署能够复用为前沿模型编写且不断增长的技能集合，而不必弃用这些技能或重新训练模型。"
+  },
+  {
+    "kind": "p",
+    "id": "S1.p6",
+    "source_page": 2,
+    "en": "Our contributions are as follows:",
+    "zh": "本文贡献如下："
+  },
+  {
+    "kind": "li",
+    "id": "S1.li1",
+    "source_page": 2,
+    "en": "• We formalize Skill Transfer, the problem of adapting a skill that already works well for a strong agent so that a weak agent can use it effectively.",
+    "zh": "我们形式化了“技能迁移”问题：将一个已经在强智能体上有效的技能适配为弱智能体也能有效使用的技能。"
+  },
+  {
+    "kind": "li",
+    "id": "S1.li2",
+    "source_page": 2,
+    "en": "• We propose a trajectory-comparison method that abstracts strong and weak trajectories into typed execution structures, localizes their structural gaps, and repairs the skill with a diagnoser–patcher agent pair.",
+    "zh": "我们提出轨迹比较方法：把强弱轨迹抽象成带类型的执行结构，定位其结构差距，并由诊断器—补丁器智能体组合修复技能。"
+  },
+  {
+    "kind": "li",
+    "id": "S1.li3",
+    "source_page": 2,
+    "en": "• We show across multiple benchmarks and agents that Skill Transfer substantially closes the strong–weak gap without modifying the weak agent.",
+    "zh": "我们在多个基准和智能体上表明，技能迁移无需修改弱智能体，就能大幅缩小强弱智能体之间的差距。"
+  },
+  {
+    "kind": "h2",
+    "id": "S2",
+    "source_page": 2,
+    "en": "2 Related Work",
+    "zh": "2 相关工作"
+  },
+  {
+    "kind": "p",
+    "id": "S2.p1",
+    "source_page": 2,
+    "en": "Memory Learning. A line of work improves an agent without weight updates by accumulating experience in an external memory: storing and retrieving observations, reflections, or long-term records [23, 22, 46, 36, 7], and distilling past trajectories into reusable, transferable insights [43, 27, 5, 29]. Such memory is auxiliary experience gathered at test time; in contrast, a skill is an authored, self-contained procedure that an agent loads on demand, and our work transfers this skill to a target agent rather than growing an experience store.",
+    "zh": "记忆学习。一类研究通过在外部记忆中积累经验，在不更新权重的情况下改善智能体：存储并检索观察、反思或长期记录 [23, 22, 46, 36, 7]，并将既往轨迹提炼成可复用、可迁移的见解 [43, 27, 5, 29]。这类记忆是在测试时收集的辅助经验；相比之下，技能是按需加载、由人编写的自包含流程。我们的工作是把这种技能迁移给目标智能体，而非扩充经验存储。"
+  },
+  {
+    "kind": "p",
+    "id": "S2.p2",
+    "source_page": 2,
+    "en": "Skill Evolution. Several works grow or optimize a skill library so that an agent solves more tasks: accumulating executable skills through self-practice [28, 44], discovering and refining them from execution feedback [1, 42, 19, 30], or evolving them via reinforcement learning [34]. These methods raise a skill’s absolute capability to solve more tasks, and do not distinguish the agent a skill was written for from the agent that has to run it. We instead adapt an existing skill effective on the strong agent to a weak agent, taking the gap between strong and weak trajectories as the signal. MASA [ 40] also claims that a skill should be adapted to different backbones, but conditions skill evolution on a pre-specified model card, a coarse profile that is largely unavailable for closed-source models.",
+    "zh": "技能演化。已有多项研究扩充或优化技能库，让智能体解决更多任务：通过自我练习积累可执行技能 [28, 44]，从执行反馈中发现和改进技能 [1, 42, 19, 30]，或借助强化学习演化技能 [34]。这些方法提高技能解决更多任务的绝对能力，却不区分技能原本面向的智能体与实际执行技能的智能体。我们则以强弱轨迹之间的差距为信号，把已对强智能体有效的现有技能适配给弱智能体。MASA [40] 同样主张按不同基座模型适配技能，但它依据预先指定的模型卡来进行技能演化；这种粗略档案对于闭源模型通常难以获得。"
+  },
+  {
+    "kind": "p",
+    "id": "S2.p3",
+    "source_page": 2,
+    "en": "Agent Distillation. Distillation is a complementary route to transfer capability into a smaller model’s parameters—from classical output [11, 12] to fine-tuning smaller LLMs on teacher-generated agent trajectories for tool use and reasoning [41, 6, 14]. All of these modify the model’s weights and require training, whereas Skill Transfer is training-free, freezing the weak model and editing only the shared, human-readable skill. In this sense, Skill Transfer can be viewed as a form of training-free distillation: it distills the strong agent’s procedural competence into the transferred skill rather than into model weights.",
+    "zh": "智能体蒸馏。蒸馏是将能力迁入较小模型参数的另一条路径：从经典的输出蒸馏 [11, 12]，到利用教师生成的智能体轨迹微调小型大语言模型，使其学会工具使用和推理 [41, 6, 14]。这些方法都要修改模型权重并进行训练；技能迁移则无需训练，固定弱模型，仅编辑共享且人类可读的技能。因此，技能迁移可视作一种无需训练的蒸馏：它把强智能体的操作能力蒸馏进迁移后的技能，而非模型权重。"
+  },
+  {
+    "kind": "figure",
+    "id": "F2",
+    "number": 2
+  },
+  {
+    "kind": "h2",
+    "id": "S3",
+    "source_page": 3,
+    "en": "3 Method",
+    "zh": "3 方法"
+  },
+  {
+    "kind": "p",
+    "id": "S3.p1",
+    "source_page": 3,
+    "en": "Skill Transfer proceeds in four steps. It first abstracts weak and strong trajectories into typed execution structures (§3.2), then localizes where the weak procedure structurally diverges from the strong one on each task (§3.3), then synthesizes the systemic gaps across the whole training batch (§3.4), and finally repairs the skill by turning each diagnosed gap into a targeted edit (§3.5). §3.6 states which agent carries out each step and how the steps iterate until the skill converges. Figure 2 gives an overview.",
+    "zh": "技能迁移分为四步：先把强弱轨迹抽象成带类型的执行结构（§3.2）；再定位同一任务上弱智能体的过程在哪些结构位置偏离强智能体（§3.3）；接着在整个训练批次中汇总系统性差距（§3.4）；最后把每项确诊差距转化为有针对性的编辑来修复技能（§3.5）。§3.6 说明每一步由哪个智能体执行，以及这些步骤如何迭代至技能收敛。图 2 给出了概览。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.1",
+    "source_page": 3,
+    "en": "3.1 Problem Formulation",
+    "zh": "3.1 问题定义"
+  },
+  {
+    "kind": "p",
+    "id": "S3.1.p1",
+    "source_page": 3,
+    "en": "Let πs and πw denote a strong (teacher) and a weak (student) agent that share the same agentic configurations and, at inference time, the same skill; they differ only in their backbone model. A task is a pair (t, y)of a task specification and its ground-truth answer, drawn from a distribution D over the target domain. Running an agent π equipped with skill S on t produces a trajectory τ, a sequence of thoughts, tool calls, and observations, together with a final output o. A task metric scores the output against the ground truth, R(o, y)∈[0,1] , with R=1 for a fully correct output. The two play different roles below: R(o, y)alone decides whether a task is solved, while τ is what we abstract and compare (§3.2–§3.3). Let S0 be an original skill that is already effective for the strong agent. We define the objective of Skill Transfer as the weak agent’s expected success over the domain,",
+    "zh": "设 πs 和 πw 分别表示强（教师）智能体与弱（学生）智能体。二者具有相同的智能体配置，推理时使用同一技能，唯一差别是基座模型。任务是任务说明与标准答案构成的二元组 (t, y)，取自目标领域上的分布 D。智能体 π 搭载技能 S 在任务 t 上运行，会产生由思考、工具调用和观察组成的轨迹 τ，以及最终输出 o。任务指标对照标准答案评价输出，R(o, y)∈[0,1]；完全正确时 R=1。二者在下文作用不同：只有 R(o, y) 决定任务是否完成，而我们要抽象和比较的是 τ（§3.2–§3.3）。设 S0 为已对强智能体有效的原始技能。我们把技能迁移的目标定义为弱智能体在该领域上的期望成功率："
+  },
+  {
+    "kind": "equation",
+    "id": "E1",
+    "source_page": 3,
+    "en": "J(S) = E_(t,y)∼D,(τ,o)∼πw(t;S)[R(o,y)]. (1)",
+    "zh": ""
+  },
+  {
+    "kind": "p",
+    "id": "S3.1.p2",
+    "source_page": 3,
+    "en": "and adapt S0 to maximize J(S) while leaving the weak model’s parameters and the skill’s intended capability unchanged. Because a skill is free-form text and D is unknown, we cannot maximize J directly. Instead, from a small set of training tasks T={t 1, . . . , tN } that the strong agent solves, an iterative diagnoser-patcher loop proposes a sequence of candidate skills S0, . . . ,SK, from which we select the adapted skillS ⋆ on a held-out validation set.",
+    "zh": "我们在保持弱模型参数和技能预期能力不变的条件下，适配 S0 以最大化 J(S)。技能是自由形式文本，D 也未知，因此无法直接最大化 J。我们转而从强智能体能够完成的一小组训练任务 T={t1,…,tN} 出发，通过迭代的诊断器—补丁器循环提出候选技能序列 S0,…,SK，并在留出的验证集上选择适配后的技能 S⋆。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.2",
+    "source_page": 3,
+    "en": "3.2 Execution Structure Abstraction",
+    "zh": "3.2 执行结构抽象"
+  },
+  {
+    "kind": "p",
+    "id": "S3.2.p1",
+    "source_page": 3,
+    "en": "Raw trajectories are too noisy to compare directly, especially across different agents, because they use different tool syntax, follow different reasoning styles, and present the same step in different surface forms. We instead compare a typed intermediate representation, the execution structure, obtained by abstracting each trajectory with an LLM (i.e., the Abstractor).",
+    "zh": "原始轨迹噪声过大，难以直接比较，尤其是不同智能体之间：它们可能使用不同的工具语法、采用不同的推理方式，或以不同表面形式表达同一步骤。因此，我们比较一种带类型的中间表示——执行结构，它由大语言模型（即“抽象器”）对各条轨迹进行抽象而得。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.2.p2a",
+    "source_page": 4,
+    "en": "Given a task t and a trajectory τ, the Abstractor emits an ordered sequence of procedure nodes X=(v1, . . . , vm), one per distinct procedural step (Figure 2b). Each node vi is a triple:",
+    "zh": "给定任务 t 和轨迹 τ，抽象器输出有序的过程节点序列 X=(v1,…,vm)，每个不同的操作步骤对应一个节点（图 2b）。每个节点 vi 是一个三元组："
+  },
+  {
+    "kind": "equation",
+    "id": "E2",
+    "source_page": 4,
+    "en": "vi = (c1i, c2i, di). (2)",
+    "zh": ""
+  },
+  {
+    "kind": "p",
+    "id": "S3.2.p2b",
+    "source_page": 4,
+    "en": "Here, c1i denotes a tier-1 label from a small, fixed, domain-agnostic set of six procedural roles: SETUP(preparation),EXECUTE(the primary domain action),VALIDATE(a correctness check before committing),RECOVER(responding to failure),OUTPUT(persisting a result), and OTHER(anything fitting none of the above). c2i denotes a tier-2 label, a short free-text tag the Abstractor invents to name the specific step (e.g. borderless_table_fallback, formula_write_or_repair). Tier-1 gives a fixed vocabulary for cross-domain alignment, and tier-2 carries the domain detail a patch needs. di holds the step’s supporting detail: its completion criterion, the tool calls, code snippets, and observations that realize it, spliced in verbatim from the trajectory, and, when the step activates a skill, the agent’s stated reason for that choice. Only the two labels enter the GED calculation of §3.3, but di is what the gap analysis there reads and cites. Appendix A shows a complete execution structure.",
+    "zh": "这里，c1i 是一级标签，取自六种固定且与领域无关的过程角色：SETUP（准备）、EXECUTE（主要领域操作）、VALIDATE（提交前正确性检查）、RECOVER（应对失败）、OUTPUT（保存结果）和 OTHER（不属于上述类别）。c2i 是二级标签，由抽象器创造的简短自由文本标记，用于命名具体步骤，例如 borderless_table_fallback 或 formula_write_or_repair。一级标签提供跨领域对齐所需的固定词表，二级标签承载修补所需的领域细节。di 保存该步骤的支持性细节：完成标准、工具调用、代码片段和观察，均逐字取自轨迹；若该步骤激活技能，还记录智能体说明的选择原因。§3.3 的 GED 计算只使用两级标签，而差距分析会读取和引用 di。附录 A 展示一个完整执行结构。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.2.p3",
+    "source_page": 4,
+    "en": "We abstract a strong and a weak trajectory jointly in one pass so equivalent steps get the same tier-2 label; abstracting them separately lets the same technique drift to different labels and breaks the gap analysis below.",
+    "zh": "我们在同一轮中联合抽象强弱两条轨迹，使等价步骤获得相同的二级标签。若分别抽象，同一种方法可能漂移成不同标签，破坏后续的差距分析。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.3",
+    "source_page": 4,
+    "en": "3.3 Structural Gap Localization",
+    "zh": "3.3 结构性差距定位"
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p1",
+    "source_page": 4,
+    "en": "Given strong and weak structures Xs = (v1, . . . , vm) and Xw = (v′1, . . . , v′n) for the same task, we first quantify their divergence through graph edit distance (ged), and then localize it to specific steps. Figure 3 shows an example.",
+    "zh": "给定同一任务的强执行结构 Xs=(v1,…,vm) 与弱执行结构 Xw=(v′1,…,v′n)，我们先用图编辑距离（GED）量化二者差异，再将差异定位到具体步骤。图 3 展示了一个例子。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p2a",
+    "source_page": 4,
+    "en": "Graph edit distance. We treat each execution structure as a path graph ordered by execution time and measure dissimilarity with graph edit distance [ 25, 9], computed by the standard sequence-alignment dynamic program with a substitution cost δ(v, v′) graded on the two-level category rather than binary match/mismatch: ",
+    "zh": "图编辑距离。我们把每个执行结构视为按执行时间排序的路径图，使用图编辑距离 [25, 9] 衡量差异。该距离由标准序列对齐动态规划计算；替换成本 δ(v,v′) 按两级类别分级，而非简单的匹配／不匹配："
+  },
+  {
+    "kind": "equation",
+    "id": "E3",
+    "source_page": 4,
+    "en": "δ(v,v′) = 0.00 if c1=c′1 and c2=c′2; 0.50 if c1=c′1 and c2≠c′2; 0.75 if c1≠c′1 and c2=c′2; 1.00 otherwise. (3)",
+    "zh": ""
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p2b",
+    "source_page": 4,
+    "en": "and an insertion/deletion cost of 1.0. An alignment A pairs each node of Xs with at most one node of Xw, and preserves order: if one step of Xs precedes another, their partners in Xw appear in the same order. GED is the cost of the cheapest alignment, ",
+    "zh": "插入或删除成本为 1.0。对齐 A 将 Xs 的每个节点最多与 Xw 的一个节点配对，且保持顺序：若 Xs 中一步先于另一步，则它们在 Xw 中的对应节点也保持这个顺序。GED 是最低成本对齐的成本："
+  },
+  {
+    "kind": "equation",
+    "id": "E4",
+    "source_page": 4,
+    "en": "GED(Xs,Xw) = min_A [Σ_(i,j)∈A δ(vi,v′j) + (m−|A|) + (n−|A|)]. (4)",
+    "zh": ""
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p2c",
+    "source_page": 4,
+    "en": "where the last two terms charge one unit for every node left unmatched, deleted from Xs or inserted into Xw; the minimum is found by the standard O(mn) dynamic program. Matching nothing costs |Xs|+|X w|=m+n, the worst case and hence the normalizer: ",
+    "zh": "末两项为 Xs 中未匹配的删除节点和 Xw 中未匹配的插入节点各计 1。标准 O(mn) 动态规划可找到最小值。完全不匹配的成本为 |Xs|+|Xw|=m+n，这是最坏情况，也用作归一化分母："
+  },
+  {
+    "kind": "equation",
+    "id": "E5",
+    "source_page": 4,
+    "en": "normalized GED(Xs,Xw) = GED(Xs,Xw)/(m+n) ∈ [0,1]. (5)",
+    "zh": ""
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p2d",
+    "source_page": 4,
+    "en": "GED is a single scalar summarizing how much the two procedures disagree overall; it is a diagnostic signal, not a success criterion, so a task is scored correct from its output alone.",
+    "zh": "GED 是概括两个过程整体不一致程度的单个标量，是诊断信号而非成功标准；任务是否正确只由输出判定。"
+  },
+  {
+    "kind": "figure",
+    "id": "F3",
+    "number": 3
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p3",
+    "source_page": 4,
+    "en": "Gap type. A single scalar cannot say where the two procedures disagree, so we also localize divergence to individual steps. We write C(X) for the multiset of tier-1 roles occurring in X, so that a role performed twice counts twice, K(X) for the skills activated in X (read off the activation nodes’ d), and M for the label matching that pairs vi with v′j when (c1i , c2i ) = (c′1j , c′2j ), falling back to tier-1 alone when no tier-2 counterpart exists. Unlike the alignment A of Eq. 4, M need not preserve order, which is what makes step reordering visible. Comparing matched and unmatched nodes yields five gap types (Figure 2c):",
+    "zh": "差距类型。单个标量无法指出两个过程究竟在哪些位置不同，因此我们还将差异定位到各个步骤。记 C(X) 为 X 中一级角色的多重集，因此同一角色执行两次便计两次；K(X) 为 X 中激活的技能集合（从激活节点的 d 读取）；M 为标签匹配关系，当 vi 与 v′j 的一级、二级标签都相同时将它们配对，若不存在二级对应项，则退回到只匹配一级标签。与式 4 的对齐 A 不同，M 不要求保持顺序，因此能显现步骤重排。比较匹配与未匹配节点，可得到五类差距（图 2c）："
+  },
+  {
+    "kind": "li",
+    "id": "S3.3.li1",
+    "source_page": 5,
+    "en": "• missing_node: C(X s)\\C(X w)̸=∅ , as a multiset difference. The weak run performs a tier-1 role fewer times than the strong run, either never at all (e.g. no VALIDATE step) or fewer times than needed when the role recurs.",
+    "zh": "missing_node：弱智能体执行某一级角色的次数少于强智能体，可能完全没有该步骤（如无 VALIDATE），也可能在该角色重复出现时执行次数不足。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.3.li2",
+    "source_page": 5,
+    "en": "• weak_node: some (i, j)∈ M has d′j ≺d i. The role is present but executed to a lower bar: a looser completion criterion, fewer artifacts, a worse technique, or a correct tool with an incorrect computed result.",
+    "zh": "weak_node：角色虽存在，但执行标准较低，例如完成标准更宽松、产物更少、方法更差，或工具正确却算错结果。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.3.li3",
+    "source_page": 5,
+    "en": "• extra_wrong_node: some j is unmatched by M. The weak run takes a step with no counterpart in Xs that fails.",
+    "zh": "extra_wrong_node：弱智能体执行了强轨迹中无对应且导致失败的额外步骤。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.3.li4",
+    "source_page": 5,
+    "en": "• order_difference: some (i, j),(i′, j′)∈ Mhave i < i′ but j > j′. Both runs contain the two steps, in opposite relative order.",
+    "zh": "order_difference：两条轨迹都有两个步骤，但相对顺序相反。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.3.li5",
+    "source_page": 5,
+    "en": "• wrong_skill_routing: K(X s)\\K(X w)̸=∅ . When a task may draw on more than one skill, the weak agent’s activated set is missing one the strong agent used.",
+    "zh": "wrong_skill_routing：弱智能体激活的技能集合缺少强智能体使用的某个技能。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.3.p4",
+    "source_page": 5,
+    "en": "The ordering ≺ on step is judged from the cited d, and every reported gap must quote the specific code snippet or observation behind it, falling back to the raw trajectory only when the structures are insufficient.",
+    "zh": "步骤质量的次序 ≺ 依据引述的 d 判断；每项报告的差距都必须引用其背后的具体代码片段或观察，只有结构信息不足时才回查原始轨迹。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.4",
+    "source_page": 5,
+    "en": "3.4 Multi-Case Gap Synthesis",
+    "zh": "3.4 多案例差距汇总"
+  },
+  {
+    "kind": "p",
+    "id": "S3.4.p1",
+    "source_page": 5,
+    "en": "§3.3 types the gaps on a single task. However, a skill edit that chases one task will not generalize, so this step applies that typing to every task in the training batch T and synthesizes the results. Besides the paired structures {X (t)s },{X (t)w } and the current skill, it reads a per-task validator report, a finer-grained comparison of πw’s output against πs’s than R (Appendix C), as well as earlier iterations’ gap reports and patch history.",
+    "zh": "§3.3 为单个任务的差距分类。然而，追逐单个任务的技能编辑难以泛化，因此这一步对训练批次 T 中的每个任务应用相同分类，再汇总结果。除了成对结构 {X(t)s}、{X(t)w} 和当前技能外，系统还读取逐任务验证器报告——它比 R 更细致地比较 πw 与 πs 的输出（附录 C）——以及先前迭代的差距报告和补丁历史。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.4.p2",
+    "source_page": 5,
+    "en": "Per-task gaps describing the same weakness are grouped across tasks into a set of systemic gaps G={g 1, g2, . . .}. Each g∈G carries a gap type, metadata (label, description), and two case sets: Fg ⊆ T, the tasks where πw failed with the gap present, and Pg ⊆ T, the tasks where πw passed despite it. A gap is admitted for repair if |Fg| ≥1or |Pg| ≥2. The second condition catches a gap that has not yet caused a failure but recurs in runs that passed anyway, which we treat as a latent robustness risk rather than a non-issue.",
+    "zh": "描述同一种弱点的逐任务差距会跨任务分组为系统性差距集合 G={g1,g2,…}。每个 g∈G 包含差距类型、元数据（标签和描述）以及两组案例：Fg⊆T 是存在该差距且 πw 失败的任务，Pg⊆T 是存在该差距但 πw 仍通过的任务。若 |Fg|≥1 或 |Pg|≥2，则将差距纳入修复。第二个条件用于捕捉尚未导致失败、却在已通过的运行中反复出现的差距；我们将它视为潜在的稳健性风险，而非无关紧要的问题。"
+  },
+  {
+    "kind": "p",
+    "id": "S3.4.p3",
+    "source_page": null,
+    "en": "Strategy selection and patch hint. Each gap admitted for repair is assigned some of the six mutually-exclusive strategies. MANDATE adds a new required workflow step with an explicit completion criterion; GUIDANCE sharpens an existing but under-specified step; PROHIBITION forbids a specific action the weak agent takes that the strong agent never does; HARD-STOP forces the agent to detect and discard a wrong result rather than report success on it; REORDER fixes step sequencing; and DESCRIPTION_PATCHextends a skill’s description (rather than its main content) using both agents’ stated reasons for choosing a skill, to fix wrong-skill routing. Table 1 maps each gap type to the strategies that repair it; when the gap has been seen in an earlier iteration, its status further constrains the choice (next paragraph and Table 2). The chosen strategy is written into a patch hint, free-form prose covering four elements: target, the file and section to edit; strategy, the chosen label; wording, the instruction text to install, which must be phrased generally enough to cover cases beyond the ones cited; and, when a previous iteration already patched this gap, a critique of why that patch failed to close it. This hint is the primary handoff to the repair step (§3.5), which executes it without redoing the diagnosis. Appendix B shows one gap entry with its hint.",
+    "zh": "策略选择与补丁提示。每项获准修复的差距会被分配六种互斥策略之一：MANDATE 新增具有明确完成标准的必需工作步骤；GUIDANCE 细化已有但说明不足的步骤；PROHIBITION 禁止弱智能体所做而强智能体从不做的具体动作；HARD-STOP 强制智能体检测并丢弃错误结果，而不是将其报告为成功；REORDER 修正步骤顺序；DESCRIPTION_PATCH 则根据两种智能体所述的技能选择原因，扩充技能描述（而非正文），以修复错误的技能路由。表 1 将每种差距类型映射到修复策略；若某差距在前一轮出现过，其状态还会进一步约束策略选择（见下段和表 2）。选定策略写入自由文本形式的补丁提示，涵盖四项：目标，即待编辑文件与章节；策略，即选定的标签；措辞，即拟加入的指令文本，应足够通用以覆盖所引用案例之外的情况；若此前迭代已修补过此差距，还要批评原补丁为何未能弥合差距。该提示是交给修复步骤（§3.5）的主要交接材料；修复步骤按提示执行，不重新诊断。附录 B 展示一条包含提示的差距记录。"
+  },
+  {
+    "kind": "table",
+    "id": "T1",
+    "number": 1
+  },
+  {
+    "kind": "table",
+    "id": "T2",
+    "number": 2
+  },
+  {
+    "kind": "p",
+    "id": "S3.4.p4",
+    "source_page": 6,
+    "en": "Status. At iteration k=0 every gap is trivially NEW, since no prior report exists to match against. From k≥1 on, each current gap is instead matched to its counterpart in iteration k−1’s report by label, and classified by the change in its failing-case count ∆ =|F (k)g | − |F(k−1)g |. Table 2 shows the resulting categories and how each overrides the default strategy choice. Eligible gaps are then ranked for repair by status tier (REGRESSION > PERSISTS > NEW > IMPROVEMENT), then by failing-case count descending within a tier.",
+    "zh": "状态。在 k=0 时，所有差距当然都是 NEW，因为没有先前报告可供匹配。从 k≥1 起，每个当前差距按标签与第 k−1 轮报告中的对应项匹配，再依据失败案例数变化 Δ=|F(k)g|−|F(k−1)g| 分类。表 2 展示这些类别如何覆盖默认策略。之后按状态等级（REGRESSION > PERSISTS > NEW > IMPROVEMENT）排序，同等级内再按失败案例数降序排列，以决定修复优先级。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.5",
+    "source_page": 6,
+    "en": "3.5 One-Shot Skill Patching",
+    "zh": "3.5 一次性技能修补"
+  },
+  {
+    "kind": "p",
+    "id": "S3.5.p1",
+    "source_page": 6,
+    "en": "Given the ranked gap report of §3.4, this step applies the edits it describes in a single consolidated pass: ",
+    "zh": "给定 §3.4 排序后的差距报告，这一步通过一次合并操作应用其中的编辑："
+  },
+  {
+    "kind": "li",
+    "id": "S3.5.li1",
+    "source_page": 6,
+    "en": "• Read and group: read every admitted gap’s patch hint and group hints by the target file section they name. ",
+    "zh": "读取并分组：读取每项纳入修复的差距提示，按所指目标文件章节分组。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.5.li2",
+    "source_page": 6,
+    "en": "•Synthesize: for each affected section, design one coherent edit satisfying every hint touching it. ",
+    "zh": "综合：对每个受影响章节，设计一项同时满足所有相关提示的连贯修改。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.5.li3",
+    "source_page": 6,
+    "en": "•Apply: replace the old text that needs editing in all sections in one multi-section edit. ",
+    "zh": "应用：一次跨章节编辑替换各处需要修改的旧文本。"
+  },
+  {
+    "kind": "li",
+    "id": "S3.5.li4",
+    "source_page": 6,
+    "en": "• Verify: re-read the patched skill, confirm every gap in the repair queue has been fixed and no section contradicts another.",
+    "zh": "验证：重新阅读修补后的技能，确认修复队列中的每项差距均已处理，且各章节没有相互矛盾。"
+  },
+  {
+    "kind": "h3",
+    "id": "S3.6",
+    "source_page": 6,
+    "en": "3.6 Iterative Loop",
+    "zh": "3.6 迭代循环"
+  },
+  {
+    "kind": "p",
+    "id": "S3.6.p1",
+    "source_page": 6,
+    "en": "Two LLM agents carry out the steps above. A diagnoser performs localization and synthesis (§3.3–§3.4), reading the paired structures and emitting the ranked gap report; a patcher performs the repair (§3.5), and is the only one of the two that may edit the skill. Skill Transfer alternates the two over the fixed batch T. At iteration 0, T is restricted once to tasks πs solves within up to M independent attempts (excluding tasks the strong agent still fails after M tries) and then held fixed for every later iteration. In each iteration, πw reruns under Sk on T first, the diagnoser then produces the gap report, and the patcher turns Sk into Sk+1. The loop stops at a fixed iteration budget K=max_edits, or earlier if the skill is left unchanged for two consecutive iterations. We take the adapted skill S⋆ to be the iterate with the highest pass rate on a held-out validation set V. Algorithm 1 summarizes the full loop.",
+    "zh": "上述步骤由两个大语言模型智能体执行。诊断器读取成对结构，完成差距定位与汇总（§3.3–§3.4），并输出排序后的差距报告；补丁器负责修复（§3.5），且二者中只有它能编辑技能。技能迁移在固定批次 T 上交替使用这两个智能体。在第 0 轮，先将 T 限定为强智能体 πs 在最多 M 次独立尝试中能够完成的任务（排除尝试 M 次后仍失败的任务），之后各轮保持 T 不变。每一轮先让 πw 在 T 上使用 Sk 重跑，诊断器再生成差距报告，补丁器则把 Sk 改为 Sk+1。达到固定迭代预算 K=max_edits 时停止；若技能连续两轮未改变，也可提前停止。适配技能 S⋆ 取留出验证集 V 上通过率最高的那一轮。算法 1 概括了完整循环。"
+  },
+  {
+    "kind": "equation",
+    "id": "E6",
+    "source_page": 7,
+    "en": "S⋆ = arg max_(k∈{0,…,K}) acc_V(Sk). (6)",
+    "zh": ""
+  },
+  {
+    "kind": "code",
+    "id": "alg1",
+    "source_page": 7,
+    "en": "Algorithm 1 Skill Transfer\nRequire: original skill S0, already effective for the strong agent πs; weak agent πw; candidate training tasks T0; validation set V; iteration budget K; strong-agent attempts M\nEnsure: a skill adapted to πw\nStrong-agent reference, run once\n1: Run πs on every task in T0 under S0, retrying a task up to M times\n2: T ← the tasks πs solved  ▷ the rest offer no reference procedure\nAdaptation loop, with the weak agent rerun every iteration\n3: S ← S0; S⋆ ← S0  ▷ current and best-so-far skill\n4: for k = 1 to K do\n5:   Run πw on T under S\n6:   Abstract both strong and weak trajectories jointly  ▷ §3.2\n7:   if πw solved every task in T then\n8:     break  ▷ no gap left to close\n9:   Localize the gaps in each strong–weak structure pair  ▷ §3.3\n10:  Group the per-task gaps into systemic ones; rank them and write one patch hint each  ▷ §3.4\n11:  S ← apply all patch hints to S in a single pass  ▷ §3.5\n12:  if S scores higher than S⋆ on V then\n13:    S⋆ ← S\n14:  if S has been left unchanged in two consecutive iterations then\n15:    break  ▷ converged\n16: return S⋆",
+    "zh": "算法 1 技能迁移\n输入：原始技能 S0（已对强智能体 πs 有效）；弱智能体 πw；候选训练任务 T0；验证集 V；迭代预算 K；强智能体尝试次数 M\n输出：适配给 πw 的技能\n强智能体参考轨迹，只运行一次\n1：在 S0 下让 πs 运行 T0 中每个任务，每个任务最多重试 M 次\n2：T ← πs 完成的任务  ▷ 其余任务没有参考过程\n适配循环，每轮重跑弱智能体\n3：S ← S0；S⋆ ← S0  ▷ 当前技能与迄今最佳技能\n4：对 k = 1 到 K：\n5：  让 πw 在 S 下运行 T\n6：  联合抽象强弱轨迹  ▷ §3.2\n7：  若 πw 完成 T 中所有任务：\n8：    退出  ▷ 已无差距可弥合\n9：  定位每一对强弱结构中的差距  ▷ §3.3\n10： 将逐任务差距合并为系统性差距，排序，并为每项写补丁提示  ▷ §3.4\n11： S ← 一次性对 S 应用所有补丁提示  ▷ §3.5\n12： 若 S 在 V 上得分高于 S⋆：\n13：   S⋆ ← S\n14： 若 S 连续两轮未改变：\n15：   退出  ▷ 已收敛\n16：返回 S⋆"
+  },
+  {
+    "kind": "h2",
+    "id": "S4",
+    "source_page": 7,
+    "en": "4 Experiments",
+    "zh": "4 实验"
+  },
+  {
+    "kind": "h3",
+    "id": "S4.1",
+    "source_page": 7,
+    "en": "4.1 Setup",
+    "zh": "4.1 设置"
+  },
+  {
+    "kind": "p",
+    "id": "S4.1.p1",
+    "source_page": 7,
+    "en": "Data. We evaluate on three benchmarks, each with 20 and 30 further cases for training and validation. SpreadsheetBench [17] collects real-world spreadsheet-manipulation requests from online forums; each task gives the agent an input workbook and an instruction (e.g. insert a formula, reformat a range, filter rows); we use a 200-case test split. OfficeQA [8] poses grounded numerical-reasoning questions over historical U.S. Treasury Bulletin documents, requiring the agent to locate the relevant table across long, noisy source text and compute a numeric answer; we use a 70-case test split. DABench [13] poses data-analysis questions over tabular CSV files, requiring the agent to write and execute analysis code and report a closed-form answer; we use a 150-case test split.",
+    "zh": "数据。我们在三个基准上评估，每个基准另有 20 个训练案例和 30 个验证案例。SpreadsheetBench [17] 收集在线论坛中的真实电子表格操作请求；每个任务给智能体一个输入工作簿和一条指令，例如插入公式、重设区域格式或筛选行；我们使用 200 个案例的测试集。OfficeQA [8] 基于历史美国财政部公报文档提出有依据的数值推理问题，要求智能体在冗长、嘈杂的源文本中找到相关表格并计算数值答案；我们使用 70 个案例的测试集。DABench [13] 基于表格 CSV 文件提出数据分析问题，要求智能体编写并执行分析代码，再报告封闭形式的答案；我们使用 150 个案例的测试集。"
+  },
+  {
+    "kind": "p",
+    "id": "S4.1.p2",
+    "source_page": 7,
+    "en": "Agents. We run the experiments under two model families. For GPT, the backbone of strong agent πs is gpt-5.4; weak agents πw use gpt-5.4-mini and gpt-4.1-mini. For Qwen3.5, we run SpreadsheetBench and DABench with Qwen3.5-122B-A10B-FP8 as πs and Qwen3.5-4B (SpreadsheetBench) or Qwen3.5-2B (DABench) as πw, with πs and πw each served on a single H200 GPU; we switch to the smaller Qwen3.5-2B on DABench because Qwen3.5-4B was already too close to πs to leave a meaningful gap to close. All agents are implemented as a tool-using agent loop on the OpenAI Agents SDK [20]. For the GPT experiments, the Abstractor, Diagnoser, and Patcher run on gpt-5.4 and the Validator on gpt-5.4-mini; for Qwen3.5, all four run on Qwen3.5-122B-A10B-FP8.",
+    "zh": "智能体。实验涵盖两个模型系列。GPT 系列以 gpt-5.4 为强智能体 πs，以 gpt-5.4-mini 和 gpt-4.1-mini 为弱智能体 πw。Qwen3.5 系列在 SpreadsheetBench 和 DABench 上，以 Qwen3.5-122B-A10B-FP8 为 πs，分别以 Qwen3.5-4B（SpreadsheetBench）和 Qwen3.5-2B（DABench）为 πw；强弱模型各由单张 H200 GPU 服务。DABench 改用更小的 Qwen3.5-2B，是因为 Qwen3.5-4B 已太接近 πs，几乎没有值得弥合的差距。所有智能体均实现为基于 OpenAI Agents SDK [20] 的工具使用循环。在 GPT 实验中，抽象器、诊断器和补丁器使用 gpt-5.4，验证器使用 gpt-5.4-mini；在 Qwen3.5 实验中，四者均使用 Qwen3.5-122B-A10B-FP8。"
+  },
+  {
+    "kind": "p",
+    "id": "S4.1.p3",
+    "source_page": 7,
+    "en": "Skills and baselines. Each benchmark starts from an original skill S0 that is already effective for πs, reused unchanged across both model families. For SpreadsheetBench, S0 is Anthropic’s official xlsx skill [3]. For OfficeQA, S0 is a pair of third-party public skills finance [18] and ripgrep [33]. For DABench, S0 is a pair of third-party public skills data-scientist [4] and statistical-analysis [10]. We compare four methods that all start from the same S0: no skill, running without any skill; original skill, the unmodified S0; EvoSkill [1], a skill-evolution baseline that optimizes the skill’s capability; and our method Skill Transfer, run for an iteration budget of K=6 with up to M=5 strong-agent attempts (Algorithm 1).",
+    "zh": "技能与基线。每个基准均从一个已对 πs 有效的原始技能 S0 出发，并在两个模型系列中原样复用。SpreadsheetBench 的 S0 是 Anthropic 官方的 xlsx 技能 [3]；OfficeQA 使用第三方公开技能 finance [18] 与 ripgrep [33]；DABench 使用第三方公开技能 data-scientist [4] 与 statistical-analysis [10]。四种比较方法均从同一 S0 出发：不使用技能；使用未修改的原始技能 S0；EvoSkill [1]，一种优化技能能力的技能演化基线；以及本文的技能迁移，迭代预算 K=6，强智能体最多尝试 M=5 次（算法 1）。"
+  },
+  {
+    "kind": "table",
+    "id": "T3",
+    "number": 3
+  },
+  {
+    "kind": "table",
+    "id": "T4",
+    "number": 4
+  },
+  {
+    "kind": "table",
+    "id": "T5",
+    "number": 5
+  },
+  {
+    "kind": "p",
+    "id": "S4.1.p4",
+    "source_page": 8,
+    "en": "Metrics. Beyond task pass rate, we report benchmark-specific fine-grained metrics (cell match ratio for SpreadsheetBench, accuracy within a relative tolerance of ≤0.1%/≤1%/≤5% for OfficeQA, and DABench’s own accuracy-by-sub-question / accuracy-proportional-by-sub-question for DABench), and average ˆ︁GED (Eq. 5) to measure how procedurally close the weak agent’s run is to the strong agent’s.",
+    "zh": "指标。除任务通过率外，我们还报告各基准的细粒度指标：SpreadsheetBench 的单元格匹配率，OfficeQA 中相对误差不超过 0.1%／1%／5% 的准确率，以及 DABench 自身的按子问题准确率和按子问题比例准确率。我们还报告平均归一化 GED（式 5），衡量弱智能体运行过程与强智能体的接近程度。"
+  },
+  {
+    "kind": "h3",
+    "id": "S4.2",
+    "source_page": 8,
+    "en": "4.2 Main Results",
+    "zh": "4.2 主要结果"
+  },
+  {
+    "kind": "p",
+    "id": "S4.2.p1",
+    "source_page": 8,
+    "en": "Table 3 reports pass rate and the fine-grained metrics for the GPT family on all three benchmarks; Tables 4 and 5 report the Qwen3.5 family on SpreadsheetBench and DABench (we omit OfficeQA for Qwen3.5: its source documents routinely exceed Qwen3.5’s 262,144-token context window, so the task is not fully well-defined for these backbones). Across all eight weak configurations, Skill Transfer achieves the best pass rate, beating the skill-evolution baseline EvoSkill by up to 12.0pp and the original skill by 4.7–23.0pp. EvoSkill’s proposer sees only the weak agent’s own failures, never a strong-agent trajectory to diff against, so its edits add generic content rather than closing the specific gap the weak agent has.",
+    "zh": "表 3 给出 GPT 系列在三个基准上的通过率和细粒度指标；表 4、5 分别给出 Qwen3.5 系列在 SpreadsheetBench 和 DABench 上的结果（Qwen3.5 的 OfficeQA 结果省略，因为源文档经常超出 Qwen3.5 的 262,144 token 上下文窗口，使这些基座模型上的任务定义不完整）。在全部八种弱智能体配置上，技能迁移均取得最高通过率，相比技能演化基线 EvoSkill 最多提升 12.0 个百分点，相比原始技能提升 4.7–23.0 个百分点。EvoSkill 的提议器只能看到弱智能体自身的失败，从不与强智能体轨迹进行差分，因此其编辑添加的是通用内容，而不是弥合弱智能体的具体差距。"
+  },
+  {
+    "kind": "p",
+    "id": "S4.2.p2",
+    "source_page": 8,
+    "en": "The original skill’s own effect on weak agents is not uniformly positive: it underperforms no skill in six of the eight weak configurations (e.g. 48.0→39.5 for gpt-5.4-mini on SpreadsheetBench, 17.1→8.6 for gpt-4.1-mini on OfficeQA), which shows that a skill written around the strong agent’s implicit steps can actively mislead a weaker one that lacks them. Where the original skill does help, Skill Transfer still adds to it. On SpreadsheetBench gpt-4.1-minigoes from 15.5 with no skill to 25.5 with the original skill and 48.5 with Skill Transfer, closing 55% of the distance the original skill leaves to gpt-5.4. On DABench gpt-5.4-mini goes 77.3 → 81.3 → 86.0 and closes that distance entirely, matching gpt-5.4’s pass rate and its ByQ/PrQ (89.7/89.9 against 89.8/88.6). Appendix D shows the accumulated edits between an original skill and the skill Skill Transfer produced from it.",
+    "zh": "原始技能对弱智能体的作用并非总是积极：在八种弱智能体配置中，有六种使用原始技能反而不如不用技能，例如 gpt-5.4-mini 在 SpreadsheetBench 上从 48.0 降至 39.5，gpt-4.1-mini 在 OfficeQA 上从 17.1 降至 8.6。这说明，围绕强智能体隐式步骤编写的技能，可能主动误导缺少这些步骤的弱智能体。即便原始技能有帮助，技能迁移也能进一步增益。在 SpreadsheetBench 上，gpt-4.1-mini 的通过率从不用技能时的 15.5，经原始技能升至 25.5，再经技能迁移升至 48.5，弥合了原始技能与 gpt-5.4 之间剩余差距的 55%。在 DABench 上，gpt-5.4-mini 的通过率依次为 77.3 → 81.3 → 86.0，完全弥合与 gpt-5.4 的通过率差距，其 ByQ/PrQ 也达到 89.7/89.9，而后者为 89.8/88.6。附录 D 展示原始技能与技能迁移产物之间累积的编辑。"
+  },
+  {
+    "kind": "h3",
+    "id": "S4.3",
+    "source_page": 9,
+    "en": "4.3 Structural Convergence",
+    "zh": "4.3 结构收敛"
+  },
+  {
+    "kind": "p",
+    "id": "S4.3.p1",
+    "source_page": 9,
+    "en": "GED decreases monotonically from no skill through original skill and EvoSkill to Skill Transfer in 4 of 8 configurations (both gpt-based weak agents on SpreadsheetBench and OfficeQA), and Skill Transfer reaches the lowest ˆ︁GED in 7 of 8. Where the pattern holds, it shows that Skill Transfer closes the procedural gap identified in §3.3 rather than improving outputs incidentally. The weak agent has learned some of the procedural steps the strong agent performs.",
+    "zh": "在八种配置中的四种（SpreadsheetBench 和 OfficeQA 上的两个 GPT 弱智能体）里，归一化 GED 从不用技能、使用原始技能、EvoSkill 到技能迁移依次单调下降；在八种中的七种里，技能迁移达到最低归一化 GED。在这一趋势成立的配置中，它表明技能迁移弥合了 §3.3 指出的操作过程差距，而非仅偶然改善输出。弱智能体学到了强智能体所执行的部分操作步骤。"
+  },
+  {
+    "kind": "h3",
+    "id": "S4.4",
+    "source_page": 9,
+    "en": "4.4 Skill Transfer Also Benefits the Strong Agent",
+    "zh": "4.4 技能迁移也有益于强智能体"
+  },
+  {
+    "kind": "p",
+    "id": "S4.4.p1",
+    "source_page": 9,
+    "en": "Although Skill Transfer targets the weak agent’s procedural gap, Table 6 shows the adapted skill also raises the strong agent’s own pass rate on SpreadsheetBench, from 67.5% to 76.5–81.3% depending on which weak agent the skill was adapted for. A patch that makes an implicit step explicit does not only help a weak model that would skip the step totally; it also helps a stronger model that performs the step inconsistently. The adapted skill converts latent or inconsistent capability into more reliable behavior, benefiting the strong agent too.",
+    "zh": "虽然技能迁移的目标是弱智能体的操作过程差距，但表 6 显示，适配后的技能也将强智能体在 SpreadsheetBench 上的通过率从 67.5% 提升至 76.5–81.3%，具体取决于技能适配的弱智能体对象。将隐式步骤写明，不仅帮助完全跳过该步骤的弱模型，也帮助执行该步骤不稳定的强模型。适配技能将潜在或不稳定的能力转化为更可靠的行为，因此强智能体也受益。"
+  },
+  {
+    "kind": "table",
+    "id": "T6",
+    "number": 6
+  },
+  {
+    "kind": "h3",
+    "id": "S4.5",
+    "source_page": 9,
+    "en": "4.5 Out-of-Distribution Generalization",
+    "zh": "4.5 分布外泛化"
+  },
+  {
+    "kind": "p",
+    "id": "S4.5.p1",
+    "source_page": 9,
+    "en": "We test whether a skill adapted on one benchmark transfers to a structurally related but distinct task: WikiTableQuestions [24] (WTQ), where the agent answers a natural-language question about a table by writing the result into a spreadsheet cell rather than editing a workbook. Table 7 reports results for both weak agents, using the xlsx skill adapted on SpreadsheetBench. For gpt-4.1-mini, accuracy on 250 held-out WTQ questions rises from 44.4% to 69.2% (+24.8pp). For gpt-5.4-mini, accuracy rises from 75.6% to 77.6% (+2.0pp) – a much smaller gain, consistent withgpt-5.4-mini’s alreadyhigh accuracy under the original skill leaving less headroom to close. The skill was never trained on WTQ; the gains come from the same xlsx-handling procedure (e.g. correct cell addressing, formula evaluation, output placement) that Skill Transfer made explicit for SpreadsheetBench. The generalization demonstrates that Skill Transfer does not overfit on specific tasks, but truly closes the procedural gaps between weak and strong agents.",
+    "zh": "我们检验在一个基准上适配的技能能否迁移到结构相关但不同的任务：WikiTableQuestions [24]（WTQ）。在该任务中，智能体回答关于表格的自然语言问题，并将结果写入电子表格单元格，而不是编辑工作簿。表 7 报告两个弱智能体使用在 SpreadsheetBench 上适配的 xlsx 技能时的结果。对 gpt-4.1-mini，250 个留出 WTQ 问题的准确率从 44.4% 升至 69.2%（+24.8 个百分点）；对 gpt-5.4-mini，则从 75.6% 升至 77.6%（+2.0 个百分点），增幅小得多，这与它在原始技能下准确率已高、剩余提升空间较小相符。技能从未在 WTQ 上训练；收益来自技能迁移在 SpreadsheetBench 中明确化的相同 xlsx 操作流程，例如正确定位单元格、计算公式和放置输出。泛化结果表明，技能迁移没有过拟合具体任务，而是真正弥合了强弱智能体之间的操作过程差距。"
+  },
+  {
+    "kind": "table",
+    "id": "T7",
+    "number": 7
+  },
+  {
+    "kind": "h2",
+    "id": "S5",
+    "source_page": 9,
+    "en": "5 Conclusion",
+    "zh": "5 结论"
+  },
+  {
+    "kind": "p",
+    "id": "S5.p1",
+    "source_page": 9,
+    "en": "We formalized skill transfer: given a skill already effective for a strong agent, transfer it to a specific weak agent without touching that agent’s parameters. Our method abstracts both agents’ trajectories into typed execution structures, localizes their gaps with a graded graph edit distance, and repairs the skill through an iterative diagnoser–patcher loop. Across three benchmarks and four weak agents from two model families, Skill Transfer raises pass rate over both the unmodified original skill and a skill-evolution baseline, and ˆ︁GED decreases toward the strong agent’s structure in most configurations, so the gain comes from closing the procedural gap of §3.3. The adapted skill also improves the strong agent it was never adapted for, and transfers to a related task it was never trained on. However, two conditions bound the method. First, it needs a strong agent and a small set of tasks that the agent solves, since the strong trajectories are the reference the diagnoser diffs against; without such a reference there is no gap to localize. Second, the gain depends on why the weak agent fails. Procedural failures are largely recoverable by making the missing steps explicit, whereas failures bound by capability the weak model does not have are difficult to recover from. Within these bounds, skill transfer offers a training-free route to reusing the growing corpus of skills authored for frontier models on the smaller, cheaper agents that real deployments often require.",
+    "zh": "我们形式化了技能迁移：给定一个已对强智能体有效的技能，在不改变弱智能体参数的情况下将其迁移给特定弱智能体。方法将两种智能体的轨迹抽象为带类型的执行结构，用分级图编辑距离定位差距，并通过迭代的诊断器—补丁器循环修复技能。在三个基准和两个模型系列的四种弱智能体上，技能迁移相较未修改的原始技能及技能演化基线均提高通过率；大多数配置中的归一化 GED 也向强智能体的结构下降，因此收益来自弥合 §3.3 的操作过程差距。适配技能还改善了原本并非适配目标的强智能体，并能迁移到从未训练过的相关任务。不过，该方法受两个条件限制。第一，它需要强智能体和少量由它成功解决的任务，因为强轨迹是诊断器进行差分的参考；缺少这种参考便无差距可定位。第二，收益取决于弱智能体失败的原因。若失败源于操作流程，将缺失步骤写明通常能够挽回；若失败受弱模型自身不具备的能力所限，则难以挽回。在这些边界内，技能迁移提供了一条无需训练的路径，让实际部署中常需使用的小型、低成本智能体复用为前沿模型编写且不断增长的技能集合。"
+  },
+  {
+    "kind": "references",
+    "id": "bib"
+  },
+  {
+    "kind": "h2",
+    "id": "A",
+    "source_page": 12,
+    "en": "A Execution Structure Example",
+    "zh": "附录 A 执行结构示例"
+  },
+  {
+    "kind": "p",
+    "id": "A.p1",
+    "source_page": 12,
+    "en": "Listing 1 shows the execution structure the Abstractor produced for the weak agent (gpt-4.1-mini) on SpreadsheetBench case 510-3 at iteration 0. Each entry of nodes is one procedure node vi of Eq. 2: category_tier1 is c1i and category_tier2 is c2i , while completes_when and tool_calls are the supporting detail di, whose code_snippet and observation are spliced in verbatim from the raw trajectory. The remaining fields are auxiliary: id and label let a gap report point at individual nodes (Listing 2), agent_intent and purpose record the agent’s stated reason for the step and the call, produces and consumes give lightweight data flow, and skill_selection_reason carries the verbatim reason argument of an activate_skill call, which is what makes wrong-skill routing detectable. Long snippets, observations, and absolute paths are abbreviated with...for space. Node node_003 is the weakVALIDATEstep that §3.3 calls a weak_node: the role is present, but its completion criterion stops at “recalculated successfully without processing errors” rather than reopening the workbook and checking the edited region.",
+    "zh": "清单 1 展示抽象器在迭代 0 中，针对 SpreadsheetBench 案例 510-3 的弱智能体（gpt-4.1-mini）生成的执行结构。nodes 的每条记录都是式 2 中的过程节点 vi：category_tier1 对应 c1i，category_tier2 对应 c2i；completes_when 和 tool_calls 是支持性细节 di，其中 code_snippet 与 observation 从原始轨迹逐字摘取。其余字段为辅助信息：id 和 label 使差距报告能够指向单独节点（清单 2）；agent_intent 与 purpose 记录智能体陈述的步骤和工具调用原因；produces 与 consumes 提供简要数据流；skill_selection_reason 保留 activate_skill 调用的原始 reason 参数，从而可以检测错误的技能路由。为节省篇幅，长代码片段、观察与绝对路径用省略号缩写。node_003 是 §3.3 所称的弱 VALIDATE 步骤：角色存在，但完成标准只到“重算成功且无处理错误”，未重新打开工作簿并检查编辑区域。"
+  },
+  {
+    "kind": "p",
+    "id": "A.listing1.caption",
+    "source_page": 13,
+    "en": "Listing 1: Execution structure abstracted from a weak-agent trajectory (SpreadsheetBench case 510-3, iteration 0).",
+    "zh": "清单 1：从弱智能体轨迹中抽象出的执行结构（SpreadsheetBench 案例 510-3，第 0 轮）。"
+  },
+  {
+    "kind": "code",
+    "id": "A.listing1",
+    "source_page": 13,
+    "en": "{\n\"agent_id\": \"weak_iter0\",\n\"task\": \"Recreate the ’Data’ sheet, preserve D:G formatting, hardcode Sum values, and save as output.\nxlsx\",\n\"total_steps\": 5,\n\"outcome\": \"success\",\n\"nodes\": [\n{\n\"id\": \"node_000\", \"label\": \"skill_activation\",\n\"category_tier1\": \"setup\", \"category_tier2\": \"skill_activation\",\n\"agent_intent\": \"Prepare the spreadsheet tooling needed to modify the Excel workbook.\",\n\"completes_when\": \"when the xlsx skill is activated and its spreadsheet handling instructions are\navailable for use\",\n\"produces\": [\"xlsx_skill_context\"], \"consumes\": [],\n\"skill_selection_reason\": \"The task involves reading, modifying, and saving an Excel workbook while\npreserving formatting and hardcoding calculated values, which is best handled with the xlsx\nskill.\",\n\"tool_calls\": [{\n\"tool\": \"activate_skill\",\n\"purpose\": \"Activate the spreadsheet-editing skill required for workbook modification\",\n\"code_snippet\": \"{\\\"name\\\": \\\"xlsx\\\", \\\"reason\\\": \\\"The task involves reading, modifying, and\nsaving an Excel workbook file ...\\\"}\",\n\"observation\": \"<activated_skill name=\\\"xlsx\\\"><instructions># Requirements for Outputs ...\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_001\", \"label\": \"task_requirement_review\",\n\"category_tier1\": \"setup\", \"category_tier2\": \"task_requirement_review\",\n\"agent_intent\": \"Understand the requested transformation and constraints before generating a script.\n\",\n\"completes_when\": \"when the sheet recreation requirements, formatting constraints, Sum calculation,\nand output filename are known\",\n\"produces\": [\"task_requirements\"], \"consumes\": [\"instruction_file\"],\n\"tool_calls\": [{\n\"tool\": \"read_file\",\n\"purpose\": \"Read the case instructions to capture the requested workbook edits and output\nrequirements\",\n\"code_snippet\": \"{\\\"file_path\\\": \\\".../cases/510-3/case_input/INSTRUCTION.md\\\"}\",\n\"observation\": \"How can I calculate the total number of days from a date provided in column D of\nmy ’Data’ sheet ...\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_002\", \"label\": \"sheet_recreation_attempt\",\n\"category_tier1\": \"execute\", \"category_tier2\": \"sheet_recreation_attempt\",\n\"agent_intent\": \"Carry out the main workbook transformation by generating and running automation\ncode.\",\n\"completes_when\": \"when a script has successfully recreated the Data sheet, preserved the required\nD:G formatting, hardcoded Sum values, and saved the modified workbook\",\n\"produces\": [\"transformation_script\", \"recreated_data_sheet\", \"hardcoded_sum_values\", \"\noutput_workbook\"],\n\"consumes\": [\"task_requirements\", \"input_workbook\"],\n\"tool_calls\": [{\n\"tool\": \"write_file\",\n\"purpose\": \"Create a Python script to load the workbook, recreate the Data sheet, preserve\nformatting, calculate Sum values, and save\",\n\"code_snippet\": \"from openpyxl import load_workbook, Workbook\\nfrom openpyxl.utils import\nget_column_letter\\nimport openpyxl.styles as styles\\n\\ninput_path = ...\",\n\"observation\": \"Successfully wrote 3131 characters to .../weak_outputs/script.py\",\n\"outcome\": \"success\"}, {\n\"tool\": \"shell\",\n\"purpose\": \"Execute the generated Python script to produce the modified workbook\",\n\"code_snippet\": \"python3 .../weak_outputs/script.py\",\n\"observation\": \"exit_code: 0\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_003\", \"label\": \"workbook_recalculation_check\",\n\"category_tier1\": \"validate\", \"category_tier2\": \"workbook_recalculation_check\",\n\"agent_intent\": \"Validate that the produced workbook is usable after modification.\",\n\"completes_when\": \"when the generated workbook has been recalculated successfully without\nprocessing errors\",\n\"produces\": [\"recalculated_workbook_check\"], \"consumes\": [\"output_workbook\"],\n\"tool_calls\": [{\n\"tool\": \"shell\",\n\"purpose\": \"Recalculate the workbook to check whether the produced file opens cleanly and formulas\nor values evaluate without immediate errors\",\n\"code_snippet\": \"python3 .../working_skills/xlsx/scripts/recalc.py .../weak_outputs/output.xlsx\",\n\"observation\": \"stdout:\\n{\\\"status\\\": \\\"success\\\", \\\"total_errors\\\": 0, \\\"total_formulas\\\": 0}\\n\\\nnexit_code: 0\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_004\", \"label\": \"output_workbook_save\",\n\"category_tier1\": \"output\", \"category_tier2\": \"output_workbook_save\",\n\"agent_intent\": \"Deliver the modified workbook in the requested output location.\",\n\"completes_when\": \"when output.xlsx exists in the output directory after the sheet recreation and\nSum hardcoding steps\",\n\"produces\": [\"output.xlsx\"], \"consumes\": [\"output_workbook\", \"recalculated_workbook_check\"],\n\"tool_calls\": [],\n\"outcome\": \"success\"\n}\n]\n}",
+    "zh": "{\n\"agent_id\": \"weak_iter0\",\n\"task\": \"重建“Data”工作表，保留 D:G 格式，硬编码 Sum 值，并保存为 output.xlsx\",\n\"total_steps\": 5,\n\"outcome\": \"success\",\n\"nodes\": [\n{\n\"id\": \"node_000\", \"label\": \"skill_activation\",\n\"category_tier1\": \"setup\", \"category_tier2\": \"skill_activation\",\n\"agent_intent\": \"准备修改 Excel 工作簿所需的电子表格工具。\",\n\"completes_when\": \"xlsx 技能已激活，其电子表格操作说明可供使用时\",\n\"produces\": [\"xlsx_skill_context\"], \"consumes\": [],\n\"skill_selection_reason\": \"任务需要读取、修改并保存 Excel 工作簿，同时保留格式并硬编码计算值，因此最适合用 xlsx 技能处理。\",\n\"tool_calls\": [{\n\"tool\": \"activate_skill\",\n\"purpose\": \"激活修改工作簿所需的电子表格编辑技能\",\n\"code_snippet\": \"{\\\"name\\\": \\\"xlsx\\\", \\\"reason\\\": \\\"The task involves reading, modifying, and\nsaving an Excel workbook file ...\\\"}\",\n\"observation\": \"<activated_skill name=\\\"xlsx\\\"><instructions># Requirements for Outputs ...\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_001\", \"label\": \"task_requirement_review\",\n\"category_tier1\": \"setup\", \"category_tier2\": \"task_requirement_review\",\n\"agent_intent\": \"在生成脚本前理解要求的变换与约束。\",\n\"completes_when\": \"已明确工作表重建要求、格式约束、Sum 计算及输出文件名时\",\n\"produces\": [\"task_requirements\"], \"consumes\": [\"instruction_file\"],\n\"tool_calls\": [{\n\"tool\": \"read_file\",\n\"purpose\": \"读取案例说明，取得要求的工作簿编辑和输出条件\",\n\"code_snippet\": \"{\\\"file_path\\\": \\\".../cases/510-3/case_input/INSTRUCTION.md\\\"}\",\n\"observation\": \"How can I calculate the total number of days from a date provided in column D of\nmy ’Data’ sheet ...\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_002\", \"label\": \"sheet_recreation_attempt\",\n\"category_tier1\": \"execute\", \"category_tier2\": \"sheet_recreation_attempt\",\n\"agent_intent\": \"通过生成并运行自动化代码，完成主要工作簿变换。\",\n\"completes_when\": \"脚本已成功重建 Data 工作表、保留所需 D:G 格式、硬编码 Sum 值并保存修改后的工作簿时\",\n\"produces\": [\"transformation_script\", \"recreated_data_sheet\", \"hardcoded_sum_values\", \"\noutput_workbook\"],\n\"consumes\": [\"task_requirements\", \"input_workbook\"],\n\"tool_calls\": [{\n\"tool\": \"write_file\",\n\"purpose\": \"创建 Python 脚本以加载工作簿、重建 Data 工作表、保留格式、计算 Sum 值并保存\",\n\"code_snippet\": \"from openpyxl import load_workbook, Workbook\\nfrom openpyxl.utils import\nget_column_letter\\nimport openpyxl.styles as styles\\n\\ninput_path = ...\",\n\"observation\": \"Successfully wrote 3131 characters to .../weak_outputs/script.py\",\n\"outcome\": \"success\"}, {\n\"tool\": \"shell\",\n\"purpose\": \"执行生成的 Python 脚本，得到修改后的工作簿\",\n\"code_snippet\": \"python3 .../weak_outputs/script.py\",\n\"observation\": \"exit_code: 0\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_003\", \"label\": \"workbook_recalculation_check\",\n\"category_tier1\": \"validate\", \"category_tier2\": \"workbook_recalculation_check\",\n\"agent_intent\": \"验证修改后生成的工作簿可用。\",\n\"completes_when\": \"生成的工作簿已成功重算且没有处理错误时\",\n\"produces\": [\"recalculated_workbook_check\"], \"consumes\": [\"output_workbook\"],\n\"tool_calls\": [{\n\"tool\": \"shell\",\n\"purpose\": \"重算工作簿，检查生成文件能否正常打开，以及公式或数值是否能立即正确求值\",\n\"code_snippet\": \"python3 .../working_skills/xlsx/scripts/recalc.py .../weak_outputs/output.xlsx\",\n\"observation\": \"stdout:\\n{\\\"status\\\": \\\"success\\\", \\\"total_errors\\\": 0, \\\"total_formulas\\\": 0}\\n\\\nnexit_code: 0\",\n\"outcome\": \"success\"}],\n\"outcome\": \"success\"\n},\n{\n\"id\": \"node_004\", \"label\": \"output_workbook_save\",\n\"category_tier1\": \"output\", \"category_tier2\": \"output_workbook_save\",\n\"agent_intent\": \"将修改后的工作簿交付到要求的输出位置。\",\n\"completes_when\": \"完成工作表重建和 Sum 硬编码步骤后，输出目录中存在 output.xlsx 时\",\n\"produces\": [\"output.xlsx\"], \"consumes\": [\"output_workbook\", \"recalculated_workbook_check\"],\n\"tool_calls\": [],\n\"outcome\": \"success\"\n}\n]\n}"
+  },
+  {
+    "kind": "h2",
+    "id": "B",
+    "source_page": 14,
+    "en": "B Gap Report Example",
+    "zh": "附录 B 差距报告示例"
+  },
+  {
+    "kind": "p",
+    "id": "B.p1",
+    "source_page": 14,
+    "en": "Listing 2 shows one gap entry from a diagnoser gap report on SpreadsheetBench (gpt-4.1-mini, iteration 1; the full report for that iteration contains 15 such gaps). The prior iteration’s patch had pushed the weak agent toward recalculating after an edit, but the weak agent still stops at a superficial check (recalc succeeding, or one unrepresentative cell) instead of reopening the workbook and spot-checking the target region; the diagnoser marks this gap REGRESSION (Table 2) across seven failing cases, and the skill_patch_hint’s PRIOR-PATCH CRITIQUE names four of them individually before prescribing a replacement verification protocol, following the TARGET/STYLE/WORDING/PRIORPATCH-CRITIQUE structure described in §3.4.",
+    "zh": "清单 2 展示 SpreadsheetBench 中一条诊断器差距报告记录（gpt-4.1-mini，第 1 轮；该轮完整报告包含 15 条此类差距）。上一轮补丁使弱智能体更倾向于在编辑后重算，但它仍停留于表面检查——重算成功或检查一个缺乏代表性的单元格——而未重新打开工作簿并抽查目标区域。诊断器在七个失败案例中将此差距标为 REGRESSION（表 2）；skill_patch_hint 的 PRIOR-PATCH CRITIQUE 在给出替代验证流程前，逐一指出其中四个案例，并遵循 §3.4 所述 TARGET／STYLE／WORDING／PRIOR-PATCH-CRITIQUE 结构。"
+  },
+  {
+    "kind": "p",
+    "id": "B.listing2.caption",
+    "source_page": 14,
+    "en": "Listing 2: One gap from a diagnoser gap report (gap_type=weak_node, status=REGRESSION).",
+    "zh": "清单 2：诊断器差距报告中的一项差距（gap_type=weak_node，status=REGRESSION）。"
+  },
+  {
+    "kind": "code",
+    "id": "B.listing2",
+    "source_page": 14,
+    "en": "{\n\"gap_id\": \"gap_005\",\n\"gap_type\": \"weak_node\",\n\"sub_dimension\": \"no value-level spotcheck\",\n\"target_skill\": \"xlsx\",\n\"category_tier1\": \"validate\",\n\"category_tier2\": \"output_verification\",\n\"label\": \"recalc_without_targeted_readback_verification\",\n\"description\": \"The previous patch moved the agent toward recalculation, but current weak runs still\noften stop at recalc success, formula-only inspection, or a one-cell check instead of reopening\nthe saved workbook and checking the actual visible results in the task-relevant region. This now\nappears in more failing cases than in iter 0, so the prior patch direction was right but\nmeasurably insufficient.\",\n\"weak_evidence\": {\n\"267-21\": \"python3 .../scripts/recalc.py .../weak_outputs/output.xlsx 30\",\n\"399-14\": \"print(’Checking cells N12 and O12:’, ws[’N12’].value, ws[’O12’].value)\",\n\"44628\": \"VALUES D4:G4: [20, 15, 35, 35]\",\n\"496-15\": \"ls -l .../weak_outputs/output.xlsx\",\n\"50631\": \"python3 .../scripts/recalc.py .../weak_outputs/output.xlsx\",\n\"50916\": \"print(’Sample cell formulas and values:’); cells_to_check = [’C12’,’D12’,’E12’,’F12’,’G12’,’\nD13’,’E13’,’D14’,’E14’]; [(c, ws_formulas[c].value, ws_values[c].value) for c in cells_to_check]\n\",\n\"57612\": \"FORMULA D4: =IF(AND(C4>=5,C4<=6),5,IF(AND(C4>=3,C4<=4),3.75,IF(AND(C4>=1,C4<=2),1,0)))\"\n},\n\"strong_evidence\": {\n\"267-21\": \"for r in ws.iter_rows(values_only=True): print(r)\",\n\"399-14\": \"for r in [12,15,16,18,21,22,7]: print(r, ws[f’N{r}’].value, ws[f’O{r}’].value, ws[f’P{r}’].\nvalue)\",\n\"44628\": \"print([ws[c].value for c in [’D3’,’E3’,’F3’,’G3’]])\",\n\"496-15\": \"for row in range(1, ws.max_row + 1): print(row, d, e)\",\n\"50631\": \"for coord in [’B36’,’B37’,’B38’,’D7’,’D38’,’F7’,’F38’,’H7’,’H30’,’H36’,’H37’,’H38’]: print(’\nvalue’, coord, ws2[coord].value)\",\n\"50916\": \"for r in [12,13,14,17,18,19,20,21]: print(r, [ws.cell(r,c).value for c in range(1,9)])\",\n\"57612\": \"for r in range(4,16): print(r, wsv[f’C{r}’].value, wsv[f’D{r}’].value)\"\n},\n\"strong_node_ref\": {\"267-21\": \"node_007\", \"399-14\": \"node_004\", \"44628\": \"node_004\",\n\"496-15\": \"node_005\", \"50631\": \"node_004\", \"50916\": \"node_004\", \"57612\": \"node_004\"},\n\"weak_node_ref\": {\"267-21\": \"node_009\", \"399-14\": \"node_005\", \"44628\": \"node_006\",\n\"496-15\": \"node_003\", \"50631\": \"node_006\", \"50916\": \"node_005\", \"57612\": \"node_004\"},\n\"strong_completes_when\": \"when the saved workbook has been reopened in both formula and data-only views\nand the task-relevant edited region has been explicitly spot-checked\",\n\"weak_completes_when\": \"when recalc succeeds, the file exists, or a tiny unrepresentative slice looks\nplausible, without verifying the actual target range or final visible values\",\n\"missing_produces\": [\"verification_report\", \"spotcheck_results\"],\n\"skill_patch_hint\": \"TARGET: patch xlsx/SKILL.md in the Recalculating formulas section and the Common\nWorkflow after recalc. STYLE: MANDATE, and because this gap is REGRESSION, explicitly replace the\nprior weak mechanism rather than merely intensifying it. WORDING: add a post-recalc hard-stop\nchecklist saying the agent must reopen the canonical output.xlsx twice: once with data_only=False\nto verify formulas or structural edits landed in the intended addresses, and once with data_only=\nTrue to verify visible values in the actual destination region. Require four checks: the named\ntarget cells from the prompt, the first edited row, one middle or edge row, and the final edited\nor summary row. Also require one unchanged control row or cell to confirm no unintended spillover.\nAdd a hard-stop sentence: ’A zero-error recalc report, save message, or file-exists check is not\ncompletion. If readback shows wrong placement, blank results, untouched ranges, wrong totals, or\nthe wrong sheet layout, repair and re-verify.’ PRIOR-PATCH CRITIQUE: the iter-0 patch successfully\nmade recalc common, but current structures show the agent satisfies the letter while skipping the\nreal semantic check. 496-15 stops at ls -l. 50631 ends after recalc and an H38 patch without\nchecking the full date extent. 50916 executes a list comprehension that prints nothing, then\nclaims success. 44628 reads back the wrong cells and accepts D4:G4 instead of D3:G3. The new patch\nmust therefore switch mechanisms from generic recalc guidance to a mandatory readback protocol\nwith explicit target-region coverage.\",\n\"failed_case_ids\": [\"267-21\", \"399-14\", \"44628\", \"496-15\", \"50631\", \"50916\", \"57612\"],\n\"pass_case_ids\": [\"84-40\"],\n\"status\": \"REGRESSION\"\n}",
+    "zh": "{\n\"gap_id\": \"gap_005\",\n\"gap_type\": \"weak_node\",\n\"sub_dimension\": \"缺少数值级抽查\",\n\"target_skill\": \"xlsx\",\n\"category_tier1\": \"validate\",\n\"category_tier2\": \"output_verification\",\n\"label\": \"recalc_without_targeted_readback_verification\",\n\"description\": \"先前补丁促使智能体进行重算，但当前弱智能体的运行仍常停在重算成功、仅检查公式，或只查一个单元格，而未重新打开已保存工作簿，检查任务相关区域的实际可见结果。相较第 0 轮，这一问题出现在更多失败案例中，说明先前补丁方向正确，但明显不足。\",\n\"weak_evidence\": {\n\"267-21\": \"python3 .../scripts/recalc.py .../weak_outputs/output.xlsx 30\",\n\"399-14\": \"print(’Checking cells N12 and O12:’, ws[’N12’].value, ws[’O12’].value)\",\n\"44628\": \"VALUES D4:G4: [20, 15, 35, 35]\",\n\"496-15\": \"ls -l .../weak_outputs/output.xlsx\",\n\"50631\": \"python3 .../scripts/recalc.py .../weak_outputs/output.xlsx\",\n\"50916\": \"print(’Sample cell formulas and values:’); cells_to_check = [’C12’,’D12’,’E12’,’F12’,’G12’,’\nD13’,’E13’,’D14’,’E14’]; [(c, ws_formulas[c].value, ws_values[c].value) for c in cells_to_check]\n\",\n\"57612\": \"FORMULA D4: =IF(AND(C4>=5,C4<=6),5,IF(AND(C4>=3,C4<=4),3.75,IF(AND(C4>=1,C4<=2),1,0)))\"\n},\n\"strong_evidence\": {\n\"267-21\": \"for r in ws.iter_rows(values_only=True): print(r)\",\n\"399-14\": \"for r in [12,15,16,18,21,22,7]: print(r, ws[f’N{r}’].value, ws[f’O{r}’].value, ws[f’P{r}’].\nvalue)\",\n\"44628\": \"print([ws[c].value for c in [’D3’,’E3’,’F3’,’G3’]])\",\n\"496-15\": \"for row in range(1, ws.max_row + 1): print(row, d, e)\",\n\"50631\": \"for coord in [’B36’,’B37’,’B38’,’D7’,’D38’,’F7’,’F38’,’H7’,’H30’,’H36’,’H37’,’H38’]: print(’\nvalue’, coord, ws2[coord].value)\",\n\"50916\": \"for r in [12,13,14,17,18,19,20,21]: print(r, [ws.cell(r,c).value for c in range(1,9)])\",\n\"57612\": \"for r in range(4,16): print(r, wsv[f’C{r}’].value, wsv[f’D{r}’].value)\"\n},\n\"strong_node_ref\": {\"267-21\": \"node_007\", \"399-14\": \"node_004\", \"44628\": \"node_004\",\n\"496-15\": \"node_005\", \"50631\": \"node_004\", \"50916\": \"node_004\", \"57612\": \"node_004\"},\n\"weak_node_ref\": {\"267-21\": \"node_009\", \"399-14\": \"node_005\", \"44628\": \"node_006\",\n\"496-15\": \"node_003\", \"50631\": \"node_006\", \"50916\": \"node_005\", \"57612\": \"node_004\"},\n\"strong_completes_when\": \"已分别以公式视图和仅数值视图重新打开保存的工作簿，并明确抽查任务相关的编辑区域时\",\n\"weak_completes_when\": \"重算成功、文件存在，或一个缺乏代表性的小片段看似合理时；它没有验证实际目标区域或最终可见数值\",\n\"missing_produces\": [\"verification_report\", \"spotcheck_results\"],\n\"skill_patch_hint\": \"目标：修补 xlsx/SKILL.md 的“重算公式”章节和重算后的“通用工作流程”。风格：MANDATE；由于该差距属于 REGRESSION，应明确替换先前较弱的机制，而非仅加强措辞。措辞：增加重算后的硬停止核对清单，要求智能体两次重新打开规范输出 output.xlsx：一次用 data_only=False，验证公式或结构编辑是否落在目标地址；一次用 data_only=True，验证实际目标区域的可见值。要求检查四处：提示词点名的目标单元格、首个编辑行、一个中间或边界行，以及最后编辑行或汇总行。还须检查一个未改变的对照行或单元格，以确认没有意外波及。增加硬停止句：“重算报告零错误、保存消息或文件存在检查都不代表任务完成。若回读发现位置错误、结果为空、区域未修改、总计错误或工作表布局错误，应修复后重新验证。”此前补丁批评：第 0 轮补丁使重算更常见，但当前结构表明，智能体满足了字面要求，却跳过真正的语义检查。496-15 停在 ls -l；50631 在重算及 H38 补丁后结束，未检查完整日期范围；50916 执行了一个没有打印任何内容的列表推导式，却声称成功；44628 回读了错误单元格，接受了 D4:G4，而非 D3:G3。因此，新补丁必须从一般重算指导切换到强制回读流程，并明确覆盖目标区域。\",\n\"failed_case_ids\": [\"267-21\", \"399-14\", \"44628\", \"496-15\", \"50631\", \"50916\", \"57612\"],\n\"pass_case_ids\": [\"84-40\"],\n\"status\": \"REGRESSION\"\n}"
+  },
+  {
+    "kind": "h2",
+    "id": "C",
+    "source_page": 15,
+    "en": "C Validator Report Example",
+    "zh": "附录 C 验证器报告示例"
+  },
+  {
+    "kind": "p",
+    "id": "C.p1",
+    "source_page": 15,
+    "en": "Listing 3 shows a validator report for a SpreadsheetBench case (48608, iteration 0). The validator compares the weak agent’s output.xlsx against the strong agent’s own output, not the gold answer (§3.4). Its top-level verdict is PASS only if every expected file matches exactly; PARTIAL if a file is present but imperfect (as here) or one expected file is entirely missing; FAIL if most expected files are missing or severely wrong. The scores block gives file_presence_ratio (share of expected files present in any form), content_match_ratio (share of present files that are an exact match), and their weighted blend overall_quality_score= 0.4×presence+ 0.6×content . Within a file’s detail, row_match_ratio counts whole strong rows found anywhere in the weak output, cell_match_ratio is the finer-grained cell-by-cell match, and per_column_match_ratio breaks the latter down by column. Here, the file is present with matching sheet structure, but a 0.0 match ratio on the PASSEScolumn, yieldingverdict=PARTIAL.",
+    "zh": "清单 3 展示 SpreadsheetBench 案例 48608 在第 0 轮的验证器报告。验证器将弱智能体的 output.xlsx 与强智能体自己的输出比较，而非与标准答案比较（§3.4）。只有所有预期文件完全匹配，顶层 verdict 才是 PASS；若文件存在但不完美（本例），或完全缺少一个预期文件，则为 PARTIAL；若大多数预期文件缺失或严重错误，则为 FAIL。scores 块给出 file_presence_ratio（以任何形式存在的预期文件比例）、content_match_ratio（存在文件中完全匹配的比例），以及二者的加权组合 overall_quality_score=0.4×presence+0.6×content。在单个文件的 detail 中，row_match_ratio 统计弱输出中任意位置出现的完整强输出行；cell_match_ratio 是更细粒度的逐单元格匹配率；per_column_match_ratio 再按列分解。此处文件存在，工作表结构相同，但 PASSES 列的匹配率为 0.0，因此 verdict=PARTIAL。"
+  },
+  {
+    "kind": "p",
+    "id": "C.listing3.caption",
+    "source_page": 15,
+    "en": "Listing 3: Validator report for case 48608, iteration 0 (verdict=PARTIAL).",
+    "zh": "清单 3：案例 48608 第 0 轮的验证器报告（verdict=PARTIAL）。"
+  },
+  {
+    "kind": "code",
+    "id": "C.listing3",
+    "source_page": 15,
+    "en": "{\n\"strong_agent\": \"strong\",\n\"weak_agent\": \"weak_iter0\",\n\"verdict\": \"PARTIAL\",\n\"result_quality\": {\n\"files\": {\n\"present\": [\n{\n\"filename\": \"output.xlsx\",\n\"matched_weak_filename\": \"output.xlsx\",\n\"content_match\": false,\n\"comparator\": \"xlsx\",\n\"detail\": {\n\"sheets_match\": true,\n\"strong_sheets\": [\"Sheet1\"],\n\"weak_sheets\": [\"Sheet1\"],\n\"cell_match_ratio\": 0.9091,\n\"per_sheet\": {\n\"Sheet1\": {\n\"present\": true,\n\"row_match_ratio\": 0.125,\n\"cell_match_ratio\": 0.9091,\n\"strong_rows\": 8,\n\"weak_rows\": 17,\n\"missing_rows\": 7,\n\"extra_rows\": 16,\n\"per_column_match_ratio\": {\n\"Name\": 1.0,\n\"Session\": 1.0,\n\"Result\": 1.0,\n\"\": 1.0,\n\"Passes (Hidden)\": 1.0,\n\"Passes\": 0.0\n}\n}\n}\n}\n}\n],\n\"missing_from_weak\": [],\n\"extra_in_weak\": []\n},\n\"scores\": {\n\"file_presence_ratio\": 1.0,\n\"content_match_ratio\": 0.0,\n\"overall_quality_score\": 0.4\n}\n},\n\"analysis\": \"The weak agent produced the required workbook file, and the workbook structure matches the\nreference sheet name. However, the sheet contents do not fully match the reference. The overall\ncell match is high, but the key ’Passes’ column does not match the reference, and the row\nalignment is poor, with many extra and missing rows. This indicates a partially correct\nspreadsheet output rather than an exact reproduction.\",\n\"verdict_reasoning\": \"There is one expected file and it is present, so file presence is complete. The\ncontent is not an exact match due to differences in the workbook rows and the ’Passes’ column, so\ncontent_match_ratio is 0. Because the output is present but not correct, the verdict is PARTIAL.\"\n}",
+    "zh": "{\n\"strong_agent\": \"strong\",\n\"weak_agent\": \"weak_iter0\",\n\"verdict\": \"PARTIAL\",\n\"result_quality\": {\n\"files\": {\n\"present\": [\n{\n\"filename\": \"output.xlsx\",\n\"matched_weak_filename\": \"output.xlsx\",\n\"content_match\": false,\n\"comparator\": \"xlsx\",\n\"detail\": {\n\"sheets_match\": true,\n\"strong_sheets\": [\"Sheet1\"],\n\"weak_sheets\": [\"Sheet1\"],\n\"cell_match_ratio\": 0.9091,\n\"per_sheet\": {\n\"Sheet1\": {\n\"present\": true,\n\"row_match_ratio\": 0.125,\n\"cell_match_ratio\": 0.9091,\n\"strong_rows\": 8,\n\"weak_rows\": 17,\n\"missing_rows\": 7,\n\"extra_rows\": 16,\n\"per_column_match_ratio\": {\n\"Name\": 1.0,\n\"Session\": 1.0,\n\"Result\": 1.0,\n\"\": 1.0,\n\"Passes (Hidden)\": 1.0,\n\"Passes\": 0.0\n}\n}\n}\n}\n}\n],\n\"missing_from_weak\": [],\n\"extra_in_weak\": []\n},\n\"scores\": {\n\"file_presence_ratio\": 1.0,\n\"content_match_ratio\": 0.0,\n\"overall_quality_score\": 0.4\n}\n},\n\"analysis\": \"弱智能体生成了要求的工作簿文件，工作簿结构与参考工作表名称一致。然而，工作表内容并未完全匹配参考。整体单元格匹配率很高，但关键的“Passes”列与参考不符，行对齐也较差，有许多多余行和缺失行。这说明电子表格输出仅部分正确，而非精确复现。\",\n\"verdict_reasoning\": \"预期文件只有一个且已存在，因此文件存在率为完整。由于工作簿各行及“Passes”列存在差异，内容并非完全匹配，content_match_ratio 为 0。输出存在但不正确，所以判定为 PARTIAL。\"\n}"
+  },
+  {
+    "kind": "h2",
+    "id": "D",
+    "source_page": 16,
+    "en": "D Adapted Skill Example",
+    "zh": "附录 D 适配后技能示例"
+  },
+  {
+    "kind": "p",
+    "id": "D.p1",
+    "source_page": 16,
+    "en": "Listing 4 shows the full diff between the original xlsx skill S0 and the skill adapted for gpt-5.4-mini on SpreadsheetBench: four hunks, 63 lines removed and 79 added. The edits fall into three kinds: unconditional rules become conditional on what the prompt asks, vague instructions become explicit scoping steps that must precede an edit, and generic verification advice becomes a mandatory readback gate on the saved workbook together with rules for what to do when it fails.",
+    "zh": "清单 4 展示 SpreadsheetBench 中，原始 xlsx 技能 S0 与为 gpt-5.4-mini 适配的技能之间的完整差异：四个变更块，删除 63 行、增加 79 行。编辑分为三类：将无条件规则改为以提示词要求为条件；把模糊指令改为编辑前必须完成的明确范围界定步骤；把笼统的验证建议改为对已保存工作簿的强制回读关卡，并规定失败时如何处理。"
+  },
+  {
+    "kind": "p",
+    "id": "D.listing4.caption",
+    "source_page": 16,
+    "en": "Listing 4: skill_changes_xlsx.diff for gpt-5.4-mini on SpreadsheetBench. Header paths are shortened and long lines are cut at a sentence boundary, marked [...].",
+    "zh": "清单 4：SpreadsheetBench 上为 gpt-5.4-mini 适配的 skill_changes_xlsx.diff。文件头路径已缩短；长行在句子边界截断，以 […] 标记。"
+  },
+  {
+    "kind": "code",
+    "id": "D.listing4",
+    "source_page": 16,
+    "en": "--- skill_baseline_xlsx/SKILL.md\n+++ skill_final_xlsx/SKILL.md\n@@ -15,8 +15,9 @@\n- Every Excel model MUST be delivered with ZERO formula errors (#REF!, #DIV/0!, #VALUE!, #N/A, #NAME?)\n### Preserve Existing Templates (when updating templates)\n-- Study and EXACTLY match existing format, style, and conventions when modifying files\n-- Never impose standardized formatting on files with established patterns\n+- Inspect and EXACTLY match the workbook’s structure, styles, merges, dimensions, and conventions before\nediting\n+- If the prompt says recreate, rebuild, or preserve a sheet exactly, capture the template first and\ntreat sheet copy/recreation as a required step before value fixes\n+- Never treat in-place edits as equivalent to recreation when template fidelity, split fields, or\npreserved layout matter\n- Existing template conventions ALWAYS override these guidelines\n## Financial models\n@@ -96,57 +97,26 @@\n## Excel File Workflows\n-## CRITICAL: Use Formulas, Not Hardcoded Values\n+## CRITICAL: Choose formulas vs hardcodes explicitly\n-**Always use Excel formulas instead of calculating values in Python and hardcoding them.** This ensures\nthe spreadsheet remains dynamic and updateable.\n-\n-### WRONG - Hardcoding Calculated Values\n-‘‘‘python\n-# Bad: Calculating in Python and hardcoding result\n-total = df[’Sales’].sum()\n-sheet[’B10’] = total # Hardcodes 5000\n-\n-# Bad: Computing growth rate in Python\n-growth = (df.iloc[-1][’Revenue’] - df.iloc[0][’Revenue’]) / df.iloc[0][’Revenue’]\n-sheet[’C5’] = growth # Hardcodes 0.15\n-\n-# Bad: Python calculation for average\n-avg = sum(values) / len(values)\n-sheet[’D20’] = avg # Hardcodes 42.5\n-‘‘‘\n-\n-### CORRECT - Using Excel Formulas\n-‘‘‘python\n-# Good: Let Excel calculate the sum\n-sheet[’B10’] = ’=SUM(B2:B9)’\n-\n-# Good: Growth rate as Excel formula\n-sheet[’C5’] = ’=(C4-C2)/C2’\n-\n-# Good: Average using Excel function\n-sheet[’D20’] = ’=AVERAGE(D2:D19)’\n-‘‘‘\n-\n-This applies to ALL calculations - totals, percentages, ratios, differences, etc. The spreadsheet should\nbe able to recalculate when source data changes.\n+- If the task asks to build, fix, copy, extend, summarize, or preserve spreadsheet behavior -- or the\nworkbook should update when source cells change -- write Excel formulas into the workbook, not Python-\ncomputed results\n+- If the prompt explicitly asks for static final values, hardcoded outputs are allowed because the user\nrequested a non-dynamic result\n+- Do not choose Python-computed cell values merely because they are easier when workbook logic is part\nof the deliverable\n+- Dynamic example: write a lookup, SUMIF, or fill-down formula into the target cells\n+- Static exception example: the prompt explicitly asks for final pasted values with no formulas\n+- When the dynamic branch applies, reopen the saved workbook with normal loading and confirm the target\ncells contain formulas, not just displayed numbers\n## Common Workflow\n1. **Choose tool**: pandas for data, openpyxl for formulas/formatting\n2. **Create/Load**: Create new workbook or load existing file\n-3. **Modify**: Add/edit data, formulas, and formatting\n-4. **Save**: Write to file\n-5. **Recalculate formulas (MANDATORY IF USING FORMULAS)**: Use the scripts/recalc.py script\n+3. **Audit target before editing**: identify the editable deliverable sheet, any source-data sheets, and\nany example/reference/oracle sheets before changing cells. Do not overwrite sheets named like Desired\nResults, Example, Template, or Reference unless the prompt explicitly names them as the sheet to modify.\nThen identify the exact destination range, condition or lookup columns, first and last affected row, and\nwhether the task is whole-column, bounded-range, table, merged-region, summary-section, or sheet-\nrecreation work. If the task deletes, filters, copies, or keeps rows based on only some columns inside a\nwider visible band, write down the exact named condition columns first and treat adjacent numbering,\nhelper, or metadata columns as out of scope unless the prompt names them explicitly. If the destination\nsubset is smaller than the source table, derive destination start/end rows separately from source lookup\nbounds. For existing summary blocks, identify the label column and the result column before writing\nanything; prove the mapping on the first label row and on one later label row so you know the real\ndestination cells. Check at least one sample near the start and one near the end of the intended span. Do\nnot infer bounds from the prompt alone or from a tiny preview. If the prompt says recreate or preserve a\nsheet exactly, inspect styles, merged cells, and layout anchors before touching data\n+4. **Modify the workbook state**: apply the requested spreadsheet change itself; do not substitute code\ntext, macro text, instructions, comments, or note cells as the main solution. For formula repairs, copied\npatterns, schedule grids, or repeated rules, state the intended destination start row, end row, start\ncolumn, and end column before writing, then apply the change across that exact region. If the prompt\nnames one cell as an example but describes a whole column, repeated rule, copied formula pattern, or\nschedule grid, derive the workbook-defined destination span from the target area itself and fill every\ntarget row in that span, e.g. ‘for row in range(start_row, end_row+1): if ws[f’{driver_col}{row}’].value\nis not None: ws[f’{target_col}{row}’] = make_formula(row)‘. For report strips, pass lists, or other\nbounded destinations, destination bounds are separate from source lookup bounds. If a row-selection rule\ndepends on a named subset of columns, build the predicate from that exact subset rather than the whole\ninspected slice: bad = checking every visible column because it is nearby; good = checking only the\nexplicitly named subset, then applying deletion/filter/copy logic from that predicate. Read back one kept\n-row boundary and one deleted-row boundary to prove the subset-column rule, not just the final row count.\nIf merged cells block direct fill, build the full editable non-merged target set and fill every editable\ntarget cell across the whole intended grid; merged cells are not permission to retreat to a tiny safe\nsubset. For workbook summary sections, preserve the existing label/result layout: if rows already contain\nlabels like ‘Sum A‘, ‘Sum B‘, or similar, write formulas into the established result cells adjacent to\nthose labels rather than into a nearby blank column. Verify the same label-to-result offset on more than\none summary row before broad fill. For schedule/calendar formulas, classify each reference before fill as\nfixed-row, fixed-column, or relative. Keep the day/cycle key on the current row in the day column, let\nthe return range move with the destination period column, and build one anchor formula that survives both\nhorizontal and vertical translation, e.g. ‘=IFERROR(INDEX(C$2:C$8,MATCH($B12,$B$2:$B$8,0)),\"\")‘; then\nprove it on the anchor cell, one horizontally shifted neighbor, and one next-row cell before broad fill.\nDo not translate a legacy nested-IF or copied formula whose anchor already points at the wrong row,\nheader, day field, or prior output cell, and do not build chain formulas that match against earlier\nfilled schedule cells. For mixed text-and-number summary cells like category codes with numeric suffixes,\nbuild the formula from the actual data-cell range itself, not from summary labels or an oversized sheet\nrectangle: compare the category token to ‘LEFT(source_range,1)‘, parse the numeric suffix from that same\n‘source_range‘, and sum with an error-tolerant conversion so blanks and nonmatches contribute zero. Do\nnot compare whole cells in a broad block to a bare category letter, and do not parse suffixes from label\nrows or blank-leading regions. If readback or validation shows the visible divergence is in a repeated\ndate-series column, rebuild that exact date family first from an explicit row offset from the first\ntarget row, e.g. ‘=IF(start_date+offset<=end_date,start_date+offset,\"\")‘, rather than repairing a nearby\nformula family that merely coexists in the workbook. After rebuilding the date family, verify the first\ndate, the last intended date, and the first blank cell after the series. One-cell or sample-cell patches\nare not sufficient unless the prompt explicitly names one cell as the entire target\n+5. **Save**: Write to file\n+6. **Recalculate formulas (MANDATORY IF USING FORMULAS)**: Use the scripts/recalc.py script\n‘‘‘bash\npython scripts/recalc.py output.xlsx\n‘‘‘\n-6. **Verify and fix any errors**:\n- - The script returns JSON with error details\n- - If ‘status‘ is ‘errors_found‘, check ‘error_summary‘ for specific error types and locations\n- - Fix the identified errors and recalculate again\n- - Common errors to fix:\n- - ‘#REF!‘: Invalid cell references\n- - ‘#DIV/0!‘: Division by zero\n- - ‘#VALUE!‘: Wrong data type in formula\n- - ‘#NAME?‘: Unrecognized formula name\n+7. **Read back the final file (MANDATORY ACCEPTANCE GATE)**: after every edit, reopen the saved workbook\nand verify the exact target cells against the actual task invariant; do not use readback as logging only\n. If formulas were inserted or changed, run recalc first, then use ‘data_only=True‘ to check final values\nand normal loading when formula text or formatting also matters. For small edited regions, check every\ntarget output cell. For large edited regions, check the first edited cell, the last edited cell, one\nboundary case, and one logic-proving case that can expose the likely failure mode. Mark each check ‘PASS‘\nor ‘FAIL‘ against the business rule, not merely against \"cell has a value,\" \"format looks right,\" or \"\nfile opens.\" Treat readback as a go/no-go gate: if a class cell reads ‘False‘ or blank where a class\nlabel should appear, a repaired summary reads all zeros despite visible matching source data, a latest-\nfour result disagrees with a manual row check, a date-series checkpoint still contradicts the requested\nprogression, the first untouched row now contains the filled formula, or any other target invariant fails\n, the workbook is not deliverable. Return to editing, repair the failing logic, and repeat save -> recalc\n-> readback. The agent MUST NOT deliver the workbook until every readback check passes\n### Creating new Excel files\n@@ -204,6 +174,22 @@\nwb.save(’modified.xlsx’)\n‘‘‘\n+Before modifying an existing workbook:\n+- Identify sheet roles first: which sheet is the editable deliverable target, which sheets are only\nsource data, and which sheets are examples, reference tabs, templates, or desired-results/oracle tabs\n+- Use example/reference/desire-results sheets to infer the required transformation or compare outcomes,\nbut do not overwrite them unless the prompt explicitly tells you to edit that sheet; bad: copying the\ndesired ordering into the reference sheet, good: reordering the working sheet so it matches the reference\narrangement\n+- Derive the full affected region from the workbook itself: source/destination sheet, start row, end row\n, start column, end column, stopping rule, and any condition columns or table bounds\n+- If row deletion, filtering, or copying depends on only some columns inside a wider band, identify the\nexact named subset columns before editing and keep nearby numbering/helper columns out of the predicate\nunless the prompt explicitly includes them\n+- If the task says recreate a sheet, rebuild a template, or preserve a tab exactly, duplicate or rebuild\nthe target structure first, preserve row/column layout plus style anchors and merges, then populate\nrepaired values or formulas\n+- If the prompt names one cell but describes a repeated rule, copied formula pattern, or whole target\ncolumn, derive the workbook-defined first/last target rows plus start/end columns from the destination\narea and fill every row in that span rather than only the named example; state ‘start_row‘, ‘end_row‘, ‘\nstart_col‘, and ‘end_col‘ before writing. Reusable pattern: ‘for row in range(start_row, end_row+1): if\nws[f’{driver_col}{row}’].value is not None: ws[f’{target_col}{row}’] = template_for(row)‘\n+- If merged cells block direct fill, enumerate the full editable non-merged target set across the\nintended grid and fill every editable target cell; encountering merged cells is not permission to abandon\nthe rest of the grid\n+- For existing summary sections, identify the label column and the result column from the sheet\nstructure before writing formulas. Prove the destination mapping on the first label row and one later\nlabel row, then write into those established result cells rather than a nearby blank column\n+- For schedule/calendar formulas, classify references before filling: fixed-column, fixed-row, or\nrelative. Keep the match key on the current row in the day column, let the return range move with the\ndestination period column, and build one anchor formula that translates correctly in both directions, e.g\n. ‘=IFERROR(INDEX(C$2:C$8,MATCH($B12,$B$2:$B$8,0)),\"\")‘; then test the anchor cell, one horizontally\nshifted neighbor, and one next-row cell before broad fill\n+- Do not translate a legacy nested-IF or copied formula whose anchor already points at the wrong field (\nfor example the wrong row, header, date column, day field, or prior output cell); translation spreads\nwrong logic faithfully\n+- If writing category totals from mixed cells like A2, B1, or F3, build the formula from the actual data\n-cell range itself, not from summary labels or the whole sheet rectangle. Compare ‘LEFT(source_range,1)‘\nto the category token, parse the numeric suffix from that same ‘source_range‘, and sum with an error-\ntolerant conversion so blanks and nonmatches contribute zero; generic pattern: match the prefix from ‘\nsource_range‘, extract the suffix from ‘source_range‘, and aggregate only those parsed matches\n+- Do not compare whole cells in a broad block to a bare category letter, and do not parse suffixes from\nlabel rows or blank-leading regions; those anti-patterns collapse the logic to mismatches and zero totals\n+- Zero totals across every summary row are a red flag when the visible source table contains matching\nmixed letter-number entries\n+- If only a subset of rows belongs in the output, derive destination start/end rows separately and bound\nthe fill to that subset rather than extending to the whole sheet by default\n+\n## Recalculating formulas\nExcel files created or modified by openpyxl contain formulas as strings but not calculated values. Use\nthe provided ‘scripts/recalc.py‘ script to recalculate formulas:\n@@ -224,27 +210,57 @@\n- Returns JSON with detailed error locations and counts\n- Works on both Linux and macOS\n+Recovery rules after recalc:\n+- If ‘status‘ is ‘errors_found‘, inspect ‘error_summary‘, fix the specific cells, and rerun recalc\nimmediately\n+- Do not perform multiple near-identical formula rewrites that keep the same failing coercion or parsing\npattern\n+- After the second recalc failure on the same target cells, stop whole-range rewrites. Make one real\nmechanism switch on one pilot target cell, prove it on the saved workbook, and only then fill the region\n+- Do not cycle through TAKE/FILTER, LARGE/IF, SUMPRODUCT-with-LARGE, AGGREGATE, or similar array-heavy\nvariants that all chase the same underlying idea without first proving one engine-compatible mechanism on\nthe pilot cell. Superficial syntax swaps do not count as a new mechanism\n+- Change mechanism based on the error class; for mixed text/number parsing across ranges, use an error-\ntolerant formula pattern so blanks, unmatched cells, or nonnumeric entries contribute zero instead of\npropagating errors\n+- For row-wise \"latest N nonblank values\" tasks, do not use ‘COUNT(range)‘ alone to choose a contiguous\ntail slice unless the workbook guarantees nonblank entries are left-packed. When blanks may appear\nbetween valid entries, derive the cutoff position of the Nth-latest populated cell first from a nonblank-\nposition mask such as ‘LARGE((range<>\"\")*COLUMN(range),MIN(N,COUNT(range)))‘, then aggregate only cells\nat or after that cutoff with a scalar pattern such as ‘SUMPRODUCT((range<>\"\")*(COLUMN(range)>=cutoff)*\nrange)/MIN(N,COUNT(range))‘\n+- For latest-N recovery, write the candidate formula to one representative row, run recalc, reopen with\n‘data_only=True‘, compare the numeric result to a manual latest-N check for that row, and only then fill\nthe remaining rows\n+- Do not attempt a third retry unless the mechanism has actually changed and the pilot-cell proof\nsucceeded\n+- After recalc succeeds, still reopen the saved workbook and read back one or two target cells to\nconfirm no formula errors and plausible values\n+\n## Formula Verification Checklist\nQuick checks to ensure formulas work correctly:\n-### Essential Verification\n-- [ ] **Test 2-3 sample references**: Verify they pull correct values before building full model\n-- [ ] **Column mapping**: Confirm Excel columns match (e.g., column 64 = BL, not BK)\n-- [ ] **Row offset**: Remember Excel rows are 1-indexed (DataFrame row 5 = Excel row 6)\n-\n-### Common Pitfalls\n-- [ ] **NaN handling**: Check for null values with ‘pd.notna()‘\n-- [ ] **Far-right columns**: FY data often in columns 50+\n-- [ ] **Multiple matches**: Search all occurrences, not just first\n-- [ ] **Division by zero**: Check denominators before using ‘/‘ in formulas (#DIV/0!)\n-- [ ] **Wrong references**: Verify all cell references point to intended cells (#REF!)\n-- [ ] **Cross-sheet references**: Use correct format (Sheet1!A1) for linking sheets\n-\n-### Formula Testing Strategy\n-- [ ] **Start small**: Test formulas on 2-3 cells before applying broadly\n-- [ ] **Verify dependencies**: Check all cells referenced in formulas exist\n-- [ ] **Test edge cases**: Include zero, negative, and very large values\n+### Scope before writing\n+- [ ] Derive the exact target span from the workbook: sheet, start/end row, start/end column, stopping\nrule, and any condition/lookup columns\n+- [ ] If the destination subset is smaller than the source table, derive destination start/end rows\nseparately and state them before filling\n+- [ ] Check at least one sample near the start and one near the end of the intended span\n+- [ ] Confirm column mapping and row offsets before filling formulas\n+- [ ] If preserving or recreating a template, inspect styles, merges, and layout anchors before editing\n+\n+### Building and filling formulas\n+- [ ] Test 2-3 sample references before broad fill\n+- [ ] Verify dependencies and cross-sheet references exist\n+- [ ] State the destination ‘start_row‘, ‘end_row‘, ‘start_col‘, and ‘end_col‘ before writing any\nrepeated-rule fix\n+- [ ] If the prompt names an exemplar cell but describes a repeated rule, fill the full workbook-defined\nregion rather than just the sample cell\n+- [ ] If a row condition uses only some columns in a wider visible band, define and use that exact named\nsubset rather than the whole slice\n+- [ ] If merged cells exist, enumerate all editable non-merged targets in the intended grid and fill all\nof them\n+- [ ] For existing summary rows, identify the label column and the result column, prove the offset on\nthe first label row and one later label row, and write only into those established target cells\n+- [ ] For copied calendar/schedule formulas, decide fixed-column vs fixed-row vs relative references\nbefore fill; keep the match key on the current row day column, let the return range move with the\ndestination period column, and test one anchor cell, one horizontally shifted neighbor, and one next-row\ncell\n+- [ ] Do not copy a schedule formula whose anchor already points at the wrong field or a prior output\ncell\n+- [ ] For mixed text+number category summaries, compare the category token to the prefix from the real\ndata-cell range and parse the numeric suffix from that same range; do not aggregate from label rows or\noversized sheet rectangles\n+- [ ] For latest-N-nonblank logic, reject a ‘COUNT(range)‘-based contiguous tail unless nonblank cells\nare guaranteed to be left-packed; prove the formula selects positions of the last N populated cells\n+- [ ] Before broad fill after a formula-family repair, prove one pilot row against a manual check on the\nrecalculated workbook\n+- [ ] Bound the fill to the true target subset; do not extend to unrelated rows by default\n+- [ ] Use error-tolerant patterns when blanks or nonnumeric text may appear\n+\n+### Readback after save\n+- [ ] Run ‘scripts/recalc.py‘ after formula changes\n+- [ ] Reopen with ‘data_only=True‘ for final values and normal loading when formula text or formatting\nmust also be checked\n+- [ ] Compare observed exact target cells to the task-specific acceptance rule, not just to \"file opens\n,\" \"format looks right,\" or \"cell has something\"\n+- [ ] Small target: check every output cell. Large target: check the first edited cell, the last edited\ncell, one boundary case, and one logic-proving case\n+- [ ] Mark every readback check ‘PASS‘ or ‘FAIL‘ explicitly\n+- [ ] Treat ‘False‘ or blank class cells where labels should appear, all-zero summaries despite visible\nmatching source data, latest-four results that fail a manual row check, date progressions that still\ndiverge, content mismatches hidden by correct formatting, ‘#VALUE!‘, ‘None‘, wrong booleans, numerically\nwrong invariants, or a changed first-untouched row as failure signals that require more editing before\ndelivery\n+- [ ] For summary blocks, read back the real destination cells, not a nearby column that merely contains\nplausible computed values\n+- [ ] If repeated date-series columns still diverge, repair that exact date family first and re-check\nthe first date, last intended date, and first blank after the series\n+- [ ] For row-deletion/filter tasks based on subset columns, read back one kept-row boundary and one\ndeleted-row boundary that prove the predicate used the right columns\n+- [ ] For pilot-cell recovery after repeated recalc failures, prove one target cell calculates correctly\nbefore filling the rest of the region\n+- [ ] For dynamic-workbook tasks, confirm the target cells still contain formulas, not hardcoded numbers\n+- [ ] For recreated sheets, verify both preserved structure/formatting and repaired content fields\n### Interpreting scripts/recalc.py Output\nThe script returns JSON with error details:",
+    "zh": "--- skill_baseline_xlsx/SKILL.md\n+++ skill_final_xlsx/SKILL.md\n@@ -15,8 +15,9 @@\n- 每个 Excel 模型交付时必须没有任何公式错误（#REF!、#DIV/0!、#VALUE!、#N/A、#NAME?）\n### 保留现有模板（更新模板时）\n-- 修改文件时，研究并精确匹配现有格式、样式和惯例\n-- 不要对已有固定模式的文件强加标准格式\n+- 编辑前，检查并精确匹配工作簿的结构、样式、合并单元格、尺寸和惯例\n+- 若提示词要求精确重建、重新制作或保留工作表，应先记录模板，再把复制／重建工作表作为修正数值前的必需步骤\n+- 当模板保真、字段拆分或原有布局很重要时，不要把原地修改视为等同于重建\n- 现有模板的惯例始终优先于这些指导规则\n## 财务模型\n@@ -96,57 +97,26 @@\n## Excel 文件工作流程\n-## 关键：使用公式，而非硬编码数值\n+## 关键：明确选择公式还是硬编码值\n-**始终使用 Excel 公式，不要在 Python 中计算结果后硬编码。**这样电子表格才能随源数据变化动态更新。\n-\n-### 错误示例：硬编码计算值\n-```python\n-# 错误：在 Python 中求和并硬编码结果\n-total = df['Sales'].sum()\n-sheet['B10'] = total # 硬编码 5000\n-\n-# 错误：在 Python 中计算增长率\n-growth = (df.iloc[-1]['Revenue'] - df.iloc[0]['Revenue']) / df.iloc[0]['Revenue']\n-sheet['C5'] = growth # 硬编码 0.15\n-\n-# 错误：在 Python 中计算平均值\n-avg = sum(values) / len(values)\n-sheet['D20'] = avg # 硬编码 42.5\n-```\n-\n-### 正确示例：使用 Excel 公式\n-```python\n-# 正确：让 Excel 计算总和\n-sheet['B10'] = '=SUM(B2:B9)'\n-\n-# 正确：用 Excel 公式计算增长率\n-sheet['C5'] = '=(C4-C2)/C2'\n-\n-# 正确：用 Excel 函数计算平均值\n-sheet['D20'] = '=AVERAGE(D2:D19)'\n-```\n-\n-这适用于所有计算，包括总计、百分比、比率和差值等。源数据变化时，电子表格应能重新计算。\n+- 若任务要求构建、修复、复制、扩展、汇总或保留电子表格的动态行为，或者工作簿应在源单元格改变时更新，则应将 Excel 公式写入工作簿，而非写入 Python 计算出的结果\n+- 若提示词明确要求静态最终值，则可硬编码输出，因为用户要的是非动态结果\n+- 若交付物包含工作簿逻辑，不能仅因更方便就选择 Python 计算出的单元格值\n+- 动态示例：向目标单元格写入查找、SUMIF 或向下填充公式\n+- 静态例外：提示词明确要求粘贴最终值，且不要公式\n+- 当适用动态分支时，以普通方式重新打开已保存工作簿，确认目标单元格包含公式，而非仅有显示数值\n## 通用工作流程\n1. **选择工具**：数据使用 pandas，公式／格式使用 openpyxl\n2. **创建／加载**：创建新工作簿或加载现有文件\n-3. **修改**：添加／编辑数据、公式和格式\n-4. **保存**：写入文件\n-5. **重算公式（使用公式时为必需）**：运行 scripts/recalc.py\n+3. **编辑前审查目标**：更改单元格前，识别可编辑的交付目标工作表、源数据工作表，以及示例／参考／标准答案工作表。除非提示词明确指定这些工作表为编辑对象，否则不要覆盖名称类似 Desired Results、Example、Template 或 Reference 的工作表。随后识别准确的目标范围、条件列或查找列、首末受影响行，以及任务属于整列、限定范围、表格、合并区域、汇总区域还是工作表重建。如果任务依据较宽可见区域内的部分列来删除、筛选、复制或保留行，应先写下准确的具名条件列；除非提示词明确点名，否则相邻的编号列、辅助列和元数据列不属于条件范围。如果目标子集比源表更小，应分别推导目标首末行和源数据查找边界。对于现有汇总块，应在写入前确定标签列和结果列；在首个标签行与后续另一个标签行验证映射，从而确认实际目标单元格。在目标区域的开头附近和末尾附近各检查至少一个样本。不要仅凭提示词或很小的预览推断边界。若提示词要求精确重建或保留工作表，接触数据前应检查样式、合并单元格和布局锚点\n+4. **修改工作簿状态**：直接实施要求的电子表格修改；不能用代码文本、宏文本、操作说明、批注或备注单元格替代主要解决方案。对于修复公式、复制模式、日程网格或重复规则，在写入前写明目标起止行和起止列，再在该确切区域内应用修改。若提示词点名一个单元格作为例子，却描述整列、重复规则、复制公式模式或日程网格，应从目标区域本身推导工作簿定义的目标范围，并填充其中每一目标行。例如：`for row in range(start_row, end_row+1): if ws[f'{driver_col}{row}'].value is not None: ws[f'{target_col}{row}'] = make_formula(row)`。对于报告条带、通过名单或其他限定目标，目标边界与源查找边界不同。若选行规则取决于具名的部分列，谓词只应由这些列构成，而非整个检查切片：错误做法是因为相邻便检查每一可见列；正确做法是仅检查明确点名的列，再据此删除、筛选或复制。回读一个保留行边界和一个删除行边界，证明使用了正确的部分列，而非只看最终行数。若合并单元格阻碍直接填充，应建立完整的可编辑、非合并目标集合，填充整个预期网格中的每个可编辑单元格；合并单元格不能成为退回到很小安全子集的理由。对于工作簿汇总区域，应保留现有标签／结果布局：若行内已有“Sum A”“Sum B”等标签，应将公式写入这些标签旁的既定结果单元格，而非附近空列。广泛填充前，在多于一个汇总行上验证同一标签到结果的偏移。对于日程／日历公式，填充前应将每个引用分为固定行、固定列或相对引用。使日期／周期键留在日期列的当前行，让返回范围随目标周期列移动，建立在水平与垂直平移后均正确的锚点公式，例如 `=IFERROR(INDEX(C$2:C$8,MATCH($B12,$B$2:$B$8,0)),\"\")`；广泛填充前，在锚点单元格、一个水平偏移邻格和下一行单元格上验证。不要平移锚点已经指向错误行、表头、日期字段或前一输出单元格的旧版嵌套 IF 或复制公式，也不要构建与先前已填日程单元格匹配的链式公式。对于包含文本和数值的混合汇总单元格，例如带数字后缀的类别代码，应从实际数据单元格范围构造公式，而不是从汇总标签或过大的工作表矩形构造：将类别标记与 `LEFT(source_range,1)` 比较，从同一个 `source_range` 解析数字后缀，并使用容错转换求和，使空白和不匹配项贡献零。不要把宽区域中的完整单元格与单个类别字母比较，也不要从标签行或前端空白区域解析后缀。若回读或验证显示，可见差异位于重复的日期序列列，应先根据距首个目标行的显式行偏移重建该日期序列，例如 `=IF(start_date+offset<=end_date,start_date+offset,\"\")`，而非修复工作簿中恰好并存的邻近公式族。重建后验证首个日期、预期最后日期及序列之后第一个空白单元格。除非提示词明确指定单个单元格就是完整目标，否则修补一个或几个样本单元格并不足够\n+5. **保存**：写入文件\n+6. **重算公式（使用公式时为必需）**：运行 scripts/recalc.py\n```bash\npython scripts/recalc.py output.xlsx\n```\n-6. **验证并修复所有错误**：\n- - 脚本返回包含错误细节的 JSON\n- - 若 `status` 为 `errors_found`，查看 `error_summary` 中具体错误类型和位置\n- - 修复已识别错误并再次重算\n- - 常见待修错误：\n- - `#REF!`：无效单元格引用\n- - `#DIV/0!`：除以零\n- - `#VALUE!`：公式中的数据类型错误\n- - `#NAME?`：无法识别的公式名称\n+7. **回读最终文件（强制验收关卡）**：每次编辑后，重新打开已保存工作簿，按实际任务的不变量验证确切的目标单元格；回读不能只当日志。若插入或修改了公式，应先重算，再用 `data_only=True` 检查最终值；需要检查公式文本或格式时，还要以普通方式加载。对小范围编辑，检查每个目标输出单元格。对大范围编辑，检查第一个和最后一个编辑单元格、一个边界案例，以及一个可暴露可能失败模式、能证明逻辑的案例。按业务规则将每项检查标记为 `PASS` 或 `FAIL`，不能只凭“单元格有值”“格式看起来正确”或“文件可打开”。把回读视为准入／拒绝关卡：如果类别单元格应有标签却读到 `False` 或空白；修复后的汇总在源数据明显有匹配项时仍全为零；最近四项结果与手工逐行检查不符；日期序列检查点仍违背要求的进展；首个不应修改的行却出现填充公式；或任何其他目标不变量失败，那么工作簿都不可交付。返回编辑步骤，修复失败逻辑，再次保存→重算→回读。每项回读检查通过前，智能体绝不能交付工作簿\n### 创建新的 Excel 文件\n@@ -204,6 +174,22 @@\nwb.save('modified.xlsx')\n```\n+修改现有工作簿之前：\n+- 首先识别工作表角色：哪个是可编辑的交付目标，哪些只提供源数据，哪些是示例、参考标签页、模板或预期结果／标准答案标签页\n+- 用示例／参考／预期结果工作表推断所需变换或比较结果；除非提示词明确要求编辑该工作表，否则不要覆盖。错误：把预期顺序复制进参考工作表；正确：重排工作工作表，使其与参考排列一致\n+- 从工作簿本身推导完整受影响区域：源／目标工作表、起止行、起止列、停止规则、所有条件列或表格边界\n+- 若删除、筛选或复制行仅取决于较宽区域内的部分列，编辑前识别明确点名的列；除非提示词明确包含，否则不要将邻近编号列／辅助列纳入谓词\n+- 若任务要求重建工作表、重做模板或精确保留标签页，应先复制或重建目标结构，保留行列布局、样式锚点和合并信息，再填入修复后的数值或公式\n+- 若提示词点名一个单元格但描述重复规则、复制公式模式或整个目标列，应从目标区域推导工作簿定义的首末目标行及起止列，填充范围内每一行，而非仅处理所举样例；写入前明确 `start_row`、`end_row`、`start_col` 和 `end_col`。可复用模式：`for row in range(start_row, end_row+1): if ws[f'{driver_col}{row}'].value is not None: ws[f'{target_col}{row}'] = template_for(row)`\n+- 若合并单元格妨碍直接填充，应列出预期网格中全部可编辑、非合并目标，并填充每一个；遇到合并单元格不能作为放弃网格其余部分的理由\n+- 对现有汇总区域，写公式前先从工作表结构确定标签列和结果列；在首个标签行和后续一个标签行验证目标映射，再写入既定结果单元格，而非附近空列\n+- 对日程／日历公式，填充前将引用分类为固定列、固定行或相对引用。匹配键应留在日期列当前行，返回范围随目标周期列移动，且锚点公式在两个方向平移后都正确，例如 `=IFERROR(INDEX(C$2:C$8,MATCH($B12,$B$2:$B$8,0)),\"\")`；广泛填充前，测试锚点单元格、一个水平偏移邻格和下一行单元格\n+- 不要平移锚点已经指向错误字段（如错误行、表头、日期列、日期字段或前一输出单元格）的旧版嵌套 IF 或复制公式；平移只会忠实传播错误逻辑\n+- 如果要从 A2、B1 或 F3 等混合单元格求类别总计，应从实际数据单元格范围构造公式，而非汇总标签或整张工作表的矩形。将 `LEFT(source_range,1)` 与类别标记比较，从相同 `source_range` 解析数字后缀，再以容错转换求和，使空白与不匹配项贡献零；通用模式：从 `source_range` 匹配前缀，从 `source_range` 提取后缀，只聚合解析成功的匹配项\n+- 不要把宽区域里的完整单元格与单个类别字母比较，也不要从标签行或前端空白区域解析后缀；这些反模式会使逻辑全不匹配，导致总计为零\n+- 若可见源表中有匹配的字母数字混合项，但每个汇总行总计都为零，这是危险信号\n+- 若输出只应包含部分行，应分别推导目标首末行，将填充限制到该子集，而非默认延伸至整张工作表\n+\n## 重算公式\n由 openpyxl 创建或修改的 Excel 文件把公式保存为字符串，却不含计算值。使用提供的 `scripts/recalc.py` 脚本重算公式：\n@@ -224,27 +210,57 @@\n- 返回包含详细错误位置与计数的 JSON\n- 在 Linux 和 macOS 上均可运行\n+重算后的恢复规则：\n+- 若 `status` 为 `errors_found`，检查 `error_summary`，修复具体单元格，立即再次重算\n+- 不要反复进行几乎相同的公式改写，却保留同一失败的类型转换或解析模式\n+- 若同一目标单元格第二次重算仍失败，停止整区域改写；先在一个试验目标单元格上真正切换机制，证明其在已保存工作簿上有效，然后才填充整个区域\n+- 不要在未先证明单个试验单元格上有兼容计算引擎的机制前，循环尝试 TAKE/FILTER、LARGE/IF、带 LARGE 的 SUMPRODUCT、AGGREGATE 或类似的重数组变体；这些只是追逐同一底层思路的表面语法替换，不算新机制\n+- 根据错误类别切换机制；对于跨区域的文本／数值混合解析，使用容错公式，使空白、不匹配或非数字内容贡献零，而非传播错误\n+- 对逐行求“最近 N 个非空值”的任务，除非工作簿保证非空项从左侧连续排列，否则不要仅用 `COUNT(range)` 选取连续尾段。若有效项之间可能有空白，先从非空位置掩码（如 `LARGE((range<>\"\")*COLUMN(range),MIN(N,COUNT(range)))`）推导倒数第 N 个已填单元格的位置，再以标量模式（如 `SUMPRODUCT((range<>\"\")*(COLUMN(range)>=cutoff)*range)/MIN(N,COUNT(range))`）仅聚合该位置及其后的单元格\n+- 对最近 N 项的恢复，应先把候选公式写入有代表性的一行，重算后以 `data_only=True` 重新打开，把数值结果与该行手工核查的最近 N 项比较，然后才填充其余行\n+- 除非机制确已改变，且试验单元格验证成功，否则不要进行第三次重试\n+- 重算成功后仍要重新打开已保存工作簿，回读一两个目标单元格，确认没有公式错误且数值合理\n+\n## 公式验证清单\n快速检查公式能否正确工作：\n-### 必要验证\n-- [ ] **测试 2–3 个样本引用**：构建完整模型前，确认它们提取正确数值\n-- [ ] **列映射**：确认 Excel 列匹配（例如第 64 列是 BL，不是 BK）\n-- [ ] **行偏移**：记住 Excel 行从 1 计数（DataFrame 第 5 行等于 Excel 第 6 行）\n-\n-### 常见陷阱\n-- [ ] **NaN 处理**：用 `pd.notna()` 检查空值\n-- [ ] **最右侧列**：财年数据通常在第 50 列及以后\n-- [ ] **多个匹配项**：搜索全部出现位置，而非只找第一个\n-- [ ] **除以零**：公式使用 `/` 前检查分母（#DIV/0!）\n-- [ ] **引用错误**：确认所有单元格引用都指向预期位置（#REF!）\n-- [ ] **跨工作表引用**：连接工作表时用正确格式（Sheet1!A1）\n-\n-### 公式测试策略\n-- [ ] **从小处开始**：广泛应用前，在 2–3 个单元格上测试公式\n-- [ ] **验证依赖项**：检查公式引用的所有单元格都存在\n-- [ ] **测试边界案例**：包括零、负数和很大的数值\n+### 写入前确定范围\n+- [ ] 从工作簿推导确切目标范围：工作表、起止行、起止列、停止规则及任何条件列／查找列\n+- [ ] 若目标子集小于源表，应分别推导并在填充前写明目标起止行\n+- [ ] 在预期范围的开头和末尾附近各检查至少一个样本\n+- [ ] 填公式前，确认列映射和行偏移\n+- [ ] 若要保留或重建模板，编辑前检查样式、合并单元格和布局锚点\n+\n+### 构建和填充公式\n+- [ ] 大范围填充前，测试 2–3 个样本引用\n+- [ ] 验证依赖项和跨工作表引用存在\n+- [ ] 修复任何重复规则前，写明目标 `start_row`、`end_row`、`start_col` 和 `end_col`\n+- [ ] 若提示词点名样例单元格，但描述重复规则，应填充工作簿定义的完整区域，而非只填样例\n+- [ ] 若选行条件仅使用较宽可见区域中的部分列，应定义并仅使用明确点名的那些列，而非整段切片\n+- [ ] 若存在合并单元格，应枚举预期网格中所有可编辑、非合并目标，并全部填充\n+- [ ] 对现有汇总行，找出标签列与结果列，在首个及后续一个标签行验证偏移，并且只写入既定目标单元格\n+- [ ] 对复制的日历／日程公式，填充前确定固定列、固定行及相对引用；使匹配键留在日期列当前行，让返回范围随目标周期列移动，测试锚点单元格、一个水平偏移邻格与下一行单元格\n+- [ ] 不要复制锚点已指向错误字段或先前输出单元格的日程公式\n+- [ ] 对文本＋数字混合类别汇总，应将类别标记与真实数据单元格范围的前缀比较，并从同一范围解析数字后缀；不要从标签行或过大的工作表矩形聚合\n+- [ ] 对最近 N 个非空项，除非保证非空单元格从左连续排列，否则拒绝依据 `COUNT(range)` 选取连续尾段；要证明公式选中最后 N 个已填单元格的位置\n+- [ ] 修复公式族后，在大范围填充前，将一行试验结果与重算工作簿上的手工检查对照\n+- [ ] 将填充限制到真正的目标子集；不要默认延伸至无关行\n+- [ ] 空白或非数字文本可能出现时，使用容错模式\n+\n+### 保存后的回读\n+- [ ] 更改公式后运行 `scripts/recalc.py`\n+- [ ] 用 `data_only=True` 重新打开以检查最终值；需要检查公式文本或格式时，按普通方式加载\n+- [ ] 将观察到的确切目标单元格与任务特定的验收规则比较，而非只看“文件可打开”“格式看着正确”或“单元格有内容”\n+- [ ] 小目标检查每个输出单元格；大目标检查首末编辑单元格、一个边界案例和一个能够证明逻辑的案例\n+- [ ] 明确标记每项回读检查为 `PASS` 或 `FAIL`\n+- [ ] 应有标签的类别单元格读到 `False` 或空白、源数据明显有匹配项但汇总全为零、最近四项结果未通过手工逐行检查、日期进展仍然偏离、正确格式掩盖的内容不匹配、`#VALUE!`、`None`、错误布尔值、数值不变量错误，或首个未触及行发生变化，都意味着必须继续编辑才能交付\n+- [ ] 汇总块要回读真正的目标单元格，而非旁边恰好有合理计算值的列\n+- [ ] 若重复日期序列列仍有差异，应先修复该日期序列，再检查首个日期、预期最后日期及序列之后第一个空白单元格\n+- [ ] 若行删除／筛选任务只依据部分列，应回读一个保留行边界与一个删除行边界，证明谓词用了正确列\n+- [ ] 对反复重算失败后的试验单元格恢复，应先证明一个目标单元格计算正确，再填充其余区域\n+- [ ] 动态工作簿任务应确认目标单元格仍含公式，而非硬编码数值\n+- [ ] 重建工作表应同时验证保留下来的结构／格式和修复后的内容字段\n### 解读 scripts/recalc.py 的输出\n脚本返回包含错误细节的 JSON："
+  }
+]

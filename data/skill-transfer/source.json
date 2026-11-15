@@ -1,0 +1,19 @@
+{
+  "title": "Skill Transfer: Adapting Agent Skills from Strong to Weak Agents",
+  "authors": [
+    "Yifan Lan",
+    "Hanyu Wang",
+    "Lu Lin",
+    "Jinghui Chen"
+  ],
+  "institution": "The Pennsylvania State University",
+  "version": "author-preprint",
+  "pdf_creation_date": "2026-09-23",
+  "pdf_source_url": "https://github.com/Yifan-Lan/Skill-Transfer/blob/main/paper/SKill_Transfer_preprint.pdf",
+  "pdf_download_url": "https://raw.githubusercontent.com/Yifan-Lan/Skill-Transfer/main/paper/SKill_Transfer_preprint.pdf",
+  "pdf_file": "Skill-Transfer-preprint.pdf",
+  "pdf_sha256": "65d0e1d491971607e8a83b17fb12d768f2b96871a14d503bc86b8c3f6623d891",
+  "pages": 20,
+  "retrieved_date": "2026-11-15",
+  "notes": "Text and images are taken from this PDF; no external version is mixed in."
+}

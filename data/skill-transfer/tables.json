@@ -1,0 +1,560 @@
+[
+  {
+    "number": 1,
+    "head": [
+      [
+        [
+          "差距类型",
+          "Gap type"
+        ],
+        [
+          "策略",
+          "Strategy"
+        ]
+      ]
+    ],
+    "rows": [
+      [
+        "missing_node",
+        [
+          "强制要求（若容易误入的错误路径不明显，还须增加禁止条款）",
+          "MANDATE (+ PROHIBITION if the tempting wrong path is non-obvious)"
+        ]
+      ],
+      [
+        "weak_node",
+        [
+          "根据根因选择：指导／禁止／硬停止／强制要求",
+          "GUIDANCE / PROHIBITION / HARD-STOP / MANDATE, chosen by root cause"
+        ]
+      ],
+      [
+        "extra_wrong_node",
+        [
+          "禁止",
+          "PROHIBITION"
+        ]
+      ],
+      [
+        "order_difference",
+        [
+          "重排顺序",
+          "REORDER"
+        ]
+      ],
+      [
+        "wrong_skill_routing",
+        [
+          "修改描述",
+          "DESCRIPTION_PATCH"
+        ]
+      ]
+    ],
+    "en": "Table 1: Gap type → patch strategy mapping written into the patch hint.",
+    "zh": "表 1：写入补丁提示的差距类型到补丁策略映射。"
+  },
+  {
+    "number": 2,
+    "head": [
+      [
+        [
+          "状态",
+          "Status"
+        ],
+        [
+          "触发条件",
+          "Trigger"
+        ],
+        [
+          "对补丁提示的影响",
+          "Effect on the patch hint"
+        ]
+      ]
+    ],
+    "rows": [
+      [
+        "NEW",
+        [
+          "与第 k−1 轮无匹配项",
+          "no iteration-(k−1) match"
+        ],
+        [
+          "采用表 1 的策略；无需批评此前补丁",
+          "take the strategy from Table 1; no prior-patch critique"
+        ]
+      ],
+      [
+        "RESOLVED",
+        [
+          "|Fg| = 0 且 |Pg| < 2",
+          "|Fg| = 0 and |Pg| < 2"
+        ],
+        [
+          "舍弃该差距；不生成补丁",
+          "drop the gap; emit no patch"
+        ]
+      ],
+      [
+        "IMPROVEMENT",
+        [
+          "Δ < 0",
+          "Δ < 0"
+        ],
+        [
+          "保留先前策略，并针对仍失败的案例补充",
+          "keep the previous strategy and supplement it for the cases still failing"
+        ]
+      ],
+      [
+        "PERSISTS",
+        [
+          "Δ = 0",
+          "Δ = 0"
+        ],
+        [
+          "禁止仅作指导；升级为其他机制，并替换现有指令，而非在其后追加",
+          "GUIDANCE is forbidden; escalate to a different mechanism and replace the standing instruction rather than append to it"
+        ]
+      ],
+      [
+        "REGRESSION",
+        [
+          "Δ > 0",
+          "Δ > 0"
+        ],
+        [
+          "先撤销有害编辑或缩小其范围，再根据根因重新推导策略",
+          "revert or rescope the harmful edit first, then re-derive the strategy from the root cause"
+        ]
+      ]
+    ],
+    "en": "Table 2: Cross-iteration gap status and how it overrides the strategy of Table 1.",
+    "zh": "表 2：跨迭代差距状态及其如何覆盖表 1 的策略。"
+  },
+  {
+    "number": 3,
+    "head": [
+      [
+        {
+          "text": [
+            "智能体",
+            "Agent"
+          ],
+          "rowspan": 2
+        },
+        {
+          "text": [
+            "方法",
+            "Method"
+          ],
+          "rowspan": 2
+        },
+        {
+          "text": "SpreadsheetBench",
+          "colspan": 3
+        },
+        {
+          "text": "OfficeQA",
+          "colspan": 5
+        },
+        {
+          "text": "DABench",
+          "colspan": 4
+        }
+      ],
+      [
+        "P%↑",
+        "CM↑",
+        "G↓",
+        "P%↑",
+        "≤.1↑",
+        "≤1↑",
+        "≤5↑",
+        "G↓",
+        "P%↑",
+        "ByQ↑",
+        "PrQ↑",
+        "G↓"
+      ]
+    ],
+    "rows": [
+      [
+        "Strong gpt-5.4",
+        "No skill",
+        "59.0",
+        "0.717",
+        "–",
+        "52.9",
+        "57.1",
+        "62.9",
+        "67.1",
+        "–",
+        "82.0",
+        "86.3",
+        "85.0",
+        "–"
+      ],
+      [
+        "Strong gpt-5.4",
+        "Original skill",
+        "67.5",
+        "0.807",
+        "–",
+        "57.1",
+        "57.1",
+        "67.1",
+        "72.9",
+        "–",
+        "86.0",
+        "89.8",
+        "88.6",
+        "–"
+      ],
+      [
+        "Weak gpt-4.1-mini",
+        "No skill",
+        "15.5",
+        "0.468",
+        "0.280",
+        "17.1",
+        "17.1",
+        "24.3",
+        "27.1",
+        "0.335",
+        "74.7",
+        "80.4",
+        "79.9",
+        "0.204"
+      ],
+      [
+        "Weak gpt-4.1-mini",
+        "Original skill",
+        "25.5",
+        "0.486",
+        "0.203",
+        "8.6",
+        "12.9",
+        "15.7",
+        "15.7",
+        "0.297",
+        "68.7",
+        "72.9",
+        "74.3",
+        "0.218"
+      ],
+      [
+        "Weak gpt-4.1-mini",
+        "EvoSkill",
+        "36.5",
+        "0.541",
+        "0.187",
+        "14.3",
+        "17.1",
+        "24.3",
+        "25.7",
+        "0.251",
+        "79.3",
+        "82.8",
+        "83.2",
+        "0.185"
+      ],
+      [
+        "Weak gpt-4.1-mini",
+        "Skill Transfer",
+        "48.5",
+        "0.638",
+        "0.154",
+        "18.6",
+        "18.6",
+        "25.7",
+        "28.6",
+        "0.177",
+        "80.7",
+        "83.2",
+        "85.2",
+        "0.158"
+      ],
+      [
+        "Weak gpt-5.4-mini",
+        "No skill",
+        "48.0",
+        "0.662",
+        "0.227",
+        "21.4",
+        "24.3",
+        "25.7",
+        "30.0",
+        "0.275",
+        "77.3",
+        "85.2",
+        "84.3",
+        "0.243"
+      ],
+      [
+        "Weak gpt-5.4-mini",
+        "Original skill",
+        "39.5",
+        "0.632",
+        "0.111",
+        "14.3",
+        "18.6",
+        "22.9",
+        "28.6",
+        "0.168",
+        "81.3",
+        "87.6",
+        "86.0",
+        "0.126"
+      ],
+      [
+        "Weak gpt-5.4-mini",
+        "EvoSkill",
+        "50.0",
+        "0.683",
+        "0.099",
+        "27.1",
+        "28.6",
+        "35.7",
+        "40.0",
+        "0.127",
+        "86.0",
+        "87.9",
+        "87.2",
+        "0.083"
+      ],
+      [
+        "Weak gpt-5.4-mini",
+        "Skill Transfer",
+        "51.5",
+        "0.691",
+        "0.095",
+        "30.0",
+        "31.4",
+        "35.7",
+        "37.1",
+        "0.109",
+        "86.0",
+        "89.7",
+        "89.9",
+        "0.109"
+      ]
+    ],
+    "en": "Table 3: SpreadsheetBench, OfficeQA, and DABench. Within each weak agent, bold is the best method for that column and underline the second best. CM = Cell Match; G = normalized GED; ≤X is accuracy within X% relative tolerance of the gold numeric answer; ByQ/PrQ are DABench’s own accuracy-by-sub-question and accuracy-proportional-by-sub-question metrics.",
+    "zh": "表 3：SpreadsheetBench、OfficeQA 和 DABench。每个弱智能体组内，粗体为该列最佳方法，下划线为第二名。CM 为单元格匹配率；G 为归一化 GED；≤X 表示与标准数值答案的相对误差不超过 X% 的准确率；ByQ/PrQ 是 DABench 的按子问题准确率及按子问题比例准确率。"
+  },
+  {
+    "number": 4,
+    "head": [
+      [
+        [
+          "智能体",
+          "Agent"
+        ],
+        [
+          "方法",
+          "Method"
+        ],
+        "P%↑",
+        "CM↑",
+        "G↓"
+      ]
+    ],
+    "rows": [
+      [
+        "Strong Qwen3.5-122B",
+        "No skill",
+        "55.0",
+        "70.5",
+        "–"
+      ],
+      [
+        "Strong Qwen3.5-122B",
+        "Original skill",
+        "59.5",
+        "72.2",
+        "–"
+      ],
+      [
+        "Weak Qwen3.5-4B",
+        "No skill",
+        "22.0",
+        "38.1",
+        "0.281"
+      ],
+      [
+        "Weak Qwen3.5-4B",
+        "Original skill",
+        "15.5",
+        "35.5",
+        "0.222"
+      ],
+      [
+        "Weak Qwen3.5-4B",
+        "EvoSkill",
+        "17.0",
+        "33.3",
+        "0.223"
+      ],
+      [
+        "Weak Qwen3.5-4B",
+        "Skill Transfer",
+        "26.0",
+        "42.5",
+        "0.204"
+      ]
+    ],
+    "en": "Table 4: Qwen3.5 on SpreadsheetBench.",
+    "zh": "表 4：Qwen3.5 在 SpreadsheetBench 上的结果。"
+  },
+  {
+    "number": 5,
+    "head": [
+      [
+        [
+          "智能体",
+          "Agent"
+        ],
+        [
+          "方法",
+          "Method"
+        ],
+        "P%↑",
+        "ByQ↑",
+        "PrQ↑",
+        "G↓"
+      ]
+    ],
+    "rows": [
+      [
+        "Strong Qwen3.5-122B",
+        "No skill",
+        "72.7",
+        "88.9",
+        "87.8",
+        "–"
+      ],
+      [
+        "Strong Qwen3.5-122B",
+        "Original skill",
+        "74.0",
+        "89.4",
+        "88.0",
+        "–"
+      ],
+      [
+        "Weak Qwen3.5-2B",
+        "No skill",
+        "19.3",
+        "47.6",
+        "43.0",
+        "0.259"
+      ],
+      [
+        "Weak Qwen3.5-2B",
+        "Original skill",
+        "7.3",
+        "48.8",
+        "45.8",
+        "0.273"
+      ],
+      [
+        "Weak Qwen3.5-2B",
+        "EvoSkill",
+        "13.3",
+        "42.6",
+        "45.5",
+        "0.252"
+      ],
+      [
+        "Weak Qwen3.5-2B",
+        "Skill Transfer",
+        "22.0",
+        "48.9",
+        "48.4",
+        "0.243"
+      ]
+    ],
+    "en": "Table 5: Qwen3.5 on DABench.",
+    "zh": "表 5：Qwen3.5 在 DABench 上的结果。"
+  },
+  {
+    "number": 6,
+    "head": [
+      [
+        [
+          "方法",
+          "Method"
+        ],
+        [
+          "适配目标",
+          "Adapted for"
+        ],
+        "Pass %↑"
+      ]
+    ],
+    "rows": [
+      [
+        "No skill",
+        "–",
+        "59.0"
+      ],
+      [
+        "Original skill",
+        "–",
+        "67.5"
+      ],
+      [
+        "Skill Transfer",
+        "gpt-4.1-mini",
+        "76.5"
+      ],
+      [
+        "Skill Transfer",
+        "gpt-5.4-mini",
+        "81.3"
+      ]
+    ],
+    "en": "Table 6: Strong agent (gpt-5.4) on SpreadsheetBench, using a skill adapted for a weak agent.",
+    "zh": "表 6：强智能体（gpt-5.4）在 SpreadsheetBench 上使用为弱智能体适配的技能。"
+  },
+  {
+    "number": 7,
+    "head": [
+      [
+        [
+          "弱智能体",
+          "Weak agent"
+        ],
+        [
+          "技能",
+          "Skill"
+        ],
+        "Acc %↑"
+      ]
+    ],
+    "rows": [
+      [
+        "gpt-4.1-mini",
+        "Original skill",
+        "44.4"
+      ],
+      [
+        "gpt-4.1-mini",
+        "Skill Transfer",
+        "69.2"
+      ],
+      [
+        "gpt-5.4-mini",
+        "Original skill",
+        "75.6"
+      ],
+      [
+        "gpt-5.4-mini",
+        "Skill Transfer",
+        "77.6"
+      ]
+    ],
+    "en": "Table 7: Out-of-distribution: WikiTableQuestions, using the xlsx skill adapted on SpreadsheetBench.",
+    "zh": "表 7：分布外任务 WikiTableQuestions，使用在 SpreadsheetBench 上适配的 xlsx 技能。"
+  }
+]

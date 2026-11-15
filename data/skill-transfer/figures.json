@@ -1,0 +1,29 @@
+[
+  {
+    "number": 1,
+    "page": 2,
+    "width": 1164,
+    "height": 399,
+    "alt": "强弱智能体使用同一技能时的流程差异",
+    "en": "Figure 1: Motivation for Skill Transfer. Given the same task and skill S0, the strong agent supplies inspection and verification steps that the skill leaves implicit and completes the task. The weak agent omits those same steps and fails. This gap motivates Skill Transfer.",
+    "zh": "图 1：技能迁移的动机。面对同一任务和技能 S0，强智能体补上技能未明说的检查与验证步骤，从而完成任务；弱智能体省略这些步骤，因而失败。这一差距促成了技能迁移。"
+  },
+  {
+    "number": 2,
+    "page": 3,
+    "width": 1173,
+    "height": 357,
+    "alt": "技能迁移的四步流程",
+    "en": "Figure 2: Skill Transfer overview. (1) The strong agent runs once under the original skill S0, while the weak agent reruns each iteration under the current skill Sk on the same training tasks. (2) The Abstractor turns both trajectories into typed node sequences (§3.2). (3) Aligning the paired structures localizes the gaps on each task and synthesizes the systemic ones into a gap report (§3.3–§3.4). (4) The patcher edits only the skill, in one pass, to obtain Sk+1, which is used to rerun the weak agent. After the iterations, S⋆ is selected on V.",
+    "zh": "图 2：技能迁移概览。（1）强智能体在原始技能 S0 下运行一次；弱智能体在每轮迭代中，使用当前技能 Sk 在相同训练任务上重新运行。（2）抽象器把两条轨迹转成带类型的节点序列（§3.2）。（3）对齐成对结构，定位每个任务的差距，并将系统性差距汇总为报告（§3.3–§3.4）。（4）补丁器仅编辑技能，且一次完成，得到 Sk+1，再用于重跑弱智能体。迭代结束后，在验证集 V 上选出 S⋆。"
+  },
+  {
+    "number": 3,
+    "page": 5,
+    "width": 1161,
+    "height": 504,
+    "alt": "结构性差距定位和图编辑距离示例",
+    "en": "Figure 3: Structural gap localization on one task. Top: matching the strong and weak node sequences by their tier-1/tier-2 labels surfaces the five gap types; wrong_skill_routing is read from the activated skills recorded in d. Bottom: one minimum-cost alignment of the same pair, charging δ (Eq. 3) per matched pair and one per unmatched node, which gives GED = 4.0 and normalized GED = 4.0/(5+5) = 0.40.",
+    "zh": "图 3：单个任务的结构性差距定位。上：按一级／二级标签匹配强弱节点序列，呈现五类差距；wrong_skill_routing 根据 d 中记录的已激活技能判定。下：同一对序列的一种最低成本对齐；每个匹配对按 δ（式 3）计费，每个未匹配节点计 1，得到 GED = 4.0、归一化 GED = 4.0/(5+5) = 0.40。"
+  }
+]

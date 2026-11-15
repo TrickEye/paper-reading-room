@@ -33,5 +33,12 @@
     "figures": 8,
     "tables": 4,
     "builder": "skillgen.py"
+  },
+  {
+    "id": "skill-transfer",
+    "pdf": "Skill-Transfer-preprint.pdf",
+    "figures": 3,
+    "tables": 7,
+    "builder": "skill_transfer.py"
   }
 ]

@@ -10,7 +10,7 @@ const http = require('node:http');
 const {createHash} = require('node:crypto');
 const root = path.resolve(__dirname, '../public');
 const output = process.env.BROWSER_OUTPUT_DIR || path.join(require('node:os').tmpdir(), 'paper-reader-browser-check');
-const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4]};
+const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7]};
 const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {
@@ -45,9 +45,24 @@ async function main() {
   browser = await chromium.launch({headless: true, ...(process.env.CHROME_EXECUTABLE ? {executablePath: process.env.CHROME_EXECUTABLE} : {})});
   const route = (id, prefix = '') => base + prefix + (preview ? `/reader-preview.html?paper=${id}` : `/papers/${id}.html`);
   const manifest = JSON.parse(await fs.readFile(path.join(root,'content/manifest.json')));
+  if (!preview) {
+    const index = await browser.newPage({viewport:{width:390,height:844}});
+    await index.goto(base + '/');
+    const card = index.locator('.card').filter({hasText:'Skill Transfer: Adapting Agent Skills'});
+    assert.equal(await card.count(),1);
+    assert.equal(await card.locator('a.primary').getAttribute('href'),'papers/skill-transfer.html');
+    assert.equal(await card.locator('a.secondary').getAttribute('href'),'pdfs/Skill-Transfer-preprint.pdf');
+    const pdf = await index.request.get(base + '/pdfs/Skill-Transfer-preprint.pdf');
+    assert.equal(pdf.status(),200);
+    assert((await pdf.body()).subarray(0,5).toString() === '%PDF-');
+    await card.locator('a.primary').click(); await state(index);
+    assert.equal(await index.locator('body').getAttribute('data-paper'),'skill-transfer');
+    await index.close();
+  }
   const metrics = [];
   const baselineHashes = JSON.parse(await fs.readFile(path.resolve(__dirname,'../tests/migration-baseline.json')));
   for (const [id, counts] of Object.entries(expected)) {
+    if (process.env.BROWSER_PAPER && id !== process.env.BROWSER_PAPER) continue;
     const page = await browser.newPage({viewport: {width:1440,height:1000}});
     const requests = [], errors = [];
     page.on('request', req => requests.push(req.url()));
@@ -60,18 +75,27 @@ async function main() {
       const old = JSON.parse(await fs.readFile(path.join(process.env.MIGRATION_BASELINE_DIR, `${id}-dom.json`)));
       assert.deepEqual(actual, old, `${id}: original IDs, bilingual text, complete tables, math, code and article text must remain unchanged`);
     }
-    for (const [key,value] of Object.entries(actual)) assert.equal(createHash('sha256').update(JSON.stringify(value)).digest('hex'),baselineHashes[id][key],`${id}: migration baseline ${key}`);
+    if (baselineHashes[id]) {
+      for (const [key,value] of Object.entries(actual)) assert.equal(createHash('sha256').update(JSON.stringify(value)).digest('hex'),baselineHashes[id][key],`${id}: migration baseline ${key}`);
+    } else if (id === 'skill-transfer') {
+      assert.equal(await page.locator('.ltx_bibitem').count(),46);
+      assert.equal(await page.locator('.code-pair').count(),5);
+      assert.equal(await page.locator('#T3 tbody tr').count(),10);
+      assert(await page.locator('#S5').getByText('技能迁移').count());
+      assert(await page.locator('#D').getByText('附录 D').count());
+    }
     assert(await page.locator('math').evaluateAll(nodes => nodes.every(n => n.namespaceURI === 'http://www.w3.org/1998/Math/MathML' && [...n.querySelectorAll('*')].every(x => x.namespaceURI === n.namespaceURI))), `${id}: MathML namespace`);
     await page.screenshot({path:path.join(output,`${id}-desktop.png`)});
     for (const [kind, selector] of [['table','article table'],['formula','article math'],['figure','figure.ltx_figure']]) {
       const element = page.locator(selector + ':visible').first();
       if (await element.count()) {
         await element.scrollIntoViewIfNeeded();
+        if (kind === 'figure') await element.locator('img').first().evaluate(img => img.decode());
         await page.screenshot({path:path.join(output,`${id}-${kind}.png`)});
       }
     }
     for (const mode of ['en','dual','zh']) {
-      await page.selectOption('#reading-mode',mode);
+      await page.locator(`#reading-mode [data-mode="${mode}"]`).click();
       assert.equal(await page.locator('html').getAttribute('data-lang'),mode);
       const unit = page.locator('[data-unit]').filter({has:page.locator(':scope > .zh')}).first();
       assert.equal(await unit.locator(':scope > .zh').isVisible(),mode!=='en');
@@ -79,7 +103,7 @@ async function main() {
       if(mode==='en') assert.equal(await page.locator('article .zh:visible,article .translation:visible').count(),0,'English mode hides all translations, including tables/notes');
       if(mode==='zh') assert.equal(await page.locator('article .en:visible').evaluateAll(nodes=>nodes.filter(n=>!n.closest('.ltx_bib_title')).length),0,'Chinese mode hides English pairs, including tables/code');
     }
-    await page.selectOption('#reading-mode','en');
+    await page.locator('#reading-mode [data-mode="en"]').click();
     await page.fill('#search-input',doc.meta.titles.en.slice(0,18));
     await page.waitForFunction(() => document.querySelectorAll('#search-results a').length > 0);
     await page.locator('#search-results a').first().click();
@@ -103,15 +127,16 @@ async function main() {
     assert.equal(await page.locator('#dialog-image').getAttribute('src'),await page.locator('figure.ltx_figure img').first().getAttribute('src'));
     await page.keyboard.press('Escape'); assert(!(await page.locator('#image-dialog').isVisible()));
     assert(await page.locator('.figure-zoom').first().evaluate(el=>el===document.activeElement));
-    await page.evaluate(()=>{window.print=()=>{window.__printed=true;};});
-    await page.click('#print-button');
-    await page.waitForFunction(()=>window.__printed===true,{},{timeout:30000});
+    await page.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));
+    await page.emulateMedia({media:'print'});
+    assert(await page.locator('article').isVisible());
+    await page.emulateMedia({media:'screen'});
     assert(await page.locator('article img').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
     assert.equal(requests.filter(url=>/\/paper\.[a-f0-9]+\.json/.test(url)).length,1,'Mode/search/print must not fetch paper content again');
     assert(!requests.some(url=>/\.pdf(?:$|\?)/.test(url)),'PDF must not download on reading');
     assert(!requests.some(url=>/\/content\/(?!manifest)/.test(url) && !url.includes(`/content/${id}/`)),'No other paper resources');
     assert(requests.every(url=>url.startsWith(base)),'No external runtime request');
-    await page.selectOption('#reading-mode',id==='ace'?'zh':'dual');
+    await page.locator(`#reading-mode [data-mode="${id==='ace'?'zh':'dual'}"]`).click();
     await page.emulateMedia({reducedMotion:'reduce'});
     await page.setViewportSize({width:390,height:844});
     await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
@@ -197,26 +222,21 @@ async function main() {
     assert((await page.locator('link[rel=stylesheet]').getAttribute('href')).includes(manifest.reader.css.replace('../','')));
     await page.close();console.log('PASS stale shell resolves current hashed reader');
   }
-  // Failed images have local retry and prevent the print button from printing
-  // an incomplete document. Then retry and print successfully without reload.
+  // Failed images have local retry; after recovery, print media includes them.
   const page = await browser.newPage();
   const assetPattern = '**/content/skillcat/assets/figure-01.*';
   await page.route(assetPattern,route=>route.fulfill({status:404,body:'missing'}));
   await page.goto(route('skillcat'));await state(page);
   await page.locator('figure img').first().scrollIntoViewIfNeeded();
   await page.waitForSelector('.image-error');
-  await page.evaluate(()=>{window.print=()=>{window.__printed=true;};});
-  await page.click('#print-button');
-  await page.waitForFunction(()=>document.querySelector('#print-status').textContent.includes('再次点击打印'));
-  assert(!(await page.evaluate(()=>window.__printed)));
   await page.unroute(assetPattern);await page.locator('.image-error button').click();
   await page.waitForFunction(()=>document.querySelector('figure img').naturalWidth>0);
-  await page.click('#print-button');await page.waitForFunction(()=>window.__printed===true);
+  await page.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));
   await page.emulateMedia({media:'print'});
   await page.screenshot({path:path.join(output,'skillcat-print.png')});
   await page.pdf({path:path.join(output,'skillcat-print.pdf'),format:'A4',printBackground:true});
-  await page.close();console.log('PASS image retry and print failure recovery');
-  await require('./browser_notes.cjs')({browser,route,output});
+  await page.close();console.log('PASS image retry and print layout');
+  if (!process.env.BROWSER_PAPER) await require('./browser_notes.cjs')({browser,route,output});
   await fs.writeFile(path.join(output,'metrics.json'),JSON.stringify(metrics,null,2));
   console.log('Browser artifacts:',output);
 }

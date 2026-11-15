@@ -1,0 +1,50 @@
+[
+  {
+    "figure": 1,
+    "file": "figure-01.png",
+    "page": 2,
+    "method": "isolated PDF figure crop rendered at 216 dpi",
+    "bbox_pdf_points": [
+      112,
+      76,
+      500,
+      209
+    ],
+    "width": 1164,
+    "height": 399,
+    "sha256": "090e79f49afb3af1a292e8cee7becc3a90d9c755a214a7f4aee3172e685e1155",
+    "source_pdf_sha256": "65d0e1d491971607e8a83b17fb12d768f2b96871a14d503bc86b8c3f6623d891"
+  },
+  {
+    "figure": 2,
+    "file": "figure-02.png",
+    "page": 3,
+    "method": "isolated PDF figure crop rendered at 216 dpi",
+    "bbox_pdf_points": [
+      110,
+      81,
+      501,
+      200
+    ],
+    "width": 1173,
+    "height": 357,
+    "sha256": "c3ae41f9de10114a6ae7d043cb1a213e0886e6e064b5fc69f13d57679cb2431c",
+    "source_pdf_sha256": "65d0e1d491971607e8a83b17fb12d768f2b96871a14d503bc86b8c3f6623d891"
+  },
+  {
+    "figure": 3,
+    "file": "figure-03.png",
+    "page": 5,
+    "method": "isolated PDF figure crop rendered at 216 dpi",
+    "bbox_pdf_points": [
+      113,
+      74,
+      500,
+      242
+    ],
+    "width": 1161,
+    "height": 504,
+    "sha256": "0f514b68c3c8eaa3503c29e19ff79ea3485126339611873fb9f0810db812710a",
+    "source_pdf_sha256": "65d0e1d491971607e8a83b17fb12d768f2b96871a14d503bc86b8c3f6623d891"
+  }
+]

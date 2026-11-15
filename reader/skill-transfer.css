@@ -1,0 +1,12 @@
+.code-pair{margin:24px 0;font:13px/1.8 ui-monospace,SFMono-Regular,Menlo,monospace}
+.code-pair pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:18px;margin:0;font:inherit}
+.code-pair .en{margin-top:14px!important}
+[data-lang=en] .code-pair .en,[data-lang=dual] .code-pair .en{display:block}
+.ltx_table table{min-width:700px}
+.ltx_table .table-scroll{border:1px solid var(--line)}
+.ltx_table td,.ltx_table th{padding:8px 9px}
+.ltx_table td.best{font-weight:750}
+.ltx_table td.second{text-decoration:underline;text-underline-offset:2px}
+.equation{font-family:Georgia,"Times New Roman",serif;text-align:center;overflow-x:auto;padding:12px 4px;margin:18px 0;white-space:nowrap}
+.table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media print{.code-pair{font-size:8pt}.code-pair pre{break-inside:auto}.ltx_table table{min-width:0}}

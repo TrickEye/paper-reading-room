@@ -83,5 +83,19 @@
     "defaultMode": "dual",
     "storageKey": "ace-reader-",
     "summary": "原图保留 · 按需加载"
+  },
+  "skill-transfer": {
+    "title": "Skill Transfer · 中文全文与逐段对照",
+    "description": "Skill Transfer 作者预印本的中文译文与逐段英文对照，包含正文、附录、3 幅原图和 7 张完整表格。",
+    "brand": "Skill Transfer",
+    "authors": [
+      "Yifan Lan",
+      "Hanyu Wang",
+      "Lu Lin",
+      "Jinghui Chen"
+    ],
+    "defaultMode": "dual",
+    "storageKey": "ace-reader-",
+    "summary": "原图保留 · 按需加载"
   }
 }

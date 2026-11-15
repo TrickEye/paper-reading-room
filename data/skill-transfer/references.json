@@ -1,0 +1,278 @@
+[
+  {
+    "id": "R1",
+    "number": 1,
+    "en": "[1] Salaheddin Alzubi, Noah Provenzano, Jaydon Bingham, Weiyuan Chen, and Tu Vu. Evoskill: Automated skill discovery for multi-agent systems.arXiv preprint arXiv:2603.02766, 2026.",
+    "zh": "[1] EvoSkill：多智能体系统的自动技能发现。原始引文：Salaheddin Alzubi, Noah Provenzano, Jaydon Bingham, Weiyuan Chen, and Tu Vu. Evoskill: Automated skill discovery for multi-agent systems.arXiv preprint arXiv:2603.02766, 2026."
+  },
+  {
+    "id": "R2",
+    "number": 2,
+    "en": "[2] Anthropic. Introducing agent skills. Anthropic News, 2025. https://www.anthropic.com/ news/skills.",
+    "zh": "[2] 智能体技能简介。原始引文：Anthropic. Introducing agent skills. Anthropic News, 2025. https://www.anthropic.com/ news/skills."
+  },
+  {
+    "id": "R3",
+    "number": 3,
+    "en": "[3] Anthropic. Agent skills. https://github.com/anthropics/skills, 2025. GitHub repository. Accessed: 2026-06-29.",
+    "zh": "[3] 智能体技能。原始引文：Anthropic. Agent skills. https://github.com/anthropics/skills, 2025. GitHub repository. Accessed: 2026-06-29."
+  },
+  {
+    "id": "R4",
+    "number": 4,
+    "en": "[4] borghei. data-scientist (claude agent skill). https://github.com/borghei/ Claude-Skills, 2026.",
+    "zh": "[4] data-scientist（Claude 智能体技能）。原始引文：borghei. data-scientist (claude agent skill). https://github.com/borghei/ Claude-Skills, 2026."
+  },
+  {
+    "id": "R5",
+    "number": 5,
+    "en": "[5] Yurui Chang, Yiran Wu, Qingyun Wu, and Lu Lin. Memcollab: Cross-model memory collaboration via contrastive trajectory distillation.arXiv preprint arXiv:2603.23234, 2026.",
+    "zh": "[5] MemCollab：通过对比轨迹蒸馏实现跨模型记忆协作。原始引文：Yurui Chang, Yiran Wu, Qingyun Wu, and Lu Lin. Memcollab: Cross-model memory collaboration via contrastive trajectory distillation.arXiv preprint arXiv:2603.23234, 2026."
+  },
+  {
+    "id": "R6",
+    "number": 6,
+    "en": "[6] Baian Chen, Chang Shu, Ehsan Shareghi, Nigel Collier, Karthik Narasimhan, and Shunyu Yao. Fireact: Toward language agent fine-tuning.arXiv preprint arXiv:2310.05915, 2023.",
+    "zh": "[6] FireAct：迈向语言智能体微调。原始引文：Baian Chen, Chang Shu, Ehsan Shareghi, Nigel Collier, Karthik Narasimhan, and Shunyu Yao. Fireact: Toward language agent fine-tuning.arXiv preprint arXiv:2310.05915, 2023."
+  },
+  {
+    "id": "R7",
+    "number": 7,
+    "en": "[7] Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, and Deshraj Yadav. Mem0: Building production-ready ai agents with scalable long-term memory.arXiv preprint arXiv:2504.19413, 2025.",
+    "zh": "[7] Mem0：利用可扩展长期记忆构建可用于生产的 AI 智能体。原始引文：Prateek Chhikara, Dev Khant, Saket Aryan, Taranjeet Singh, and Deshraj Yadav. Mem0: Building production-ready ai agents with scalable long-term memory.arXiv preprint arXiv:2504.19413, 2025."
+  },
+  {
+    "id": "R8",
+    "number": 8,
+    "en": "[8] Databricks. Officeqa: A grounded reasoning benchmark. arXiv preprint arXiv:2603.08655, 2026.",
+    "zh": "[8] OfficeQA：有依据的推理基准。原始引文：Databricks. Officeqa: A grounded reasoning benchmark. arXiv preprint arXiv:2603.08655, 2026."
+  },
+  {
+    "id": "R9",
+    "number": 9,
+    "en": "[9] Xinbo Gao, Bing Xiao, Dacheng Tao, and Xuelong Li. A survey of graph edit distance.Pattern Analysis and Applications, 13(1):113–129, 2010.",
+    "zh": "[9] 图编辑距离综述。原始引文：Xinbo Gao, Bing Xiao, Dacheng Tao, and Xuelong Li. A survey of graph edit distance.Pattern Analysis and Applications, 13(1):113–129, 2010."
+  },
+  {
+    "id": "R10",
+    "number": 10,
+    "en": "[10] Giro03k. statistical-analysis (claude agent skill). https://github.com/Giro03k/ claude-statistical-analysis-skill, 2026.",
+    "zh": "[10] statistical-analysis（Claude 智能体技能）。原始引文：Giro03k. statistical-analysis (claude agent skill). https://github.com/Giro03k/ claude-statistical-analysis-skill, 2026."
+  },
+  {
+    "id": "R11",
+    "number": 11,
+    "en": "[11] Geoffrey Hinton, Oriol Vinyals, and Jeff Dean. Distilling the knowledge in a neural network. arXiv preprint arXiv:1503.02531, 2015.",
+    "zh": "[11] 将知识蒸馏到神经网络中。原始引文：Geoffrey Hinton, Oriol Vinyals, and Jeff Dean. Distilling the knowledge in a neural network. arXiv preprint arXiv:1503.02531, 2015."
+  },
+  {
+    "id": "R12",
+    "number": 12,
+    "en": "[12] Cheng-Yu Hsieh, Chun-Liang Li, Chih-Kuan Yeh, Hootan Nakhost, Yasuhisa Fujii, Alex Ratner, Ranjay Krishna, Chen-Yu Lee, and Tomas Pfister. Distilling step-by-step! outperforming larger language models with less training data and smaller model sizes. InFindings of the Association for Computational Linguistics: ACL 2023, pages 8003–8017, 2023.",
+    "zh": "[12] 逐步蒸馏：以更少训练数据和更小模型超越大型语言模型。原始引文：Cheng-Yu Hsieh, Chun-Liang Li, Chih-Kuan Yeh, Hootan Nakhost, Yasuhisa Fujii, Alex Ratner, Ranjay Krishna, Chen-Yu Lee, and Tomas Pfister. Distilling step-by-step! outperforming larger language models with less training data and smaller model sizes. InFindings of the Association for Computational Linguistics: ACL 2023, pages 8003–8017, 2023."
+  },
+  {
+    "id": "R13",
+    "number": 13,
+    "en": "[13] Xueyu Hu, Ziyu Zhao, Shuang Wei, Ziwei Chai, Qianli Ma, Guoyin Wang, Xuwu Wang, Jing Su, Jingjing Xu, Ming Zhu, et al. Infiagent-dabench: Evaluating agents on data analysis tasks. arXiv preprint arXiv:2401.05507, 2024.",
+    "zh": "[13] InfiAgent-DABench：评估智能体的数据分析任务。原始引文：Xueyu Hu, Ziyu Zhao, Shuang Wei, Ziwei Chai, Qianli Ma, Guoyin Wang, Xuwu Wang, Jing Su, Jingjing Xu, Ming Zhu, et al. Infiagent-dabench: Evaluating agents on data analysis tasks. arXiv preprint arXiv:2401.05507, 2024."
+  },
+  {
+    "id": "R14",
+    "number": 14,
+    "en": "[14] Minki Kang, Jongwon Jeong, Seanie Lee, Jaewoong Cho, and Sung Ju Hwang. Distilling LLM agent into small models with retrieval and code tools.arXiv preprint arXiv:2505.17612, 2025.",
+    "zh": "[14] 使用检索和代码工具将大语言模型智能体蒸馏为小模型。原始引文：Minki Kang, Jongwon Jeong, Seanie Lee, Jaewoong Cho, and Sung Ju Hwang. Distilling LLM agent into small models with retrieval and code tools.arXiv preprint arXiv:2505.17612, 2025."
+  },
+  {
+    "id": "R15",
+    "number": 15,
+    "en": "[15] Yifan Lan, Yuanpu Cao, Hanyu Wang, Lu Lin, and Jinghui Chen. The illusion of reasoning: Exposing evasive data contamination in LLMs via Zero-CoT truncation.arXiv preprint arXiv:2605.21856, 2026.",
+    "zh": "[15] 推理的幻觉：通过 Zero-CoT 截断揭示大语言模型中的规避性数据污染。原始引文：Yifan Lan, Yuanpu Cao, Hanyu Wang, Lu Lin, and Jinghui Chen. The illusion of reasoning: Exposing evasive data contamination in LLMs via Zero-CoT truncation.arXiv preprint arXiv:2605.21856, 2026."
+  },
+  {
+    "id": "R16",
+    "number": 16,
+    "en": "[16] Xiangyi Li, Yimin Liu, Wenbo Chen, Bingran You, Zonglin Di, Yifeng He, et al. SkillsBench: Benchmarking how well agent skills work across diverse tasks.arXiv preprint arXiv:2602.12670, 2026.",
+    "zh": "[16] SkillsBench：评测智能体技能在多样任务中的表现。原始引文：Xiangyi Li, Yimin Liu, Wenbo Chen, Bingran You, Zonglin Di, Yifeng He, et al. SkillsBench: Benchmarking how well agent skills work across diverse tasks.arXiv preprint arXiv:2602.12670, 2026."
+  },
+  {
+    "id": "R17",
+    "number": 17,
+    "en": "[17] Zeyao Ma, Bohan Zhang, Jing Zhang, Jifan Yu, Xiaokang Zhang, Xiaohan Zhang, Sijia Luo, Xi Wang, and Jie Tang. Spreadsheetbench: Towards challenging real world spreadsheet manipulation.arXiv preprint arXiv:2406.14991, 2024.",
+    "zh": "[17] SpreadsheetBench：迈向具有挑战性的真实世界电子表格操作。原始引文：Zeyao Ma, Bohan Zhang, Jing Zhang, Jifan Yu, Xiaokang Zhang, Xiaohan Zhang, Sijia Luo, Xi Wang, and Jie Tang. Spreadsheetbench: Towards challenging real world spreadsheet manipulation.arXiv preprint arXiv:2406.14991, 2024."
+  },
+  {
+    "id": "R18",
+    "number": 18,
+    "en": "[18] Travis Neuman. finance (claude agent skill). https://agent-skills.md/skills/ travisjneuman/.claude/finance, 2026.",
+    "zh": "[18] finance（Claude 智能体技能）。原始引文：Travis Neuman. finance (claude agent skill). https://agent-skills.md/skills/ travisjneuman/.claude/finance, 2026."
+  },
+  {
+    "id": "R19",
+    "number": 19,
+    "en": "[19] Jingwei Ni, Yihao Liu, Xinpeng Liu, Yutao Sun, Mengyu Zhou, Pengyu Cheng, Dexin Wang, Erchao Zhao, Xiaoxi Jiang, and Guanjun Jiang. Trace2skill: Distill trajectory-local lessons into transferable agent skills. arXiv preprint arXiv:2603.25158, 2026.",
+    "zh": "[19] Trace2Skill：将局部轨迹经验提炼为可迁移的智能体技能。原始引文：Jingwei Ni, Yihao Liu, Xinpeng Liu, Yutao Sun, Mengyu Zhou, Pengyu Cheng, Dexin Wang, Erchao Zhao, Xiaoxi Jiang, and Guanjun Jiang. Trace2skill: Distill trajectory-local lessons into transferable agent skills. arXiv preprint arXiv:2603.25158, 2026."
+  },
+  {
+    "id": "R20",
+    "number": 20,
+    "en": "[20] OpenAI. Openai agents sdk. https://openai.github.io/openai-agents-python/ , 2025.",
+    "zh": "[20] OpenAI Agents SDK。原始引文：OpenAI. Openai agents sdk. https://openai.github.io/openai-agents-python/ , 2025."
+  },
+  {
+    "id": "R21",
+    "number": 21,
+    "en": "[21] OpenAI. Agent skills. https://github.com/openai/skills, 2025. GitHub repository. Accessed: 2026-06-29.",
+    "zh": "[21] 智能体技能。原始引文：OpenAI. Agent skills. https://github.com/openai/skills, 2025. GitHub repository. Accessed: 2026-06-29."
+  },
+  {
+    "id": "R22",
+    "number": 22,
+    "en": "[22] Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. Memgpt: Towards llms as operating systems, 2024. URL https: //arxiv.org/abs/2310.08560.",
+    "zh": "[22] MemGPT：迈向作为操作系统的大语言模型。原始引文：Charles Packer, Sarah Wooders, Kevin Lin, Vivian Fang, Shishir G. Patil, Ion Stoica, and Joseph E. Gonzalez. Memgpt: Towards llms as operating systems, 2024. URL https: //arxiv.org/abs/2310.08560."
+  },
+  {
+    "id": "R23",
+    "number": 23,
+    "en": "[23] Joon Sung Park, Joseph O’Brien, Carrie Jun Cai, Meredith Ringel Morris, Percy Liang, and Michael S Bernstein. Generative agents: Interactive simulacra of human behavior. InProceedings of the 36th annual acm symposium on user interface software and technology, pages 1–22, 2023.",
+    "zh": "[23] 生成式智能体：人类行为的交互式模拟。原始引文：Joon Sung Park, Joseph O’Brien, Carrie Jun Cai, Meredith Ringel Morris, Percy Liang, and Michael S Bernstein. Generative agents: Interactive simulacra of human behavior. InProceedings of the 36th annual acm symposium on user interface software and technology, pages 1–22, 2023."
+  },
+  {
+    "id": "R24",
+    "number": 24,
+    "en": "[24] Panupong Pasupat and Percy Liang. Compositional semantic parsing on semi-structured tables. InProceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pages 1470–1480, 2015.",
+    "zh": "[24] 半结构化表格上的组合语义解析。原始引文：Panupong Pasupat and Percy Liang. Compositional semantic parsing on semi-structured tables. InProceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers), pages 1470–1480, 2015."
+  },
+  {
+    "id": "R25",
+    "number": 25,
+    "en": "[25] Alberto Sanfeliu and King-Sun Fu. A distance measure between attributed relational graphs for pattern recognition.IEEE Transactions on Systems, Man, and Cybernetics, SMC-13(3): 353–362, 1983.",
+    "zh": "[25] 用于模式识别的属性关系图距离度量。原始引文：Alberto Sanfeliu and King-Sun Fu. A distance measure between attributed relational graphs for pattern recognition.IEEE Transactions on Systems, Man, and Cybernetics, SMC-13(3): 353–362, 1983."
+  },
+  {
+    "id": "R26",
+    "number": 26,
+    "en": "[26] Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. Toolformer: Language models can teach themselves to use tools.Advances in neural information processing systems, 36: 68539–68551, 2023.",
+    "zh": "[26] Toolformer：语言模型可以自学使用工具。原始引文：Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom. Toolformer: Language models can teach themselves to use tools.Advances in neural information processing systems, 36: 68539–68551, 2023."
+  },
+  {
+    "id": "R27",
+    "number": 27,
+    "en": "[27] Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion: Language agents with verbal reinforcement learning.Advances in neural information processing systems, 36:8634–8652, 2023.",
+    "zh": "[27] Reflexion：通过语言强化学习的语言智能体。原始引文：Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion: Language agents with verbal reinforcement learning.Advances in neural information processing systems, 36:8634–8652, 2023."
+  },
+  {
+    "id": "R28",
+    "number": 28,
+    "en": "[28] Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. V oyager: An open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291, 2023.",
+    "zh": "[28] Voyager：基于大语言模型的开放式具身智能体。原始引文：Guanzhi Wang, Yuqi Xie, Yunfan Jiang, Ajay Mandlekar, Chaowei Xiao, Yuke Zhu, Linxi Fan, and Anima Anandkumar. V oyager: An open-ended embodied agent with large language models. arXiv preprint arXiv:2305.16291, 2023."
+  },
+  {
+    "id": "R29",
+    "number": 29,
+    "en": "[29] Hanyu Wang, Yuanpu Cao, Lu Lin, and Jinghui Chen. PreFlect: From retrospective to prospective reflection in large language model agents.arXiv preprint arXiv:2602.07187, 2026.",
+    "zh": "[29] PreFlect：从回顾性反思到前瞻性反思的大语言模型智能体。原始引文：Hanyu Wang, Yuanpu Cao, Lu Lin, and Jinghui Chen. PreFlect: From retrospective to prospective reflection in large language model agents.arXiv preprint arXiv:2602.07187, 2026."
+  },
+  {
+    "id": "R30",
+    "number": 30,
+    "en": "[30] Hanyu Wang, Yifan Lan, Bochuan Cao, Lu Lin, and Jinghui Chen. Skillgrad: Optimizing agent skills like gradient descent.arXiv preprint arXiv:2605.27760, 2026.",
+    "zh": "[30] SkillGrad：像梯度下降一样优化智能体技能。原始引文：Hanyu Wang, Yifan Lan, Bochuan Cao, Lu Lin, and Jinghui Chen. Skillgrad: Optimizing agent skills like gradient descent.arXiv preprint arXiv:2605.27760, 2026."
+  },
+  {
+    "id": "R31",
+    "number": 31,
+    "en": "[31] Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc Le, Ed Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. Self-consistency improves chain of thought reasoning in language models.arXiv preprint arXiv:2203.11171, 2022.",
+    "zh": "[31] 自一致性改善思维链推理。原始引文：Xuezhi Wang, Jason Wei, Dale Schuurmans, Quoc Le, Ed Chi, Sharan Narang, Aakanksha Chowdhery, and Denny Zhou. Self-consistency improves chain of thought reasoning in language models.arXiv preprint arXiv:2203.11171, 2022."
+  },
+  {
+    "id": "R32",
+    "number": 32,
+    "en": "[32] Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, brian ichter, Fei Xia, Ed H. Chi, Quoc V Le, and Denny Zhou. Chain of thought prompting elicits reasoning in large language models. In Alice H. Oh, Alekh Agarwal, Danielle Belgrave, and Kyunghyun Cho, editors, Advances in Neural Information Processing Systems, 2022. URL https://openreview.net/ forum?id=_VjQlMeSB_J.",
+    "zh": "[32] 思维链提示激发大语言模型的推理能力。原始引文：Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, brian ichter, Fei Xia, Ed H. Chi, Quoc V Le, and Denny Zhou. Chain of thought prompting elicits reasoning in large language models. In Alice H. Oh, Alekh Agarwal, Danielle Belgrave, and Kyunghyun Cho, editors, Advances in Neural Information Processing Systems, 2022. URL https://openreview.net/ forum?id=_VjQlMeSB_J."
+  },
+  {
+    "id": "R33",
+    "number": 33,
+    "en": "[33] xdg-claude. ripgrep (claude agent skill). https://claude-plugins.dev/skills/@xdg/ xdg-claude/ripgrep, 2026.",
+    "zh": "[33] ripgrep（Claude 智能体技能）。原始引文：xdg-claude. ripgrep (claude agent skill). https://claude-plugins.dev/skills/@xdg/ xdg-claude/ripgrep, 2026."
+  },
+  {
+    "id": "R34",
+    "number": 34,
+    "en": "[34] Peng Xia, Jianwen Chen, Hanyang Wang, Jiaqi Liu, Kaide Zeng, Yu Wang, Siwei Han, Yiyang Zhou, Xujiang Zhao, Haifeng Chen, et al. Skillrl: Evolving agents via recursive skill-augmented reinforcement learning.arXiv preprint arXiv:2602.08234, 2026.",
+    "zh": "[34] SkillRL：通过递归技能增强强化学习演化智能体。原始引文：Peng Xia, Jianwen Chen, Hanyang Wang, Jiaqi Liu, Kaide Zeng, Yu Wang, Siwei Han, Yiyang Zhou, Xujiang Zhao, Haifeng Chen, et al. Skillrl: Evolving agents via recursive skill-augmented reinforcement learning.arXiv preprint arXiv:2602.08234, 2026."
+  },
+  {
+    "id": "R35",
+    "number": 35,
+    "en": "[35] Jiajun Xu, Zhiyuan Li, Wei Chen, Qun Wang, Xin Gao, Qi Cai, and Ziyuan Ling. On-device language models: A comprehensive review. arXiv preprint arXiv:2409.00088, 2024.",
+    "zh": "[35] 端侧语言模型：综合综述。原始引文：Jiajun Xu, Zhiyuan Li, Wei Chen, Qun Wang, Xin Gao, Qi Cai, and Ziyuan Ling. On-device language models: A comprehensive review. arXiv preprint arXiv:2409.00088, 2024."
+  },
+  {
+    "id": "R36",
+    "number": 36,
+    "en": "[36] Wujiang Xu, Zujie Liang, Kai Mei, Hang Gao, Juntao Tan, and Yongfeng Zhang. A-mem: Agentic memory for llm agents.Advances in Neural Information Processing Systems, 38: 17577–17604, 2026.",
+    "zh": "[36] A-Mem：智能体记忆。原始引文：Wujiang Xu, Zujie Liang, Kai Mei, Hang Gao, Juntao Tan, and Yongfeng Zhang. A-mem: Agentic memory for llm agents.Advances in Neural Information Processing Systems, 38: 17577–17604, 2026."
+  },
+  {
+    "id": "R37",
+    "number": 37,
+    "en": "[37] John Yang, Carlos Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and Ofir Press. Swe-agent: Agent-computer interfaces enable automated software engineering. Advances in Neural Information Processing Systems, 37:50528–50652, 2024.",
+    "zh": "[37] SWE-agent：智能体计算机接口支持自动化软件工程。原始引文：John Yang, Carlos Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and Ofir Press. Swe-agent: Agent-computer interfaces enable automated software engineering. Advances in Neural Information Processing Systems, 37:50528–50652, 2024."
+  },
+  {
+    "id": "R38",
+    "number": 38,
+    "en": "[38] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models.arXiv preprint arXiv:2210.03629, 2022.",
+    "zh": "[38] ReAct：协同语言模型中的推理与行动。原始引文：Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. React: Synergizing reasoning and acting in language models.arXiv preprint arXiv:2210.03629, 2022."
+  },
+  {
+    "id": "R39",
+    "number": 39,
+    "en": "[39] Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Tom Griffiths, Yuan Cao, and Karthik Narasimhan. Tree of thoughts: Deliberate problem solving with large language models. Advances in neural information processing systems, 36:11809–11822, 2023.",
+    "zh": "[39] 思维树：用大语言模型进行审慎问题求解。原始引文：Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Tom Griffiths, Yuan Cao, and Karthik Narasimhan. Tree of thoughts: Deliberate problem solving with large language models. Advances in neural information processing systems, 36:11809–11822, 2023."
+  },
+  {
+    "id": "R40",
+    "number": 40,
+    "en": "[40] Jianxiang Yu, Jiapeng Zhu, Bochen Lin, Qier Cui, Zichen Ding, and Xiang Li. Skill is not one-size-fits-all: Model-aware skill alignment for llm agents.arXiv preprint arXiv:2605.30723, 2026.",
+    "zh": "[40] 技能并非一体适用：面向模型的大语言模型智能体技能对齐。原始引文：Jianxiang Yu, Jiapeng Zhu, Bochen Lin, Qier Cui, Zichen Ding, and Xiang Li. Skill is not one-size-fits-all: Model-aware skill alignment for llm agents.arXiv preprint arXiv:2605.30723, 2026."
+  },
+  {
+    "id": "R41",
+    "number": 41,
+    "en": "[41] Aohan Zeng, Mingdao Liu, Rui Lu, Bowen Wang, Xiao Liu, Yuxiao Dong, and Jie Tang. Agenttuning: Enabling generalized agent abilities for llms. InFindings of the Association for Computational Linguistics: ACL 2024, pages 3053–3077, 2024.",
+    "zh": "[41] AgentTuning：赋予大语言模型通用智能体能力。原始引文：Aohan Zeng, Mingdao Liu, Rui Lu, Bowen Wang, Xiao Liu, Yuxiao Dong, and Jie Tang. Agenttuning: Enabling generalized agent abilities for llms. InFindings of the Association for Computational Linguistics: ACL 2024, pages 3053–3077, 2024."
+  },
+  {
+    "id": "R42",
+    "number": 42,
+    "en": "[42] Hanrong Zhang, Shicheng Fan, Henry Peng Zou, Yankai Chen, Zhenting Wang, Jiayu Zhou, Chengze Li, Wei-Chieh Huang, Yifei Yao, Kening Zheng, et al. Coevoskills: Self-evolving agent skills via co-evolutionary verification.arXiv preprint arXiv:2604.01687, 2026.",
+    "zh": "[42] CoEvoSkills：通过协同演化验证实现技能自演化。原始引文：Hanrong Zhang, Shicheng Fan, Henry Peng Zou, Yankai Chen, Zhenting Wang, Jiayu Zhou, Chengze Li, Wei-Chieh Huang, Yifei Yao, Kening Zheng, et al. Coevoskills: Self-evolving agent skills via co-evolutionary verification.arXiv preprint arXiv:2604.01687, 2026."
+  },
+  {
+    "id": "R43",
+    "number": 43,
+    "en": "[43] Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. Expel: Llm agents are experiential learners. InProceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 19632–19642, 2024.",
+    "zh": "[43] ExpeL：大语言模型智能体是经验学习者。原始引文：Andrew Zhao, Daniel Huang, Quentin Xu, Matthieu Lin, Yong-Jin Liu, and Gao Huang. Expel: Llm agents are experiential learners. InProceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 19632–19642, 2024."
+  },
+  {
+    "id": "R44",
+    "number": 44,
+    "en": "[44] Boyuan Zheng, Michael Y Fatemi, Xiaolong Jin, Zora Zhiruo Wang, Apurva Gandhi, Yueqi Song, Yu Gu, Jayanth Srinivasa, Gaowen Liu, Graham Neubig, et al. Skillweaver: Web agents can self-improve by discovering and honing skills. arXiv preprint arXiv:2504.07079, 2025.",
+    "zh": "[44] SkillWeaver：网页智能体通过发现和磨练技能自我改进。原始引文：Boyuan Zheng, Michael Y Fatemi, Xiaolong Jin, Zora Zhiruo Wang, Apurva Gandhi, Yueqi Song, Yu Gu, Jayanth Srinivasa, Gaowen Liu, Graham Neubig, et al. Skillweaver: Web agents can self-improve by discovering and honing skills. arXiv preprint arXiv:2504.07079, 2025."
+  },
+  {
+    "id": "R45",
+    "number": 45,
+    "en": "[45] Yue Zheng, Yuhao Chen, Bin Qian, Xiufang Shi, Yuanchao Shu, and Jiming Chen. A review on edge large language models: Design, execution, and applications.ACM Computing Surveys, 57 (8):1–35, 2025.",
+    "zh": "[45] 边缘大语言模型综述：设计、执行与应用。原始引文：Yue Zheng, Yuhao Chen, Bin Qian, Xiufang Shi, Yuanchao Shu, and Jiming Chen. A review on edge large language models: Design, execution, and applications.ACM Computing Surveys, 57 (8):1–35, 2025."
+  },
+  {
+    "id": "R46",
+    "number": 46,
+    "en": "[46] Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, and Yanlin Wang. Memorybank: Enhancing large language models with long-term memory. InProceedings of the AAAI conference on artificial intelligence, volume 38, pages 19724–19731, 2024.",
+    "zh": "[46] MemoryBank：通过长期记忆增强大语言模型。原始引文：Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, and Yanlin Wang. Memorybank: Enhancing large language models with long-term memory. InProceedings of the AAAI conference on artificial intelligence, volume 38, pages 19724–19731, 2024."
+  }
+]
