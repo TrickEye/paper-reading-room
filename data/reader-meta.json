@@ -139,5 +139,21 @@
     "defaultMode": "dual",
     "storageKey": "ace-reader-",
     "summary": "原图保留 · 按需加载"
+  },
+  "wikiskill": {
+    "title": "WikiSkill · 中文全文与逐段对照",
+    "description": "WikiSkill 的完整中文译文与逐段英文对照，含原图、表格、演化算法和系统提示词。",
+    "brand": "WikiSkill",
+    "authors": [
+      "Liyan Tang",
+      "Cyrus Rashtchian",
+      "Chun-Sung Ferng",
+      "Andrew Tomkins",
+      "Da-Cheng Juan",
+      "Tu Vu"
+    ],
+    "defaultMode": "dual",
+    "storageKey": "ace-reader-",
+    "summary": "原图保留 · 按需加载"
   }
 }

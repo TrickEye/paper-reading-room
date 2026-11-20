@@ -1,0 +1,19 @@
+#paper .source-bg{background:var(--ltx-bg-color);color:#182537}
+#paper .source-fg{color:var(--ltx-fg-color)}
+#paper .equation{overflow-x:auto;max-width:100%}
+#paper .table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#paper .algorithm{border:1px solid var(--line);border-radius:5px;padding:1rem}
+#paper .algorithm-line{margin-block:.6em;white-space:pre-wrap;overflow-wrap:anywhere}
+#paper .code-pair{margin:0 0 24px;min-width:0;max-width:100%;font:13px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace}
+#paper .code-pair pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:14px;margin:0;font:inherit}
+[data-lang=dual] #paper .code-pair pre.en{margin-top:12px}
+@media print{
+  #paper .search-target{outline:none;background:transparent}
+  #paper .ltx_table,#paper .algorithm{break-inside:auto}
+  #paper .table-scroll,#paper .equation{overflow:visible}
+  #paper .ltx_table table{min-width:0;width:100%;font-size:7pt}
+  #paper .ltx_table td,#paper .ltx_table th{white-space:normal;padding:3px}
+  #paper .algorithm-line{break-inside:avoid}
+  #paper .code-pair{font-size:8pt}
+  #paper .code-pair pre{break-inside:auto}
+}

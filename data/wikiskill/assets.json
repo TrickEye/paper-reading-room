@@ -1,0 +1,32 @@
+[
+  {
+    "figure": 1,
+    "page": 1,
+    "file": "figure-01.svg",
+    "width": 632,
+    "height": 319,
+    "source_url": "https://arxiv.org/html/2608.27454v1/average_scaling.svg",
+    "method": "official-arxiv-html",
+    "sha256": "2a2327a0a0b27f5aff68d36493f41eb256ac578be9a340ce163195aded5387c7"
+  },
+  {
+    "figure": 2,
+    "page": 4,
+    "file": "figure-02.png",
+    "width": 2032,
+    "height": 939,
+    "source_url": "https://arxiv.org/html/2608.27454v1/wikiskill-diagram.png",
+    "method": "official-arxiv-html",
+    "sha256": "a22d96990e04a72b05a0670b5b5f624dc01e092d7f9c3c067d6085bb92b6efe8"
+  },
+  {
+    "figure": 3,
+    "page": 12,
+    "file": "figure-03.png",
+    "width": 2021,
+    "height": 1323,
+    "source_url": "https://arxiv.org/html/2608.27454v1/wiki-demo.png",
+    "method": "official-arxiv-html",
+    "sha256": "6d973507dc74a634b90c8b7ce40d02cf1fa13b6ba8262e9ce1e88fbdbe21cd3c"
+  }
+]

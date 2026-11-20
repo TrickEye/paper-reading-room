@@ -10,7 +10,7 @@ const http = require('node:http');
 const {createHash} = require('node:crypto');
 const root = path.resolve(__dirname, '../public');
 const output = process.env.BROWSER_OUTPUT_DIR || path.join(require('node:os').tmpdir(), 'paper-reader-browser-check');
-const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7], masa: [234,5,9], 'skill-consumption': [291,5,15]};
+const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7], masa: [234,5,9], 'skill-consumption': [291,5,15], wikiskill: [239,3,7]};
 const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {
@@ -83,6 +83,16 @@ async function main() {
     assert.equal((await skillLensResponse.body()).subarray(0,5).toString(),'%PDF-');
     await skillLensCard.locator('a.primary').click(); await state(index);
     assert.equal(await index.locator('body').getAttribute('data-paper'),'skill-consumption');
+    await index.goto(base + '/');
+    const wikiSkillCard = index.locator('.card').filter({hasText:'WikiSkill: Compiling Agent Experience'});
+    assert.equal(await wikiSkillCard.count(),1);
+    const wikiSkillPdf = await wikiSkillCard.locator('a.secondary').getAttribute('href');
+    assert.equal(wikiSkillPdf,'pdfs/WikiSkill-2608.27454v1.pdf');
+    const wikiSkillResponse = await index.request.get(base + '/' + wikiSkillPdf);
+    assert.equal(wikiSkillResponse.status(),200);
+    assert.equal((await wikiSkillResponse.body()).subarray(0,5).toString(),'%PDF-');
+    await wikiSkillCard.locator('a.primary').click(); await state(index);
+    assert.equal(await index.locator('body').getAttribute('data-paper'),'wikiskill');
     await index.close();
   }
   const metrics = [];
@@ -155,6 +165,19 @@ async function main() {
         [41,1,1,1,1,1,6,8,1,6,12,8,8,10,10]);
       assert.deepEqual(await page.locator('.prompt-template').evaluateAll(tables => tables.map(table => table.querySelectorAll('[data-unit]').length)),
         [7,4,5,8,6,4]);
+    }
+    if (id === 'wikiskill') {
+      assert.equal(await page.locator('.ltx_bibitem').count(),46);
+      assert.equal(await page.locator('.equation').count(),8);
+      assert.equal(await page.locator('#alg1 .algorithm-line').count(),21);
+      assert.equal(await page.locator('.code-pair').count(),7);
+      assert.deepEqual(await page.locator('article table').evaluateAll(tables => tables.map(table => table.rows.length)),
+        [26,23,8,14,13,6,5]);
+      assert(await page.locator('#T4 th[rowspan="2"]').count());
+      assert.deepEqual(await page.locator('#T3 td [role="img"]').allTextContents(),['✓','✗','✗','✗','✓','✓','✗','✓']);
+      assert(await page.locator('.code-pair pre.zh').filter({hasText:'提出技能改动前，必须阅读至少 4 条执行轨迹。'}).count());
+    }
+    if (id === 'skill-consumption' || id === 'wikiskill') {
       for (const figure of await page.locator('figure.ltx_figure').all()) {
         const img = figure.locator('img');
         await img.scrollIntoViewIfNeeded();
@@ -163,12 +186,12 @@ async function main() {
         assert(await page.locator('#image-dialog').isVisible());
         assert.equal(await page.locator('#dialog-image').getAttribute('src'),await img.getAttribute('src'));
         const figureId = await figure.getAttribute('id');
-        await page.locator('#dialog-image').screenshot({path:path.join(output,'skill-consumption-' + figureId + '.png')});
+        await page.locator('#dialog-image').screenshot({path:path.join(output,id + '-' + figureId + '.png')});
         await page.keyboard.press('Escape');
       }
-      for (const target of ['T6','T14']) {
-        await page.locator('#' + target).scrollIntoViewIfNeeded();
-        await page.screenshot({path:path.join(output,'skill-consumption-' + target + '.png')});
+      for (const target of id === 'wikiskill' ? ['T4','alg1','A5.SS3.p1.2'] : ['T6','T14']) {
+        await page.locator(`[id="${target}"]`).scrollIntoViewIfNeeded();
+        await page.screenshot({path:path.join(output,id + '-' + target + '.png')});
       }
     }
     for (const mode of ['en','dual','zh']) {
@@ -186,7 +209,7 @@ async function main() {
     await page.locator('#search-results a').first().click();
     assert(await page.locator('.search-target').count() > 0);
     await page.fill('#search-input',''); await page.waitForFunction(() => document.querySelector('#search-results').hidden);
-    if (id === 'skillforge') {
+    if (id === 'skillforge' || id === 'wikiskill') {
       const codeQuery = await page.locator('pre.en').first().evaluate(el => el.textContent.trim().split('\n').find(x=>x.trim().length>10).trim().slice(0,32));
       await page.fill('#search-input',codeQuery);
       await page.waitForFunction(() => document.querySelectorAll('#search-results a').length > 0);
@@ -204,12 +227,12 @@ async function main() {
     assert.equal(await page.locator('#dialog-image').getAttribute('src'),await page.locator('figure.ltx_figure img').first().getAttribute('src'));
     await page.keyboard.press('Escape'); assert(!(await page.locator('#image-dialog').isVisible()));
     assert(await page.locator('.figure-zoom').first().evaluate(el=>el===document.activeElement));
-    if (id === 'skill-consumption') await page.locator('#reading-mode [data-mode="dual"]').click();
+    if (id === 'skill-consumption' || id === 'wikiskill') await page.locator('#reading-mode [data-mode="dual"]').click();
     await page.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));
     await page.emulateMedia({media:'print'});
     assert(await page.locator('article').isVisible());
-    if (id === 'skill-consumption') {
-      await page.pdf({path:path.join(output,'skill-consumption-print.pdf'),format:'A4',printBackground:true,
+    if (id === 'skill-consumption' || id === 'wikiskill') {
+      await page.pdf({path:path.join(output,id + '-print.pdf'),format:'A4',printBackground:true,
         margin:{top:'12mm',right:'12mm',bottom:'12mm',left:'12mm'}});
     }
     await page.emulateMedia({media:'screen'});
@@ -225,11 +248,11 @@ async function main() {
     await page.waitForFunction(()=>scrollY===0);
     await page.screenshot({path:path.join(output,`${id}-mobile.png`)});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile page overflows horizontally');
-    if (id === 'skill-consumption') {
+    if (id === 'skill-consumption' || id === 'wikiskill') {
       const wideTable = page.locator('#T1 .table-scroll');
       assert(await wideTable.evaluate(element => element.scrollWidth > element.clientWidth));
       await wideTable.scrollIntoViewIfNeeded();
-      await page.screenshot({path:path.join(output,'skill-consumption-table-mobile.png')});
+      await page.screenshot({path:path.join(output,id + '-table-mobile.png')});
     }
     await page.click('#menu-button'); assert(await page.locator('#search-input').evaluate(el=>el===document.activeElement));
     await page.keyboard.press('Shift+Tab'); assert(await page.locator('nav a').last().evaluate(el=>el===document.activeElement));

@@ -1,0 +1,24 @@
+{
+  "title": "WikiSkill: Compiling Agent Experience into Persistent Knowledge for Skill Evolution",
+  "arxiv_id": "2608.27454",
+  "version": "2608.27454v1",
+  "version_date": "2026-08-27",
+  "pdf_display_date": "2026-08-28",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "authors": [
+    "Liyan Tang",
+    "Cyrus Rashtchian",
+    "Chun-Sung Ferng",
+    "Andrew Tomkins",
+    "Da-Cheng Juan",
+    "Tu Vu"
+  ],
+  "pages": 28,
+  "pdf_file": "WikiSkill-2608.27454v1.pdf",
+  "pdf_source_url": "https://arxiv.org/pdf/2608.27454v1",
+  "pdf_downloaded_date": "2026-11-15",
+  "pdf_sha256": "65afc6e12f6f707483fe1b79a97ab67c03abf4b4992f82fde03eb7b8d9ad4a69",
+  "html_source_url": "https://arxiv.org/html/2608.27454v1",
+  "html_downloaded_date": "2026-11-20",
+  "html_sha256": "829f38f5cb66ac3dddbd4d978fe9219e8a9d314a23330d8b93998c767a74daa2"
+}

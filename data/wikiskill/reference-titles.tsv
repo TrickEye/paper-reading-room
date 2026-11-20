@@ -1,0 +1,46 @@
+bib.bib32	GEPA：反思式提示词演化能优于强化学习
+bib.bib9	EvoSkill：多智能体系统的自动技能发现
+bib.bib24	为 Claude 构建技能的完整指南
+bib.bib43	SkillCraft：大语言模型智能体能学会熟练使用工具吗？
+bib.bib31	HarnessX：可组合、可适应、可演化的智能体运行框架构建平台
+bib.bib26	SkillRet：面向大语言模型智能体技能检索的大规模基准
+bib.bib21	Gemma 4 技术报告
+bib.bib22	Gemini 3.5 Flash
+bib.bib14	LiveMathematicianBench：带证明概要的数学家级推理动态基准
+bib.bib2	AA-Omniscience：评估大语言模型的跨领域知识可靠性
+bib.bib6	SoK：智能体技能，大语言模型智能体超越工具使用的能力
+bib.bib13	LLM Wiki
+bib.bib23	使用 PagedAttention 高效管理大语言模型服务的内存
+bib.bib30	Meta-Harness：模型运行框架的端到端优化
+bib.bib33	SkillsBench：评估智能体技能在不同任务中的效果
+bib.bib7	SkillNet：创建、评估并连接 AI 技能
+bib.bib44	智能体运行框架工程：用可观测性驱动编码智能体框架自动演化
+bib.bib45	智能体技能在实际中表现如何：在贴近现实的场景中评估大语言模型的技能使用
+bib.bib29	AutoHarness：通过自动合成代码运行框架改进大语言模型智能体
+bib.bib42	Skill0：通过上下文内智能体强化学习实现技能内化
+bib.bib16	SpreadsheetBench：面向有挑战性的现实电子表格操作
+bib.bib3	Terminal-Bench：在命令行界面的真实高难任务上评估智能体
+bib.bib10	Trace2Skill：将单条轨迹中的经验提炼为可迁移的智能体技能
+bib.bib11	SkillOS：为自我演化智能体学习技能选择与整理
+bib.bib1	GDPval：评估 AI 模型在现实经济价值任务上的表现
+bib.bib15	SealQA：提高搜索增强语言模型的推理要求
+bib.bib4	人类的最后一场考试
+bib.bib19	Qwen3.5：迈向原生多模态智能体
+bib.bib20	Qwen3.6-27B
+bib.bib28	Skill1：通过强化学习统一演化技能增强型智能体
+bib.bib18	ALFWorld：为交互式学习对齐文本和具身环境
+bib.bib17	推出 OfficeQA：端到端有据推理基准
+bib.bib27	面向智能体 AI 的技能检索增强
+bib.bib41	SkillGrad：像梯度下降一样优化智能体技能
+bib.bib36	SkillRL：通过递归的技能增强强化学习演化智能体
+bib.bib38	MetaClaw：只需对话，一个能在实际环境中进行元学习并演化的智能体
+bib.bib46	大语言模型的智能体技能：架构、获取、安全和未来方向
+bib.bib12	SkillOpt：自我演化智能体技能的执行策略
+bib.bib34	ReAct：协同语言模型中的推理与行动
+bib.bib40	通过智能体技能演化实现元上下文工程
+bib.bib8	通过反向传播语言模型反馈来优化生成式 AI
+bib.bib5	为智能体配备面向现实世界的技能
+bib.bib35	Self-Harness：能够自我改进的运行框架
+bib.bib39	CoEvoSkills：通过共同演化的验证实现智能体技能自演化
+bib.bib25	SkillRouter：面向大语言模型智能体的大规模技能路由
+bib.bib37	Memento-Skills：让智能体设计智能体

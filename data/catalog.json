@@ -54,5 +54,12 @@
     "figures": 5,
     "tables": 15,
     "builder": "skill_consumption.py"
+  },
+  {
+    "id": "wikiskill",
+    "pdf": "WikiSkill-2608.27454v1.pdf",
+    "figures": 3,
+    "tables": 7,
+    "builder": "wikiskill.py"
   }
 ]

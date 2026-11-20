@@ -67,6 +67,13 @@ SkillCAT 中文译文由 Luna 子代理生成并经主代理审校，网页由�
 - `data/skill-consumption/` 保存同版官方 HTML、逐段译文、提示词和表格译文、原图、来源及校验值。`scripts/builders/skill_consumption.py` 可重建统一阅读数据。表 1 用文字标注原作图标对应的模型系列，便于搜索和使用屏幕阅读器。
 - 中文译文是对原作的改编，引用以原始 PDF 为准。[arXiv 同版论文](https://arxiv.org/abs/2605.23899v1) · [CC BY 4.0 许可](https://creativecommons.org/licenses/by/4.0/)
 
+### WikiSkill
+
+- `public/papers/wikiskill.html` 提供摘要、正文第 1–7 节、局限性、AI 使用披露、附录 A–E 和 46 条参考文献题名的中文译文与逐段英文对照。页面包含 3 幅同版独立原图、7 张可选择文本的完整表格、8 个 MathML 显示公式、1 个逐行对照算法和 7 份完整系统提示词。
+- `public/pdfs/WikiSkill-2608.27454v1.pdf` 为 28 页 arXiv v1 原始 PDF。arXiv 提交日期为 2026 年 8 月 27 日，PDF 标注日期为 2026 年 8 月 28 日。
+- `data/wikiskill/` 保存同版 HTML、逐段译文、算法与提示词译文、原图及来源校验值。运行 `python3 -B scripts/build.py` 可重建阅读资源。算法按原始 PDF 将输入单列，并从第 1 行给过程编号。原始提示词取自官方 HTML 附带的纯文本，保留缩进、变量和标记。
+- 来源：[arXiv 同版论文](https://arxiv.org/abs/2608.27454v1) · [CC BY 4.0 许可](https://creativecommons.org/licenses/by/4.0/)。
+
 ## 可复用制作流程
 
 仓库保留 skill、原始论文 PDF、轻量阅读外壳和索引、统一论文 JSON、共用阅读器，以及重建所需的双语文稿、独立原图、样式、来源记录及脚本。ACE 的维护入口为 `data/ace/article.html`、`toc.json` 和 `assets/`，不再作为其他论文的外壳模板。下载源码归档、重复的 LaTeX 文件和图表 PDF、临时审计报告与 Python 缓存已清理；重建无需重新下载源码归档。来源记录中的归档摘要属于历史下载记录，不表示归档仍保存在本地。
