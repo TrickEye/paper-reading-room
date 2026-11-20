@@ -113,5 +113,31 @@
     "defaultMode": "dual",
     "storageKey": "ace-reader-",
     "summary": "原图保留 · 按需加载"
+  },
+  "skill-consumption": {
+    "title": "从原始经验到技能使用 · 中文全文与逐段对照",
+    "description": "模型生成智能体技能的系统研究，含完整中文译文、逐段英文对照、原图及附录。",
+    "brand": "技能使用",
+    "authors": [
+      "Zisu Huang",
+      "Jingwen Xu",
+      "Yifan Yang",
+      "Ziyang Gong",
+      "Qihao Yang",
+      "Muzhao Tian",
+      "Xiaohua Wang",
+      "Changze Lv",
+      "Xuemei Gao",
+      "Qi Dai",
+      "Bei Liu",
+      "Kai Qiu",
+      "Xue Yang",
+      "Dongdong Chen",
+      "Xiaoqing Zheng",
+      "Chong Luo"
+    ],
+    "defaultMode": "dual",
+    "storageKey": "ace-reader-",
+    "summary": "原图保留 · 按需加载"
   }
 }

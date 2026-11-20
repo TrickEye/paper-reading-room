@@ -47,5 +47,12 @@
     "figures": 5,
     "tables": 9,
     "builder": "masa.py"
+  },
+  {
+    "id": "skill-consumption",
+    "pdf": "From-Raw-Experience-to-Skill-Consumption-2605.23899v1.pdf",
+    "figures": 5,
+    "tables": 15,
+    "builder": "skill_consumption.py"
   }
 ]

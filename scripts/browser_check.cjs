@@ -10,7 +10,7 @@ const http = require('node:http');
 const {createHash} = require('node:crypto');
 const root = path.resolve(__dirname, '../public');
 const output = process.env.BROWSER_OUTPUT_DIR || path.join(require('node:os').tmpdir(), 'paper-reader-browser-check');
-const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7], masa: [234,5,9]};
+const expected = {ace: [184,14,22], skillforge: [238,16,4], 'permission-denied': [190,4,15], skillcat: [210,4,2], skillgen: [350,8,4], 'skill-transfer': [144,3,7], masa: [234,5,9], 'skill-consumption': [291,5,15]};
 const preview = process.env.READER_PREVIEW === '1';
 let browser, server;
 const snapshot = () => {
@@ -62,7 +62,7 @@ async function main() {
     await card.locator('a.primary').click(); await state(index);
     assert.equal(await index.locator('body').getAttribute('data-paper'),'skill-transfer');
     await index.goto(base + '/');
-    assert.equal(await index.locator('.card').count(),7);
+    assert.equal(await index.locator('.card').count(),Object.keys(expected).length);
     const masaCard = index.locator('.card').filter({hasText:'Model-Aware Skill Alignment for LLM Agents'});
     assert.equal(await masaCard.count(),1);
     assert.equal(await masaCard.locator('a.primary').getAttribute('href'),'papers/masa.html');
@@ -72,6 +72,17 @@ async function main() {
     assert((await masaPdf.body()).subarray(0,5).toString() === '%PDF-');
     await masaCard.locator('a.primary').click(); await state(index);
     assert.equal(await index.locator('body').getAttribute('data-paper'),'masa');
+    await index.goto(base + '/');
+    const skillLensCard = index.locator('.card').filter({hasText:'From Raw Experience to Skill Consumption'});
+    assert.equal(await skillLensCard.count(),1);
+    assert.equal(await skillLensCard.locator('a.primary').getAttribute('href'),'papers/skill-consumption.html');
+    const skillLensPdf = await skillLensCard.locator('a.secondary').getAttribute('href');
+    assert.equal(skillLensPdf,'pdfs/From-Raw-Experience-to-Skill-Consumption-2605.23899v1.pdf');
+    const skillLensResponse = await index.request.get(base + '/' + skillLensPdf);
+    assert.equal(skillLensResponse.status(),200);
+    assert.equal((await skillLensResponse.body()).subarray(0,5).toString(),'%PDF-');
+    await skillLensCard.locator('a.primary').click(); await state(index);
+    assert.equal(await index.locator('body').getAttribute('data-paper'),'skill-consumption');
     await index.close();
   }
   const metrics = [];
@@ -136,6 +147,30 @@ async function main() {
       assert(await page.locator('#T4').getByText('绝不可跳过系统性搜索').count());
       assert(await page.locator('#T9').getByText('算法式子串匹配').count());
     }
+    if (id === 'skill-consumption') {
+      assert.equal(await page.locator('.ltx_bibitem').count(),29);
+      assert.equal(await page.locator('.equation').count(),5);
+      assert.equal(await page.locator('.paper-footnote').count(),1);
+      assert.deepEqual(await page.locator('article table').evaluateAll(tables => tables.map(table => table.rows.length)),
+        [41,1,1,1,1,1,6,8,1,6,12,8,8,10,10]);
+      assert.deepEqual(await page.locator('.prompt-template').evaluateAll(tables => tables.map(table => table.querySelectorAll('[data-unit]').length)),
+        [7,4,5,8,6,4]);
+      for (const figure of await page.locator('figure.ltx_figure').all()) {
+        const img = figure.locator('img');
+        await img.scrollIntoViewIfNeeded();
+        await img.evaluate(node => node.decode());
+        await figure.locator('.figure-zoom').click();
+        assert(await page.locator('#image-dialog').isVisible());
+        assert.equal(await page.locator('#dialog-image').getAttribute('src'),await img.getAttribute('src'));
+        const figureId = await figure.getAttribute('id');
+        await page.locator('#dialog-image').screenshot({path:path.join(output,'skill-consumption-' + figureId + '.png')});
+        await page.keyboard.press('Escape');
+      }
+      for (const target of ['T6','T14']) {
+        await page.locator('#' + target).scrollIntoViewIfNeeded();
+        await page.screenshot({path:path.join(output,'skill-consumption-' + target + '.png')});
+      }
+    }
     for (const mode of ['en','dual','zh']) {
       await page.locator(`#reading-mode [data-mode="${mode}"]`).click();
       assert.equal(await page.locator('html').getAttribute('data-lang'),mode);
@@ -169,9 +204,14 @@ async function main() {
     assert.equal(await page.locator('#dialog-image').getAttribute('src'),await page.locator('figure.ltx_figure img').first().getAttribute('src'));
     await page.keyboard.press('Escape'); assert(!(await page.locator('#image-dialog').isVisible()));
     assert(await page.locator('.figure-zoom').first().evaluate(el=>el===document.activeElement));
+    if (id === 'skill-consumption') await page.locator('#reading-mode [data-mode="dual"]').click();
     await page.evaluate(()=>window.dispatchEvent(new Event('beforeprint')));
     await page.emulateMedia({media:'print'});
     assert(await page.locator('article').isVisible());
+    if (id === 'skill-consumption') {
+      await page.pdf({path:path.join(output,'skill-consumption-print.pdf'),format:'A4',printBackground:true,
+        margin:{top:'12mm',right:'12mm',bottom:'12mm',left:'12mm'}});
+    }
     await page.emulateMedia({media:'screen'});
     assert(await page.locator('article img').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
     assert.equal(requests.filter(url=>/\/paper\.[a-f0-9]+\.json/.test(url)).length,1,'Mode/search/print must not fetch paper content again');
@@ -185,6 +225,12 @@ async function main() {
     await page.waitForFunction(()=>scrollY===0);
     await page.screenshot({path:path.join(output,`${id}-mobile.png`)});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Mobile page overflows horizontally');
+    if (id === 'skill-consumption') {
+      const wideTable = page.locator('#T1 .table-scroll');
+      assert(await wideTable.evaluate(element => element.scrollWidth > element.clientWidth));
+      await wideTable.scrollIntoViewIfNeeded();
+      await page.screenshot({path:path.join(output,'skill-consumption-table-mobile.png')});
+    }
     await page.click('#menu-button'); assert(await page.locator('#search-input').evaluate(el=>el===document.activeElement));
     await page.keyboard.press('Shift+Tab'); assert(await page.locator('nav a').last().evaluate(el=>el===document.activeElement));
     await page.keyboard.press('Tab'); assert(await page.locator('#search-input').evaluate(el=>el===document.activeElement));

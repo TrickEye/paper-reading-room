@@ -246,6 +246,38 @@ html[data-paper="masa"] #paper .ltx_note .ltx_note_mark{display:none}
 html[data-paper="masa"] #paper .code-pair pre{break-inside:auto}}
 
 
+html[data-paper="skill-consumption"] #paper .finding{border-inline-start:3px solid var(--accent);background:var(--soft);padding:12px 18px}
+html[data-paper="skill-consumption"] #paper .paper-footnote,html[data-paper="skill-consumption"] #paper .source-citations{font-size:.8em;color:var(--muted)}
+html[data-paper="skill-consumption"] #paper .source-citations{display:block;margin-top:.3em}
+html[data-paper="skill-consumption"] #paper .source-bg{background:var(--ltx-bg-color);color:#182537}
+html[data-paper="skill-consumption"] #paper .source-fg{color:var(--ltx-fg-color)}
+html[data-paper="skill-consumption"] #paper .source-fg[style$="#000000"],html[data-paper="skill-consumption"] #paper .source-fg[style$="#0F172A"]{color:inherit}
+html[data-paper="skill-consumption"] #paper .source-highlight-good{background:#c8f0c8;color:#182537}
+html[data-paper="skill-consumption"] #paper .source-highlight-bad{background:#ffd7d7;color:#182537}
+html[data-paper="skill-consumption"] #paper .model-provider{font-size:.85em;white-space:nowrap}
+html[data-paper="skill-consumption"] #paper .equation{overflow-x:auto;max-width:100%}
+html[data-paper="skill-consumption"] #paper .table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+html[data-paper="skill-consumption"] #paper .prompt-template{min-width:0;width:100%}
+html[data-paper="skill-consumption"] #paper .prompt-paragraph{margin:0 0 1em;text-align:left;white-space:normal;overflow-wrap:anywhere}
+html[data-paper="skill-consumption"] #paper .prompt-paragraph:last-child{margin-bottom:0}
+html[data-paper="skill-consumption"] #paper .prompt-paragraph code{white-space:normal}
+html[data-paper="skill-consumption"] #paper .table-paragraph{min-width:16ch;margin:0 0 .8em;text-align:left;white-space:normal}
+html[data-paper="skill-consumption"] #paper .table-paragraph:last-child{margin-bottom:0}
+html[data-paper="skill-consumption"] #paper #T14 td,html[data-paper="skill-consumption"] #paper #T15 td{vertical-align:top}
+html[data-paper="skill-consumption"] [data-theme=dark] #paper .source-fg[style$="#008000"]{color:#8bdb9a}
+html[data-paper="skill-consumption"] [data-theme=dark] #paper .source-fg[style$="#b91c1c"],html[data-paper="skill-consumption"] [data-theme=dark] #paper .source-fg[style$="#cc0000"],html[data-paper="skill-consumption"] [data-theme=dark] #paper .source-fg[style$="#FF0000"],html[data-paper="skill-consumption"] [data-theme=dark] #paper .source-fg[style$="#ff0000"]{color:#ffa6a0}
+@media print{html[data-paper="skill-consumption"] #paper .search-target{outline:none;background:transparent}
+html[data-paper="skill-consumption"] #paper .ltx_table{break-inside:auto}
+html[data-paper="skill-consumption"] #paper .table-scroll{overflow:visible}
+html[data-paper="skill-consumption"] #paper .ltx_table table{min-width:0;width:100%;font-size:7pt}
+html[data-paper="skill-consumption"] #paper .ltx_table .prompt-template{font-size:8pt}
+html[data-paper="skill-consumption"] #paper .ltx_table td,html[data-paper="skill-consumption"] #paper .ltx_table th{white-space:normal;padding:3px}
+html[data-paper="skill-consumption"] #paper .ltx_table figcaption{break-before:avoid}
+html[data-paper="skill-consumption"] #paper .prompt-paragraph,html[data-paper="skill-consumption"] #paper .table-paragraph{break-inside:avoid}
+
+}
+
+
 :root{--notes-width:400px}
 .notes-remote{flex:none;padding:8px 16px;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5}.notes-remote p{margin:4px 0;overflow-wrap:anywhere}.notes-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .notes-actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;padding:0;background:transparent;color:var(--muted)}.notes-actions button,.notes-actions a{font-size:12px;min-height:44px}.notes-actions a{display:inline-flex;align-items:center;padding:7px 12px;border:1px solid var(--primary);border-radius:7px;text-decoration:none}.notes-actions-spacer{flex:1}.notes-action-buttons{display:flex;align-items:center;gap:8px}.notes-actions .notes-mode-toggle{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;width:84px;height:44px;min-height:44px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--soft);color:var(--muted);cursor:pointer}.notes-mode-icon{z-index:1;display:grid;place-items:center;width:36px;height:36px;transition:color .18s ease}.notes-mode-icon svg{width:19px;height:19px}.notes-mode-thumb{position:absolute;top:4px;left:4px;width:36px;height:34px;border:1px solid var(--line);border-radius:999px;background:var(--surface);box-shadow:0 1px 3px #10243c1c;transition:transform .18s ease}.notes-mode-toggle[aria-checked=false] .notes-mode-icon--edit,.notes-mode-toggle[aria-checked=true] .notes-mode-icon--source{color:var(--primary)}.notes-mode-toggle[aria-checked=true] .notes-mode-icon--edit,.notes-mode-toggle[aria-checked=false] .notes-mode-icon--source{color:var(--muted)}.notes-mode-toggle[aria-checked=true] .notes-mode-thumb{transform:translateX(38px)}.notes-mode-toggle:focus-visible,.notes-icon-button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.notes-mode-toggle:disabled{opacity:.55;cursor:wait}

@@ -1,0 +1,29 @@
+bib.bib1	面向大语言模型的智能体技能：架构、获取、安全与未来方向
+bib.bib2	大语言模型智能体：方法、应用与挑战综述
+bib.bib3	Claude 技能
+bib.bib4	AutoRefine：从轨迹到可复用专长，用于持续改进大语言模型智能体
+bib.bib5	人工智能智能体从经验中实时学习程序
+bib.bib6	ProcMem：通过非参数 PPO 从经验中学习大语言模型智能体可复用的程序性记忆
+bib.bib7	EvoSkill：多智能体系统的自动技能发现
+bib.bib8	SkillRL：通过递归的技能增强强化学习演化智能体
+bib.bib9	Trace2Skill：把单条轨迹的经验提炼为可迁移的智能体技能
+bib.bib10	CoEvoSkills：通过共同演化的验证实现智能体技能自演化
+bib.bib11	SkillsBench：评估智能体技能在多样任务中的效果
+bib.bib12	SWE-Skills-Bench：智能体技能真的有助于真实的软件工程吗？
+bib.bib13	智能体技能在真实环境中表现如何：在贴近实际的场景中评估大语言模型的技能使用
+bib.bib14	SkillCraft：大语言模型智能体能学会熟练使用工具吗？
+bib.bib15	MemP：探索智能体的程序性记忆
+bib.bib16	基于技能库的自我改进智能体强化学习
+bib.bib17	EvolveR：通过经验驱动的生命周期实现大语言模型智能体自演化
+bib.bib18	生态系统规模的智能体技能组织、编排和基准评估
+bib.bib19	SkillFlow：可扩展且高效的智能体技能检索系统
+bib.bib20	ALFWorld：对齐文本和具身环境以进行交互式学习
+bib.bib21	SpreadsheetBench：面向有挑战性的真实电子表格操作
+bib.bib22	SWE-bench：语言模型能解决真实的 GitHub 问题吗？
+bib.bib23	SealQA：提高检索增强语言模型的推理要求
+bib.bib24	伯克利函数调用排行榜（BFCL）：从工具使用到大语言模型的智能体能力评估
+bib.bib25	推出 GPT-5.4
+bib.bib26	Gemini 3.1 Pro 模型卡
+bib.bib27	Gemini 3.1 Flash-Lite 模型卡
+bib.bib28	Qwen3.5：迈向原生多模态智能体
+bib.bib29	通过 PagedAttention 实现大语言模型服务的高效内存管理

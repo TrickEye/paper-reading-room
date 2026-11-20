@@ -10,7 +10,7 @@
 
 [在线阅读](https://trickeye.github.io/paper-reading-room/) · [GitHub 仓库](https://github.com/TrickEye/paper-reading-room)
 
-已收录 ACE、SkillForge、Permission Denied、SkillCAT、SkillGen、Skill Transfer 和 MASA 七篇论文的双语全文。版本与内容范围见[阅读说明](docs/reading-guide.md)。
+已收录 ACE、SkillForge、Permission Denied、SkillCAT、SkillGen、Skill Transfer、MASA 和 From Raw Experience to Skill Consumption 八篇论文的双语全文。版本与内容范围见[阅读说明](docs/reading-guide.md)。
 
 ## 阅读器与内容分离
 
@@ -38,6 +38,7 @@ data/                      文稿、翻译、原图及来源记录
   skillgen/                 同版全文、译文、原图、表格与附录
   skill-transfer/           作者预印本全文、译文、原图、表格与附录示例
   masa/                     arXiv v1 全文、译文、原图、表格与附录 A–J
+  skill-consumption/        arXiv v1 全文、逐段译文、原图与附录 A–H
   reader-meta.json          阅读器标题、作者、默认模式与兼容偏好设置
 scripts/                    Python 构建、内容审计及浏览器验收
 skills/paper-reading-room/  可复用论文制作 skill
@@ -80,7 +81,7 @@ npx playwright install chromium
 node scripts/browser_check.cjs
 ```
 
-测试覆盖七篇论文的三种语言、搜索、移动目录、锚点及前进后退、图片放大、打印、资源失败重试与仓库子路径；既有五篇和 MASA 保留 DOM 内容基线。可通过 `CHROME_EXECUTABLE` 指定已有 Chrome，通过 `PLAYWRIGHT_MODULE` 指定已有 Playwright 包，`BROWSER_OUTPUT_DIR` 指定截图／PDF 输出目录。默认产物写入系统临时目录。内容指纹在 `tests/migration-baseline.json`；后续有意修订正文时需审阅并同步对应指纹。
+测试覆盖八篇论文的三种语言、搜索、移动目录、锚点及前进后退、图片放大、打印、资源失败重试与仓库子路径；内容指纹覆盖已有基线和新收录的 SkillLens 论文。可通过 `CHROME_EXECUTABLE` 指定已有 Chrome，通过 `PLAYWRIGHT_MODULE` 指定已有 Playwright 包，`BROWSER_OUTPUT_DIR` 指定截图／PDF 输出目录。默认产物写入系统临时目录。内容指纹在 `tests/migration-baseline.json`；后续有意修订正文时需审阅并同步对应指纹。
 
 ## GitHub Pages
 

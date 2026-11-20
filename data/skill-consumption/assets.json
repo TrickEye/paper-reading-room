@@ -1,0 +1,52 @@
+[
+  {
+    "figure": 1,
+    "page": 3,
+    "file": "figure-01.png",
+    "width": 1608,
+    "height": 612,
+    "source_url": "https://arxiv.org/html/2605.23899v1/main.png",
+    "method": "official-arxiv-html",
+    "sha256": "b1ad2333c39057fccc82d29f5a2e6deef217b44d59115c4d862f1b0906eac83a"
+  },
+  {
+    "figure": 2,
+    "page": 8,
+    "file": "figure-02.svg",
+    "width": 253,
+    "height": 146,
+    "source_url": "https://arxiv.org/html/2605.23899v1/experience_ratio.svg",
+    "method": "official-arxiv-html",
+    "sha256": "8120be3943d3b1f05e19a9c77b314164d660a7d73710b957e41da0c8bc7e2fe4"
+  },
+  {
+    "figure": 3,
+    "page": 9,
+    "file": "figure-03.svg",
+    "width": 229,
+    "height": 143,
+    "source_url": "https://arxiv.org/html/2605.23899v1/pairwise_accuracy.svg",
+    "method": "official-arxiv-html",
+    "sha256": "37c5d15e5249018af146fa9aa80e36e0b15020793c9948905bba0b899c60b915"
+  },
+  {
+    "figure": 4,
+    "page": 10,
+    "file": "figure-04.svg",
+    "width": 253,
+    "height": 146,
+    "source_url": "https://arxiv.org/html/2605.23899v1/consumption_transfer.svg",
+    "method": "official-arxiv-html",
+    "sha256": "f244348b95405beb77cffa7c4bf1aed897787a45d39265e8725b57aa7f872acd"
+  },
+  {
+    "figure": 5,
+    "page": 10,
+    "file": "figure-05.png",
+    "width": 936,
+    "height": 284,
+    "source_url": "https://arxiv.org/html/2605.23899v1/meta_skill_slope.png",
+    "method": "official-arxiv-html",
+    "sha256": "b6853274e0e2c39c448cc81bb5393ad0cca8943765d95b25b8d38d1171a9d316"
+  }
+]
